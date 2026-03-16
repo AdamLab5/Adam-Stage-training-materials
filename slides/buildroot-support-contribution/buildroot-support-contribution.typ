@@ -25,17 +25,16 @@ config-common(
 - Pre-built versions available at
   #link("https://buildroot.org/docs.html") (PDF, HTML, text)
 
-- Source code of the manual located in ```docs/manual``` in the Buildroot
+- Source code of the manual located in ``` docs/manual```  in the Buildroot
   sources
 
   - Written in #emph[Asciidoc] format
 
 - The manual can be built with:
 
-  - ```make manual```
+  - ``` make manual``` 
 
-  - or just ```make manual-html```, ```make manual-pdf```, ```make
-    manual-epub```, ```make manual-text```, ```make manual-split-html```
+  - or just ``` make manual-html``` , ``` make manual-pdf``` , ``` make manual-epub``` , ``` make manual-text``` , ``` make manual-split-html``` 
 
   - A number of tools need to be installed on your machine, see the
     manual itself.
@@ -64,13 +63,13 @@ config-common(
 
 - If you have a build issue to report:
 
-  - Make sure to reproduce after a ```make clean all``` cycle
+  - Make sure to reproduce after a ``` make clean all```  cycle
 
-  - Include the Buildroot version, Buildroot ```.config``` that reproduces
+  - Include the Buildroot version, Buildroot ``` .config```  that reproduces
     the issue, and last 100-200 lines of the build output in your
     report.
 
-  - Use #emph[pastebin] sites like ```https://paste.ack.tf/``` when
+  - Use #emph[pastebin] sites like ``` https://paste.ack.tf/```  when
     reporting issues over IRC.
 
 - The community will be much more likely to help you if you use a recent
@@ -88,13 +87,13 @@ config-common(
 
   - One month of stabilization before the release
 
-- At the beginning of the stabilization phase, ```-rc1``` is released.
+- At the beginning of the stabilization phase, ``` -rc1```  is released.
 
-- Several ```-rc``` versions are published during this stabilization
+- Several ``` -rc```  versions are published during this stabilization
   phase, until the final release.
 
 - Development not completely stopped during the stabilization, a
-  ```next``` branch is opened.
+  ``` next```  branch is opened.
 
 - Long-term maintenance of YYYY.02, with a #emph[LTS initiative]
 
@@ -102,11 +101,11 @@ config-common(
 
 - Contributions are made in the form of patches
 
-- Created with ```git``` and sent by e-mail to the mailing list
+- Created with ``` git```  and sent by e-mail to the mailing list
 
-  - Use ```git send-email``` to avoid issues
+  - Use ``` git send-email```  to avoid issues
 
-  - Use ```get-developers``` to know to who patches should be sent
+  - Use ``` get-developers```  to know to who patches should be sent
 
 - The patches are reviewed, tested and discussed by the community
 
@@ -141,10 +140,10 @@ config-common(
   - Random choice of architecture/toolchain combination from a
     pre-defined list
 
-  - Random selection of packages using ```make randpackageconfig```
+  - Random selection of packages using ``` make randpackageconfig``` 
 
   - Random enabling of features like static library only, or
-    ```BR2\_ENABLE\_DEBUG\=y```
+    ``` BR2\_ENABLE\_DEBUG\=y``` 
 
 - Scripts and tools publicly available at
   #link("https://gitlab.com/buildroot.org/buildroot-test/")
@@ -193,7 +192,7 @@ Detail of failures
 
 ===  Additional testing effort
 
-- Run-time test infrastructure in ```support/testing```
+- Run-time test infrastructure in ``` support/testing``` 
 
   - Contains a number of test cases that verify that specific Buildroot
     configurations build correctly, and boot correctly under Qemu.
@@ -201,11 +200,11 @@ Detail of failures
   - Validates filesystem format support, specific packages, core
     Buildroot functionality.
 
-  - ```./support/testing/run-tests -l```
+  - ``` ./support/testing/run-tests -l``` 
 
-  - ```./support/testing/run-tests tests.fs.test\_ext.TestExt2```
+  - ``` ./support/testing/run-tests tests.fs.test\_ext.TestExt2``` 
 
   - Run regularly on #emph[Gitlab CI]
 
-- All #emph[defconfigs] in ```configs/``` are built every week on
+- All #emph[defconfigs] in ``` configs/```  are built every week on
   #emph[Gitlab CI]
