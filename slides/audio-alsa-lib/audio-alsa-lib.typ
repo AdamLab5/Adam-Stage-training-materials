@@ -256,7 +256,8 @@ int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
 - ALSA topology:
   #link("https://www.alsa-project.org/wiki/ALSA_topology")[https://www.alsa-project.org/wiki/ALSA\_topology]
 
-``` Using ```alsa-lib``` tools to:
+``` 
+Using ```alsa-lib``` tools to:
 
 - Reorder channels
 
