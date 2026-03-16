@@ -9,7 +9,7 @@ config-common(
   // Compile with `typst c --input handout=1 ...` to generate the handout.
   handout: "handout" in sys.inputs and sys.inputs.handout == "1",
 ))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+ #show raw.where(block: true): set block(fill: luma(240), inset:
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
 = Buildroot community: support and contribution
@@ -30,7 +30,8 @@ config-common(
 
   - ``` make manual```
 
-  - or just ``` make manual-html```, ``` make manual-pdf```, ``` make manual-epub```, ``` make manual-text```, ``` make manual-split-html```
+  - or just ``` make manual-html```, ``` make manual-pdf```, ``` make
+    manual-epub```, ``` make manual-text```, ``` make manual-split-html```
 
   - A number of tools need to be installed on your machine, see the
     manual itself.
