@@ -1,0 +1,19 @@
+\documentclass
+\title{Sample title}
+\author{Sample Author}
+\institute{Sample institute}
+\date{2026}
+
+\begin{document}
+\frame{\titlepage}
+\begin {frame}
+\frametitle{Sample frame title}
+\section{First section}
+This is the first section
+
+\section{Second section}
+This is the second section
+
+\end{frame}
+\end{document}
+

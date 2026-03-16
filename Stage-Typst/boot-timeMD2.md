@@ -1,0 +1,182 @@
+At the end of the lab, you'll have your system completely up and
+running.
+
+# Setup
+
+Go to the ``` /\_\_SESSION_NAME\_\_-labs/kernel/linux/``` directory.
+
+First let's get the latest updates to the remote ```stable``` tree (that's
+needed if you started from a ready made archive of the Linux git
+repository):
+
+``` git fetch stable ```
+
+First, let's get the list of branches on our ```stable``` remote tree:
+
+``` git branch -a ```
+
+As we will do our labs with the Linux 6.1 LTS stable branch, the remote
+branch we are interested in is ```remotes/stable/linux-6.1.y```.
+
+First, open the ```Makefile``` file just to check the Linux kernel version
+that you currently have.
+
+Now, let's check out the ```6.1.y``` branch: ``` git checkout
+stable/linux-6.1.y ```
+
+Open ```Makefile``` again and make sure you now have a 6.1.\<n\> version.
+
+# Compiling environment
+
+You need the same ```PATH``` and ```CROSS_COMPILE``` environment variables
+as when you compiled U-Boot, plus the ```ARCH``` one that corresponds to
+the target architecture.
+
+``` export CROSS_COMPILE=arm-linux-gnueabihf- export ARCH=arm ```
+
+# Adding support for the 4.3\" LCD cape
+
+To support using the 4.3\" LCD cape, all we need to do is declare and
+configure the devices on this cape. This is typically done by
+customizing the board's *Device Tree* or by adding a *Device Tree
+Overlay*.
+
+So, to avoid messing with the standard DTS for our board, let's use a
+such a customized device tree through a separate file:
+
+cp
+$HOME/__SESSION_NAME__-labs/kernel/data/am335x-boneblack-lcd43.dts arch/arm/boot/dts/
+\end{bashinput}
+
+You now have to modify ```arch/arm/boot/dts/Makefile``` so that
+the new DTS file gets compiled too.
+
+\section{Configuring the Linux kernel}
+
+First, lets pick the default kernel configuration for boards with a TI
+OMAP or AMxxxx SoC:
+
+```
+make help | grep omap
+```
+
+What we need is the configuration for OMAP2 and later SoCs:
+```
+make omap2plus_defconfig
+```
+
+Let's run ```make menuconfig``` or ```make xconfig``` and select the
+below options. Use the search capability of such configuration
+interfaces to find the corresponding parameters (remove ```CONFIG_```
+when you search.
+
+To enable support for the framebuffer and the PWM backlight:
+ -  \kconfigval{CONFIG_PWM_TIEHRPWM}{y}
+ -  \kconfigval{CONFIG_FB_SIMPLE}{y}
+ -  \kconfigval{CONFIG_BACKLIGHT_PWM}{y}
+ -  \kconfigval{CONFIG_DRM}{y}
+ -  \kconfigval{CONFIG_DRM_TILCDC}{y}
+ -  \kconfigval{CONFIG_DRM_TI_TFP410}{y}
+
+For USB support:
+ -  \kconfigval{CONFIG_USB}{y}
+ -  \kconfigval{CONFIG_USB_MUSB_HDRC}{y}
+ -  \kconfigval{CONFIG_USB_MUSB_DSPS}{y}
+ -  Disable \kconfig{CONFIG_USB_GADGET}
+ -  \kconfigval{CONFIG_NOP_USB_XCEIV}{y}
+ -  \kconfigval{CONFIG_AM335X_PHY_USB}{y}
+
+For the webcam
+ -  \kconfigval{CONFIG_MEDIA_SUPPORT}{y} 
+ -  \kconfigval{CONFIG_MEDIA_USB_SUPPORT}{y}
+ -  \kconfigval{CONFIG_VIDEO_DEV}{y}
+ -  \kconfigval{CONFIG_USB_VIDEO_CLASS}{y}
+
+For your convenience, of if you screw up your settings in a later lab,
+you can also use a reference configuration file found in
+```__SESSION_NAME__-labs/kernel/data```.
+
+\section{Compiling the kernel}
+
+To compile the device tree, just run:
+```
+make dtbs
+```
+
+To compile the kernel, just run:
+```
+make -j 8 zImage
+```
+
+Note that the default ```make``` target would have worked too, but with
+just ```zImage```, we avoid compiling many modules that are configured
+in the default configuration. This saves quite a lot of time!
+
+At the end, copy the kernel binary and DTB to the SD card's boot
+partition:
+
+```
+cp arch/arm/boot/zImage /media/$USER/boot/ cp
+arch/arm/boot/dts/am335x-boneblack-lcd43.dtb /media/$USER/boot/dtb
+```
+
+\section{Installing the root filesystem}
+
+We are also ready to install the root filesystem. Still with the SD card
+connected to your workstation:
+
+\begin{bashinput}
+cd$HOME/\_\_SESSION_NAME\_\_-labs/rootfs/buildroot sudo rm -rf
+/media/$USER/rootfs/*
+sudo tar -C /media/$USER/rootfs/ -xf output/images/rootfs.tar sudo
+umount /media/$USER/rootfs
+sudo umount /media/$USER/boot
+
+Then insert the SD card in the board's slot.
+
+# Bootloader configuration
+
+Back to the serial console for your board, let's define the default boot
+sequence, to load the kernel and DTB from the external SD card:
+
+``` setenv bootcmd 'load mmc 0:1 81000000 zImage; load mmc 0:1 82000000
+dtb; bootz 81000000 - 82000000' ```
+
+The last thing to do is to define the kernel command line: ``` setenv
+bootargs console=ttyS0,115200n8 root=/dev/mmcblk0p2 rootwait ro ```
+
+\- ```rootwait``` waits for the root device to be ready before attempting
+to mount it. You may have a kernel panic otherwise. - ```ro``` mounts the
+root filesystem in read-only mode. If this is possible, this is quite
+important to avoid random filesystem checks at boot time, depending on
+how the system was shut down, switched off or rebooted. Such filesystem
+checks can add a lot of jitter from one boot to another, making boot
+time measurements unpredicable and difficult to reproduce.
+
+Last but not least, save your changes: ``` saveenv ```
+
+This saves the environment in a ```uboot.env``` file in the FAT32
+partition of the SD card.
+
+# Remove the unnecessary boot delay
+
+By default, U-Boot leaves you 2 seconds to type a key in the console, to
+reach its command line shell, before attempting to start the default
+boot command, as specified in the ```bootcmd``` environment variable.
+
+This is a pure waste of time, as if you type keys early enough, you can
+get to a shell anyway. So, let's remove this unnecessary delay which is
+too easy to eliminate and which we don't want to count in the original
+boot time. We don't want to unnecessarily slow down all our tests
+either.
+
+``` setenv bootdelay 0 saveenv ```
+
+# Testing time!
+
+First, connect the USB webcam provided by your instructor, and point it
+to an interesting direction ;)
+
+Then, reset your board or power it on, and see it work as expected. If
+you don't get what you expected, check your serial console for errors,
+and if you're stuck, show your system to your instructor.

@@ -1,0 +1,86 @@
+<h1 id="processes-scheduling-and-interrupts">Processes, scheduling and
+interrupts</h1>
+<h2 id="processes-and-scheduling">Processes and scheduling</h2>
+<h3 id="process-thread">Process, thread?</h3>
+<ul>
+<li><p>Confusion about the terms <em>process</em>, <em>thread</em> and
+<em>task</em></p></li>
+<li><p>In UNIX, a process is created using <code>fork()</code> and is
+composed of</p>
+<ul>
+<li><p>An address space, which contains the program code, data, stack,
+shared libraries, etc***</p></li>
+<li><p>A single thread, which is the only entity known by the
+scheduler***</p></li>
+</ul></li>
+<li><p>Additional threads can be created inside an existing process,
+using <code>pthread_create()</code></p>
+<ul>
+<li><p>They run in the same address space as the initial thread of the
+process</p></li>
+<li><p>They start executing a function passed as argument to
+<code>pthread_create()</code></p></li>
+</ul></li>
+</ul>
+<h3 id="process-thread-kernel-point-of-view">Process, thread: kernel
+point of view</h3>
+<ul>
+<li><p>In kernel space, each thread running in the system is represented
+by a structure of type</p></li>
+<li><p>From a scheduling point of view, it makes no difference between
+the initial thread of a process and all additional threads created
+dynamically using <code>pthread_create()</code></p></li>
+</ul>
+<figure>
+<img
+src="slides/kernel-driver-development-processes/address-space***pdf"
+alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
+</figure>
+<h3
+id="relation-between-execution-mode-address-space-and-context">Relation
+between execution mode, address space and context</h3>
+<ul>
+<li><p>When speaking about <em>process</em> and <em>thread</em>, these
+concepts need to be clarified:</p>
+<ul>
+<li><p><em>Mode</em> is the level of privilege allowing to perform some
+operations:</p>
+<ul>
+<li><p><em>Kernel Mode</em>: in this level CPU can perform any operation
+allowed by its architecture; any instruction, any I/O operation, any
+area of memory accessed***</p></li>
+<li><p><em>User Mode</em>: in this level, certain instructions are not
+permitted (especially those that could alter the global state of the
+machine), some memory areas cannot be accessed***</p></li>
+</ul></li>
+<li><p>Linux splits its <em>address space</em> in <em>kernel space</em>
+and <em>user space</em></p>
+<ul>
+<li><p><em>Kernel space</em> is reserved for code running in <em>Kernel
+Mode</em>***</p></li>
+<li><p><em>User space</em> is the place were applications execute
+(accessible from <em>Kernel Mode</em>)***</p></li>
+</ul></li>
+<li><p><em>Context</em> represents the current state of an execution
+flow***</p>
+<ul>
+<li><p>The <em>process context</em> can be seen as the content of the
+registers associated to this process: execution register, stack
+register*********</p></li>
+<li><p>The <em>interrupt context</em> replaces the <em>process
+context</em> when the interrupt handler is executed***</p></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="a-thread-life">A thread life</h3>
+<figure>
+<img src="slides/kernel-driver-development-processes/threads-life***pdf"
+alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
+</figure>
+<h3 id="execution-of-system-calls">Execution of system calls</h3>
+<p><img src="slides/kernel-driver-development-processes/syscalls***pdf"
+alt="image" /><br />
+The execution of system calls takes place in the context of the thread
+requesting them***</p>
