@@ -12,6 +12,7 @@ config-common(
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
+#set text(font: "Latin Modern Sans")
 = Buildroot community: support and contribution
 <buildroot-community-support-and-contribution>
 ===  Documentation
