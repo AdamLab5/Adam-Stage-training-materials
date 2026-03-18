@@ -1,50 +1,39 @@
 \subsection{alsa-utils}
 
 === alsa-utils
-  \begin{itemize}
-  \item ```alsa-utils``` is a repository of tools to interact with
+  \item ``` alsa-utils ``` is a repository of tools to interact with
     ALSA devices
   \item \url{https://github.com/alsa-project/alsa-utils}
-  \end{itemize}
 
 
 === Controls
-  \begin{itemize}
-  \item ```alsamixer``` provides a ```ncurse``` based graphical
+  \item ``` alsamixer ``` provides a ``` ncurse ``` based graphical
     interface to modify sound cards controls.
-  \item ```amixer``` is a command line tool to set controls.
-    \begin{itemize}
-    \item The ```scontrols``` and ```controls``` commands list the
+  \item ``` amixer ``` is a command line tool to set controls.
+    \item The ``` scontrols ``` and ``` controls ``` commands list the
       available controls.
-    \item The ```contents``` commands list the
+    \item The ``` contents ``` commands list the
       available controls and shows their content.
-    \item The ```cset``` and ```sset``` commands allows modifying
+    \item The ``` cset ``` and ``` sset ``` commands allows modifying
       the controls.
-    \item The ```cget``` and ```sget``` commands show the content of
+    \item The ``` cget ``` and ``` sget ``` commands show the content of
       a specific control.
-    \end{itemize}
-  \item ```alsactl``` is a tool that can save the control values to a
+  \item ``` alsactl ``` is a tool that can save the control values to a
     file and restore them from a file.
-  \end{itemize}
 
 
 === Playback and capture
-  \begin{itemize}
-  \item ```speaker-test``` can generate tones or noises to play on
+  \item ``` speaker-test ``` can generate tones or noises to play on
     specific channels with a specified rate.
-  \item ```aplay``` plays an audio file. It is able to set many
+  \item ``` aplay ``` plays an audio file. It is able to set many
     stream parameters.
-  \item ```arecord``` can record an audio stream to a file.
-  \end{itemize}
+  \item ``` arecord ``` can record an audio stream to a file.
 
 
-\setupdemoframe{Userspace tools}
-```
+#setupdemoframe("Userspace tools","
   Using userspace tools to:
-  \begin{itemize}
   \item configure sound card controls
   \item load and store default values for controls
   \item play sound
   \item record
-  \end{itemize}
-```
+")
