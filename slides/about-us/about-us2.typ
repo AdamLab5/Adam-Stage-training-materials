@@ -44,15 +44,12 @@ config-common(
 
 - #link("https://bootlin.com")
 
-#image("../../out/common/bootlin-logo.pdf", width: 100%)
 
 ===  Bootlin engineering services
 
-#image("../../out/slides/about-us/engineering-services.pdf", height: 80%)
 
 ===  Bootlin training courses
 
-#image("../../out/slides/about-us/training-courses.pdf", height: 70%)
 
 ===  Bootlin, an open-source contributor
 
@@ -101,5 +98,4 @@ config-common(
 - Elixir - browse Linux kernel sources on-line: 
   #link("https://elixir.bootlin.com")
 
-#image("../../out/slides/about-us/www.png", width: 70%) 
 #emph[Icon by Freepik, Flaticon]

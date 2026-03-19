@@ -122,16 +122,17 @@
   )
 )
 
-#let demoframe(title, body) = {
-  heading("Demo - "+ title,depth:3, )
+#let setupdemoframe(title, body) = {
+  heading("Demo - " + title, depth: 3)
+  
   grid(
     columns: (0.4fr, 0.6fr),
+    column-gutter: 1cm,
+    align: horizon,
     [
       #image("../../out/common/lab-penguins.pdf", width: 100%)
     ],
-    [
-      #body
-    ]
+    body
   )
 }
 
@@ -224,12 +225,12 @@
 //       #2
 //       \end{columns}
 //   \end{frame}
-// }
+// // }
 
-#let setupdemoframe(arg1, arg2) = {
-    heading("Demo - "+ arg1,depth:3, )
-    image("../../out/common/lab-penguins.pdf", width: 100%)
-}
+// #let setupdemoframe(arg1, arg2) = {
+//     heading("Demo - "+ arg1,depth:3, )
+//     image("../../out/common/lab-penguins.pdf", width: 100%)
+// }
 
 // \newcommand\setupdemoframe[2]{
 //   \begin{frame}{Demo - #1}

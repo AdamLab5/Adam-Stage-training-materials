@@ -1,26 +1,26 @@
 \section{Buildroot community: support and contribution}
 
-=== Documentation
+=== {Documentation}
   \begin{itemize}
   \item Buildroot comes with its own documentation
   \item Pre-built versions available at
     \url{https://buildroot.org/docs.html} (PDF, HTML, text)
-  \item Source code of the manual located in ```docs/manual``` in the
+  \item Source code of the manual located in ``` docs/manual ``` in the
     Buildroot sources
     \begin{itemize}
     \item Written in {\em Asciidoc} format
     \end{itemize}
   \item The manual can be built with:
     \begin{itemize}
-    \item ```make manual```
-    \item or just ```make manual-html```, ```make manual-pdf```, ```make manual-epub```, ```make manual-text```, ```make manual-split-html```
+    \item ``` make manual ```
+    \item or just ``` make manual-html ```, ``` make manual-pdf ```, ``` make manual-epub ```, ``` make manual-text ```, ``` make manual-split-html ```
     \item A number of tools need to be installed on your machine,
       see the manual itself.
     \end{itemize}
   \end{itemize}
 
 
-=== Getting support
+=== {Getting support}
   \begin{itemize}
   \item Free support
     \begin{itemize}
@@ -42,15 +42,15 @@
   \end{itemize}
 
 
-=== Tips to get free support
+=== {Tips to get free support}
   \begin{itemize}
   \item If you have a build issue to report:
     \begin{itemize}
-    \item Make sure to reproduce after a ```make clean all``` cycle
-    \item Include the Buildroot version, Buildroot ```.config``` that
+    \item Make sure to reproduce after a ``` make clean all ``` cycle
+    \item Include the Buildroot version, Buildroot ``` .config ``` that
       reproduces the issue, and last 100-200 lines of the build
       output in your report.
-    \item Use {\em pastebin} sites like ```https://paste.ack.tf/```
+    \item Use {\em pastebin} sites like ``` https://paste.ack.tf/ ```
       when reporting issues over IRC.
     \end{itemize}
   \item The community will be much more likely to help you if you use
@@ -58,7 +58,7 @@
   \end{itemize}
 
 
-=== Release schedule
+=== {Release schedule}
   \begin{itemize}
   \item The Buildroot community publishes stable releases every three
     months.
@@ -68,23 +68,23 @@
     \item Two first months of active development
     \item One month of stabilization before the release
     \end{itemize}
-  \item At the beginning of the stabilization phase, ```-rc1``` is
+  \item At the beginning of the stabilization phase, ``` -rc1 ``` is
     released.
-  \item Several ```-rc``` versions are published during this
+  \item Several ``` -rc ``` versions are published during this
     stabilization phase, until the final release.
   \item Development not completely stopped during the stabilization, a
-    ```next``` branch is opened.
+    ``` next ``` branch is opened.
   \item Long-term maintenance of YYYY.02, with a {\em LTS initiative}
   \end{itemize}
 
 
-=== Contribution process
+=== {Contribution process}
   \begin{itemize}
   \item Contributions are made in the form of patches
-  \item Created with ```git``` and sent by e-mail to the mailing list
+  \item Created with ``` git ``` and sent by e-mail to the mailing list
     \begin{itemize}
-    \item Use ```git send-email``` to avoid issues
-    \item Use ```get-developers``` to know to who patches should be
+    \item Use ``` git send-email ``` to avoid issues
+    \item Use ``` get-developers ``` to know to who patches should be
       sent
     \end{itemize}
   \item The patches are reviewed, tested and discussed by the
@@ -99,7 +99,7 @@
   \end{itemize}
 
 
-=== Patchwork
+=== {Patchwork}
   \begin{itemize}
   \item Tool that records all patches sent on the mailing list
   \item Allows the community to see which patches need review/testing,
@@ -113,7 +113,7 @@
   \end{center}
 
 
-=== Automated build testing
+=== {Automated build testing}
   \begin{itemize}
   \item The enormous number of configuration options in Buildroot make
     it very difficult to test all combinations.
@@ -122,10 +122,10 @@
     \begin{itemize}
     \item Random choice of architecture/toolchain combination from a
       pre-defined list
-    \item Random selection of packages using ```make
-        randpackageconfig```
+    \item Random selection of packages using ``` make
+        randpackageconfig ```
     \item Random enabling of features like static library only, or
-      ```BR2_ENABLE_DEBUG=y```
+      ``` BR2_ENABLE_DEBUG=y ```
     \end{itemize}
   \item Scripts and tools publicly available at
     \url{https://gitlab.com/buildroot.org/buildroot-test/}
@@ -134,13 +134,13 @@
   \end{itemize}
 
 
-=== autobuild.buildroot.org
+=== {autobuild.buildroot.org}
   \begin{center}
     \includegraphics[width=0.9\textwidth]{slides/buildroot-support-contribution/autobuild.png}
   \end{center}
 
 
-=== [fragile]Autobuild daily reports
+=== [fragile]{Autobuild daily reports}
 
 {\tiny
 \begin{verbatim}
@@ -177,20 +177,20 @@ Detail of failures
 
 
 
-=== Additional testing effort
+=== {Additional testing effort}
   \begin{itemize}
-  \item Run-time test infrastructure in ```support/testing```
+  \item Run-time test infrastructure in ``` support/testing ```
     \begin{itemize}
     \item Contains a number of test cases that verify that specific
       Buildroot configurations build correctly, and boot correctly
       under Qemu.
     \item Validates filesystem format support, specific packages, core
       Buildroot functionality.
-    \item ```./support/testing/run-tests -l```
-    \item ```./support/testing/run-tests tests.fs.test_ext.TestExt2```
+    \item ``` ./support/testing/run-tests -l ```
+    \item ``` ./support/testing/run-tests tests.fs.test_ext.TestExt2 ```
     \item Run regularly on {\em Gitlab CI}
     \end{itemize}
-  \item All {\em defconfigs} in ```configs/``` are built every week
+  \item All {\em defconfigs} in ``` configs/ ``` are built every week
     on {\em Gitlab CI}
   \end{itemize}
 
