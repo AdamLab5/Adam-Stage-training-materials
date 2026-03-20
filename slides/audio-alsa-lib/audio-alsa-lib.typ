@@ -1,7 +1,7 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
-
+#import "../audio-alsa-utils/themeBootlin.typ": *
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
 
@@ -13,7 +13,6 @@ config-common(
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
 = Userspace ALSA
-<userspace-alsa>
 == alsa-lib
 <alsa-lib>
 ===  alsa-lib
@@ -25,9 +24,9 @@ config-common(
 - It provides mainly access to the devices but also goes further and
   allows handling audio in userspace.
 
-- The library itself is actually named ```libasound```
+- The library itself is actually named ``` libasound ```
 
-- The include file is ```alsa/asoundlib.h```
+- The include file is ``` alsa/asoundlib.h ```
 
 ===  alsa-lib API
 
@@ -35,33 +34,31 @@ config-common(
   int snd_pcm_open(snd_pcm_t ** pcmp, const char * name, snd_pcm_stream_t stream, int mode)
   ```
 
-- ```name``` is the name of the PCM to be opened.
+- ``` name ``` is the name of the PCM to be opened.
 
-- ```stream``` can be either ```SND\_PCM\_STREAM\_PLAYBACK``` or
-  ```SND\_PCM\_STREAM\_CAPTURE```
+- ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or ``` SND_PCM_STREAM_CAPTURE ```
 
-- ```mode``` can be a combination of ```SND\_PCM\_NONBLOCK``` and
-  ```SND\_PCM\_ASYNC```
+- ``` mode ``` can be a combination of ``` SND_PCM_NONBLOCK ``` and ```
+  SND_PCM_ASYNC ```
 
 - ```c
   int snd_pcm_close(snd_pcm_t *pcm)
   ```
-
 - Closes the PCM.
 
 ===  PCM name
 
 - This can be specified as a hardware device. The three arguments (in
   order: CARD,DEV,SUBDEV) specify card number or identifier, device
-  number and subdevice number (-1 means any). For example: ```hw:0``` or
-  ```hw:1,0```. Instead of the index, the card name can be used:
-  ```hw:STM32MP15DK,0```
+  number and subdevice number (-1 means any). For example: ``` hw:0 ``` or
+  ``` hw:1,0 ```. Instead of the index, the card name can be used: ```
+  hw:STM32MP15DK,0 ```
 
-- Or through the ```plug``` plugin: ```plug:mypcmdef```, ```plug:hw:0,0```.
+- Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```, ``` plug:hw:0,0 ```.
 
-- The list of available names can be generated using ```snd\_card\_next```
-  to iterate over all the physical cards. See ```device\_list``` in
-  ```aplay```.
+- The list of available names can be generated using ``` snd_card_next
+  ``` to iterate over all the physical cards. See ``` device_list ``` in
+  ``` aplay ```.
 
 ===  alsa-lib API - PCM
 
@@ -73,8 +70,8 @@ config-common(
   int snd_pcm_hw_params_any(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
   ```
 
-- This will allocate a ```snd\_pcm\_hw\_params\_t``` and fill it with the
-  range of parameters supported by ```pcm```.
+- This will allocate a ``` snd_pcm_hw_params_t ``` and fill it with
+  the range of parameters supported by ``` pcm ```.
 
 - ```c
   int snd_pcm_hw_params_set_access(snd_pcm_t *pcm, snd_pcm_hw_params_t *params,
@@ -89,7 +86,7 @@ config-common(
                                    snd_pcm_format_t val)
   ```
 
-- This set the format, using a ```SND\_PCM\_FORMAT\_``` macro.
+- This set the format, using a ``` SND_PCM_FORMAT_ ``` macro.
 
 ===  alsa-lib API - PCM
 
@@ -105,7 +102,7 @@ config-common(
                                       unsigned int *val, int *dir)
   ```
 
-- Sets the sample rate, setting ```dir``` to 0 will require the exact
+- Sets the sample rate, setting ``` dir ``` to 0 will require the exact
   rate.
 
 - ```c
@@ -126,13 +123,14 @@ config-common(
   int snd_pcm_hw_params(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
   ```
 
-- Installs the parameters and calls ```snd\_pcm\_prepare``` on the stream.
+- Installs the parameters and calls ``` snd_pcm_prepare ``` on the
+  stream.
 
 - ```c
   void snd_pcm_hw_params_free(snd_pcm_hw_params_t * obj)
   ```
 
-- Frees the allocated ```snd\_pcm\_hw\_params\_t```.
+- Frees the allocated ``` snd_pcm_hw_params_t ```.
 
 - ```c
   int snd_pcm_prepare(snd_pcm_t * pcm)
@@ -189,8 +187,9 @@ config-common(
   #define snd_ctl_elem_value_alloca(ptr)
   ```
 
-- Allocate a ```snd\_ctl\_elem\_id\_t```, referring to a particular
-  control and a ```snd\_ctl\_elem\_value\_t``` to be set for this control.
+- Allocate a ``` snd_ctl_elem_id_t ```, referring to a particular
+  control and a ``` snd_ctl_elem_value_t ``` to be set for this
+  control.
 
 - ```c
   void snd_ctl_elem_id_set_interface(snd_ctl_elem_id_t *obj, snd_ctl_elem_iface_t val)
@@ -201,9 +200,9 @@ config-common(
 
 ===  alsa-lib API - controls
 
-- A lookup is needed to fill the ```snd\_ctl\_elem\_id\_t``` completely
+- A lookup is needed to fill the ``` snd_ctl_elem_id_t ``` completely
 
-````c
+```c
 int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
 {
     int err;
@@ -213,12 +212,12 @@ int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
     snd_ctl_elem_info_set_id(info, id);
     if ((err = snd_ctl_elem_info(handle, info)) < 0) {
         return err;
-    ```
+    }
     snd_ctl_elem_info_get_id(info, id);
 
     return 0;
+}
 ```
-````
 
 ===  alsa-lib API - controls
 
@@ -240,7 +239,7 @@ int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
   void snd_ctl_elem_set_bytes(snd_ctl_elem_value_t *obj, void *data, size_t size)
   ```
 
-- Set the value in ```snd\_ctl\_elem\_value\_t```.
+- Set the value in ``` snd_ctl_elem_value_t ```.
 
 - ```c
   int snd_ctl_elem_write(snd_ctl_t *ctl, snd_ctl_elem_value_t *data)
@@ -251,13 +250,13 @@ int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
 ===  Going further
 
 - UCM: The ALSA Use Case Configuration:
-  #link("https://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm__conf.html")[https://www.alsa-project.org/alsa-doc/alsa-lib/group\_\_ucm\_\_conf.html]
+  #link("https://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm__conf.html")[https://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm__conf.html]
 
 - ALSA topology:
-  #link("https://www.alsa-project.org/wiki/ALSA_topology")[https://www.alsa-project.org/wiki/ALSA\_topology]
+  #link("https://www.alsa-project.org/wiki/ALSA_topology")[https://www.alsa-project.org/wiki/ALSA_topology]
 
-``` 
-Using ```alsa-lib``` tools to:
+#setupdemoframe([Card configuration examples],[ Using ``` alsa-lib ```
+tools to:
 
 - Reorder channels
 
@@ -269,4 +268,4 @@ Using ```alsa-lib``` tools to:
 
 - Apply effects
 
-```
+])

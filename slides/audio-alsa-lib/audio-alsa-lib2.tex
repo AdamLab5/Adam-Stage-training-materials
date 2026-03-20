@@ -2,18 +2,18 @@
 
 \subsection{alsa-lib}
 
-=== alsa-lib
+=== {alsa-lib}
   \begin{itemize}
   \item The main way to interact with ALSA devices is to use alsa-lib.
   \item \url{https://github.com/alsa-project/alsa-lib}
   \item It provides mainly access to the devices but also goes further
     and allows handling audio in userspace.
-  \item The library itself is actually named ```libasound```
-  \item The include file is ```alsa/asoundlib.h```
+  \item The library itself is actually named ``` libasound ```
+  \item The include file is ``` alsa/asoundlib.h ```
   \end{itemize}
 
 
-=== [fragile]alsa-lib API
+=== [fragile]{alsa-lib API}
   \begin{itemize}
   \item 
     \begin{block}{}
@@ -22,11 +22,11 @@
 int snd_pcm_open(snd_pcm_t ** pcmp, const char * name, snd_pcm_stream_t stream, int mode)
       \end{minted}
     \end{block}
-  \item ```name``` is the name of the PCM to be opened.
-  \item ```stream``` can be either ```SND_PCM_STREAM_PLAYBACK``` or
-    ```SND_PCM_STREAM_CAPTURE```
-  \item ```mode``` can be a combination of ```SND_PCM_NONBLOCK```
-    and ```SND_PCM_ASYNC```
+  \item ``` name ``` is the name of the PCM to be opened.
+  \item ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or
+    ``` SND_PCM_STREAM_CAPTURE ```
+  \item ``` mode ``` can be a combination of ``` SND_PCM_NONBLOCK ```
+    and ``` SND_PCM_ASYNC ```
   \item 
     \begin{block}{}
     \fontsize{9}{9}\selectfont
@@ -38,22 +38,22 @@ int snd_pcm_close(snd_pcm_t *pcm)
   \end{itemize}
 
 
-=== PCM name
+=== {PCM name}
   \begin{itemize}
   \item This can be specified as a hardware device. The three
     arguments (in order: CARD,DEV,SUBDEV) specify card number or
     identifier, device number and subdevice number (-1 means any). For
-    example: ```hw:0``` or ```hw:1,0```. Instead of the index, the
-    card name can be used: ```hw:STM32MP15DK,0```
-  \item Or through the ```plug``` plugin: ```plug:mypcmdef```,
-    ```plug:hw:0,0```.
+    example: ``` hw:0 ``` or ``` hw:1,0 ```. Instead of the index, the
+    card name can be used: ``` hw:STM32MP15DK,0 ```
+  \item Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```,
+    ``` plug:hw:0,0 ```.
   \item The list of available names can be generated using
-    ```snd_card_next``` to iterate over all the physical cards. See
-    ```device_list``` in ```aplay```.
+    ``` snd_card_next ``` to iterate over all the physical cards. See
+    ``` device_list ``` in ``` aplay ```.
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - PCM
+=== [fragile]{alsa-lib API - PCM}
   \begin{itemize}
   \item The next step is to handle the PCM stream parameters
   \item
@@ -65,8 +65,8 @@ int snd_pcm_hw_params_malloc(snd_pcm_hw_params_t ** ptr)
 int snd_pcm_hw_params_any(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
       \end{minted}
       \end{block}
-    \item This will allocate a ```snd_pcm_hw_params_t``` and fill it
-      with the range of parameters supported by ```pcm```.
+    \item This will allocate a ``` snd_pcm_hw_params_t ``` and fill it
+      with the range of parameters supported by ``` pcm ```.
   \item
     \begin{block}{}
     \fontsize{9}{9}\selectfont
@@ -85,11 +85,11 @@ int snd_pcm_hw_params_set_format(snd_pcm_t *pcm, snd_pcm_hw_params_t *params,
                                  snd_pcm_format_t val)
       \end{minted}
     \end{block}
-    \item This set the format, using a ```SND_PCM_FORMAT_``` macro.
+    \item This set the format, using a ``` SND_PCM_FORMAT_ ``` macro.
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - PCM
+=== [fragile]{alsa-lib API - PCM}
   \begin{itemize}
   \item
     \begin{block}{}
@@ -108,7 +108,7 @@ int snd_pcm_hw_params_set_rate_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params,
                                     unsigned int *val, int *dir)
       \end{minted}
     \end{block}
-    \item Sets the sample rate, setting ```dir``` to 0 will require
+    \item Sets the sample rate, setting ``` dir ``` to 0 will require
       the exact rate.
   \item
     \begin{block}{}
@@ -127,7 +127,7 @@ int snd_pcm_hw_params_set_buffer_size(snd_pcm_t *pcm, snd_pcm_hw_params_t *param
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - PCM
+=== [fragile]{alsa-lib API - PCM}
   \begin{itemize}
   \item
     \begin{block}{}
@@ -136,7 +136,7 @@ int snd_pcm_hw_params_set_buffer_size(snd_pcm_t *pcm, snd_pcm_hw_params_t *param
 int snd_pcm_hw_params(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
        \end{minted}
     \end{block}
-  \item Installs the parameters and calls ```snd_pcm_prepare``` on
+  \item Installs the parameters and calls ``` snd_pcm_prepare ``` on
     the stream.
   \item
     \begin{block}{}
@@ -145,7 +145,7 @@ int snd_pcm_hw_params(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
 void snd_pcm_hw_params_free(snd_pcm_hw_params_t * obj)
       \end{minted}
     \end{block}
-  \item Frees the allocated ```snd_pcm_hw_params_t```.
+  \item Frees the allocated ``` snd_pcm_hw_params_t ```.
   \item
     \begin{block}{}
     \fontsize{9}{9}\selectfont
@@ -165,7 +165,7 @@ int snd_pcm_wait(snd_pcm_t * pcm, int timeout)
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - PCM
+=== [fragile]{alsa-lib API - PCM}
   \begin{itemize}
   \item
     \begin{block}{}
@@ -197,7 +197,7 @@ snd_pcm_sframes_t snd_pcm_mmap_readn(snd_pcm_t *pcm, void **bufs, snd_pcm_uframe
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - controls
+=== [fragile]{alsa-lib API - controls}
   \begin{itemize}
   \item It is possible to set controls programatically.
   \item
@@ -219,8 +219,8 @@ snd_ctl_elem_value_t *value;
 #define snd_ctl_elem_value_alloca(ptr)
       \end{minted}
     \end{block}
-  \item Allocate a ```snd_ctl_elem_id_t```, referring to a particular
-    control and a ```snd_ctl_elem_value_t``` to be set for this
+  \item Allocate a ``` snd_ctl_elem_id_t ```, referring to a particular
+    control and a ``` snd_ctl_elem_value_t ``` to be set for this
     control.
   \item
     \begin{block}{}
@@ -234,9 +234,9 @@ void snd_ctl_elem_id_set_name(snd_ctl_elem_id_t *obj, const char *val)
   \end{itemize}
 
 
-=== [fragile]alsa-lib API - controls
+=== [fragile]{alsa-lib API - controls}
   \begin{itemize}
-  \item A lookup is needed to fill the ```snd_ctl_elem_id_t```
+  \item A lookup is needed to fill the ``` snd_ctl_elem_id_t ```
     completely
   \end{itemize}
   \begin{block}{}
@@ -251,16 +251,16 @@ int lookup_id(snd_ctl_elem_id_t *id, snd_ctl_t *handle)
     snd_ctl_elem_info_set_id(info, id);
     if ((err = snd_ctl_elem_info(handle, info)) < 0) {
         return err;
-    ```
+    }
     snd_ctl_elem_info_get_id(info, id);
 
     return 0;
-```
+}
     \end{minted}
   \end{block}
 
 
-=== [fragile]alsa-lib API - controls
+=== [fragile]{alsa-lib API - controls}
   \begin{itemize}
   \item
     \begin{block}{}
@@ -285,7 +285,7 @@ void snd_ctl_elem_value_set_byte(snd_ctl_elem_value_t *obj, unsigned int idx,
 void snd_ctl_elem_set_bytes(snd_ctl_elem_value_t *obj, void *data, size_t size)
       \end{minted}
     \end{block}
-  \item Set the value in ```snd_ctl_elem_value_t```.
+  \item Set the value in ``` snd_ctl_elem_value_t ```.
   \item
     \begin{block}{}
     \fontsize{9}{9}\selectfont
@@ -297,7 +297,7 @@ int snd_ctl_elem_write(snd_ctl_t *ctl, snd_ctl_elem_value_t *data)
   \end{itemize}
 
 
-=== Going further
+=== {Going further}
   \begin{itemize}
   \item UCM: The ALSA Use Case Configuration:
     \url{https://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm__conf.html}
@@ -306,9 +306,8 @@ int snd_ctl_elem_write(snd_ctl_t *ctl, snd_ctl_elem_value_t *data)
   \end{itemize}
 
 
-\setupdemoframe{Card configuration examples}
-```
-  Using ```alsa-lib``` tools to:
+#setupdemoframe([Card configuration examples],[
+  Using ``` alsa-lib ``` tools to:
   \begin{itemize}
   \item Reorder channels
   \item Split channels
@@ -316,4 +315,4 @@ int snd_ctl_elem_write(snd_ctl_t *ctl, snd_ctl_elem_value_t *data)
   \item Mix samples
   \item Apply effects
   \end{itemize}
-```
+])

@@ -62,6 +62,24 @@ def prepareDoc():
         )
 
         document = re.sub(
+            r'\\begin{columns}\s*\\column\s*\{([^}]*)\}',
+            r'\n#columns(gutter: 8pt)[',
+            document
+        )
+
+        document = re.sub(
+            r'\\column\s*\{([^}]*)\}',
+            r' #colbreak()',
+            document
+        )
+
+        document = re.sub(
+            r'end{columns}',
+            r'\]',
+            document
+        )
+
+        document = re.sub(
             r'\\end{frame}',
             r'',
             document

@@ -16,6 +16,8 @@ config-common(
 <about-bootlin>
 ===  Bootlin introduction
 
+#columns(gutter: 8pt)[
+
 - Engineering company
 
   - In business since 2004
@@ -44,7 +46,12 @@ config-common(
 
 - #link("https://bootlin.com")
 
-#image("../../out/common/bootlin-logo.pdf", width: 100%)
+#colbreak()
+
+#image("../../out/common/bootlin-logo.pdf", width: 15%)
+
+
+]
 
 ===  Bootlin engineering services
 
@@ -86,6 +93,8 @@ config-common(
 
 ===  Bootlin on-line resources
 
+#columns(gutter: 8pt)[
+
 - Website with a technical blog: 
   #link("https://bootlin.com")
 
@@ -101,5 +110,10 @@ config-common(
 - Elixir - browse Linux kernel sources on-line: 
   #link("https://elixir.bootlin.com")
 
-#image("../../out/slides/about-us/www.png", width: 70%) 
+#colbreak()
+
+#image("www.png", width: 10%) 
 #emph[Icon by Freepik, Flaticon]
+
+
+]
