@@ -42,7 +42,21 @@ interface.
 Note: The codec can be part of another IC (PMIC, Bluetooth or MODEM
 chips).
 
-== simple-audio-card
+#import "@local/bootlin:0.1.0": *
+#import "@local/bootlin-yocto:0.1.0": *
+#import "@local/bootlin-utils:0.1.0": *
+#import "../audio-alsa-utils/themeBootlin.typ": *
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
+
+config-common(
+  // Compile with `typst c --input handout=1 ...` to generate the handout.
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+
+= simple-audio-card
 <simple-audio-card>
 ===  simple-card Most sound cards, can now be described
 using device tree. This is done using a sound node with a ```

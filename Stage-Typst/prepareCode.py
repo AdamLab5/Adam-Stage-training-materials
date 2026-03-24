@@ -55,6 +55,18 @@ def prepareDoc():
 
     with open(sys.argv[1], "r") as f_In, open(sys.argv[2], "w") as f_Out:
         document = f_In.read()
+
+        document = re.sub(
+            r'\\begin\{frame\}\s*\\frametitle\{([^}]*)\}',
+            r'=== \1',
+            document
+        )
+
+        document = re.sub(
+            r'([a-zàâçéèêëîïôûùüÿæœ,;])\n([a-zàâçéèêëîïôûùüÿæœA-Z])',
+            r'\1 \2',
+            document
+        )
         document = re.sub(
             r'\\begin{frame}',
             r'=== ',
@@ -100,6 +112,13 @@ def prepareDoc():
         document = re.sub(
             r'\\setupdemoframe\s*\{([^}]*)\}\s*\{([\s\S]*?\\end\{itemize\}[\s\S]*?)\}',
             r'#setupdemoframe([\1],[\2])',
+            document
+        )
+
+
+        document = re.sub(
+            r'#image\s*\{([^)]*)\}',
+            r'oui,\1',
             document
         )
         f_Out.write(document)

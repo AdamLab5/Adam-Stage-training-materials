@@ -26,28 +26,28 @@ def relecture():
             match = patternImg.search(ligne)
 
         ligne.replace("\\]", "]")
-        # if match:
-        #     path = match.group(1)
-        #     path_obj = Path(path)
-        #     filename = path_obj.stem
+        if match:
+            path = match.group(1)
+            path_obj = Path(path)
+            filename = path_obj.stem
 
-        #     svg_same_dir = path_obj.with_suffix(".svg")
-        #     svg_out_dir = Path("../../out") / (filename + ".svg")
+            svg_same_dir = path_obj.with_suffix(".svg")
+            svg_out_dir = Path("../../out") / (filename + ".svg")
 
-        #     if path_obj.exists():
-        #         ligne = ligne.replace(path, path_obj.name)
+            if path_obj.exists():
+                ligne = ligne.replace(path, path_obj.name)
 
-        #     else:
-        #         ligne = ligne.replace('#image("common/', '#image("../../out/common/')
-        #         ligne = ligne.replace('#image("slides/', '#image("../../out/slides/')
+            else:
+                ligne = ligne.replace('#image("common/', '#image("../../out/common/')
+                ligne = ligne.replace('#image("slides/', '#image("../../out/slides/')
 
-        #         if path_obj.suffix == ".pdf":
+                if path_obj.suffix == ".pdf":
                     
-        #             if svg_same_dir.exists():
-        #                 subprocess.run(["inkscape", str(svg_same_dir)])
+                    if svg_same_dir.exists():
+                        subprocess.run(["inkscape", str(svg_same_dir)])
                     
-        #             elif svg_out_dir.exists():
-        #                 subprocess.run(["inkscape", str(svg_out_dir)])
+                    elif svg_out_dir.exists():
+                        subprocess.run(["inkscape", str(svg_out_dir)])
 
 
         
@@ -74,14 +74,14 @@ def relecture():
                     nv_ligne = nv_ligne.replace("70%", "10%")
                 if "bootlin-logo.pdf" in ligne:
                     nv_ligne = nv_ligne.replace("100%", "15%")
-                
+                nv_ligne = nv_ligne.replace("#image", "#align(center, [#image")
+                nv_ligne = nv_ligne.replace("%)", "%)])")
                 
                 sys.stdout.write(nv_ligne)
         
 
         else:
             sys.stdout.write(ligne)
-
 
 
 if __name__ == "__main__":

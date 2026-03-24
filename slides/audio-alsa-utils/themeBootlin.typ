@@ -4,7 +4,7 @@
 
 #set text(
   font: "Latin Modern Roman",
-  size: 11pt
+  size: 1pt
 )
 
 // #set heading(
@@ -17,8 +17,8 @@
 #let blcodebg = rgb("E6E6E6")
 #let bldarkblue = rgb("4040BF")
 
-// #set link(
-//   fill: bldarkblue
+// #set link()(
+//   bldarkblue
 // )
 
 #let codeblock(body) = block(

@@ -1,7 +1,6 @@
-=== 
-  \frametitle{glibc}
-  \begin{columns}
-    \column{0.7\textwidth}
+=== glibc
+  
+#columns(gutter: 8pt)[
     \begin{itemize}
     \item License: LGPL
     \item C library from the GNU project
@@ -14,17 +13,16 @@
     \item \url{https://www.gnu.org/software/libc/}
     \end{itemize}
     \vfill
-    \column{0.3\textwidth}
+     #colbreak()
     \minipage[c][0.8\textheight][s]{\columnwidth}
     \includegraphics[width=\textwidth]{slides/boot-time-c-libraries/heckert_gnu_white.pdf}
     \vfill
     \tiny Image: \url{https://bit.ly/2EzHl6m}
     \endminipage
-  \end{columns}
+  \\]
 
 
-=== 
-  \frametitle{uClibc-ng}
+=== uClibc-ng
   \begin{itemize}
   \item \url{https://uclibc-ng.org/}
   \item A continuation of the old uClibc project, license: LGPL
@@ -47,10 +45,9 @@
   \end{itemize}
 
 
-=== 
-  \frametitle{musl C library}
-  \begin{columns}
-    \column{0.85\textwidth}
+=== musl C library
+  
+#columns(gutter: 8pt)[
       \url{https://www.musl-libc.org/}
       \begin{itemize}
       \item A lightweight, fast and simple library for embedded systems
@@ -68,9 +65,9 @@
       \item Size on armv7hf, version 1.2.0:
         ``` libc ```: 748 KB, source: \url{https://toolchains.bootlin.com}
       \end{itemize}
-    \column{0.15\textwidth}
+     #colbreak()
     \includegraphics[width=\textwidth]{slides/boot-time-c-libraries/musl.png}
-  \end{columns}
+  \\]
 
 
 === {glibc vs uclibc-ng vs musl - small static executables}
@@ -107,8 +104,7 @@ compare the size
   \end{itemize}
 
 
-=== 
-  \frametitle{Other smaller C libraries}
+=== Other smaller C libraries
   \begin{itemize}
   \item Several other smaller C libraries have been developed, but
     none of them have the goal of allowing the compilation of large
@@ -128,8 +124,7 @@ compare the size
   \end{itemize}
 
 
-=== 
-  \frametitle{Advice for choosing the C library}
+=== Advice for choosing the C library
   \begin{itemize}
   \item Advice to start developing and debugging your applications with
         {\em glibc}, which is the most standard solution, and is best

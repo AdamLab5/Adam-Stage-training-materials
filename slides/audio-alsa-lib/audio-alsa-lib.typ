@@ -13,7 +13,22 @@ config-common(
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
 = Userspace ALSA
-== alsa-lib
+<userspace-alsa>
+#import "@local/bootlin:0.1.0": *
+#import "@local/bootlin-yocto:0.1.0": *
+#import "@local/bootlin-utils:0.1.0": *
+#import "../audio-alsa-utils/themeBootlin.typ": *
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
+
+config-common(
+  // Compile with `typst c --input handout=1 ...` to generate the handout.
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+
+= alsa-lib
 <alsa-lib>
 ===  alsa-lib
 
@@ -36,7 +51,8 @@ config-common(
 
 - ``` name ``` is the name of the PCM to be opened.
 
-- ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or ``` SND_PCM_STREAM_CAPTURE ```
+- ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or ```
+  SND_PCM_STREAM_CAPTURE ```
 
 - ``` mode ``` can be a combination of ``` SND_PCM_NONBLOCK ``` and ```
   SND_PCM_ASYNC ```
@@ -44,6 +60,7 @@ config-common(
 - ```c
   int snd_pcm_close(snd_pcm_t *pcm)
   ```
+
 - Closes the PCM.
 
 ===  PCM name
@@ -54,7 +71,8 @@ config-common(
   ``` hw:1,0 ```. Instead of the index, the card name can be used: ```
   hw:STM32MP15DK,0 ```
 
-- Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```, ``` plug:hw:0,0 ```.
+- Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```, ``` plug:hw:0,0
+  ```.
 
 - The list of available names can be generated using ``` snd_card_next
   ``` to iterate over all the physical cards. See ``` device_list ``` in
@@ -65,8 +83,7 @@ config-common(
 - The next step is to handle the PCM stream parameters
 
 - ```c
-  snd_pcm_hw_params_t *hw_params;
-  int snd_pcm_hw_params_malloc(snd_pcm_hw_params_t ** ptr)
+  snd_pcm_hw_params_t *hw_params; int snd_pcm_hw_params_malloc(snd_pcm_hw_params_t ** ptr)
   int snd_pcm_hw_params_any(snd_pcm_t * pcm, snd_pcm_hw_params_t * params)
   ```
 
@@ -174,8 +191,7 @@ config-common(
 - It is possible to set controls programatically.
 
 - ```c
-  snd_ctl_t *handle;
-  int snd_ctl_open (snd_ctl_t **ctl, const char *name, int mode)
+  snd_ctl_t *handle; int snd_ctl_open (snd_ctl_t **ctl, const char *name, int mode)
   ```
 
 - Opens the sound card to be controlled.

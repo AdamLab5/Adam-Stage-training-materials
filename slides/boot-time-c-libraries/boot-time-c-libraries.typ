@@ -1,7 +1,20 @@
-=== 
+#import "@local/bootlin:0.1.0": *
+#import "@local/bootlin-yocto:0.1.0": *
+#import "@local/bootlin-utils:0.1.0": *
+#import "../audio-alsa-utils/themeBootlin.typ": *
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
 
-=== glibc
-<glibc>
+config-common(
+  // Compile with `typst c --input handout=1 ...` to generate the handout.
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+===  glibc
+
+#columns(gutter: 8pt)[
+
 - License: LGPL
 
 - C library from the GNU project
@@ -18,13 +31,13 @@
 
 - #link("https://www.gnu.org/software/libc/")
 
-#image("heckert_gnu_white.pdf", width: 100%)
-Image: #link("https://bit.ly/2EzHl6m")
+#colbreak()
+#image("heckert_gnu_white.svg", width: 100%)
+Image: #link("https://bit.ly/2EzHl6m") 
+]
 
-=== 
+===  uClibc-ng
 
-=== uClibc-ng
-<uclibc-ng>
 - #link("https://uclibc-ng.org/")
 
 - A continuation of the old uClibc project, license: LGPL
@@ -50,11 +63,9 @@ Image: #link("https://bit.ly/2EzHl6m")
 
 - Actively supported, supported by Buildroot but not by Yocto Project.
 
-=== 
+===  musl C library
 
-=== musl C library
-<musl-c-library>
-#link("https://www.musl-libc.org/")
+#columns(gutter: 8pt)[ #link("https://www.musl-libc.org/")
 
 - A lightweight, fast and simple library for embedded systems
 
@@ -75,7 +86,9 @@ Image: #link("https://bit.ly/2EzHl6m")
 - Size on armv7hf, version 1.2.0: ``` libc ```: 748 KB, source:
   #link("https://toolchains.bootlin.com")
 
-#image("musl.png", width: 100%)
+#colbreak()
+#image("musl.png", width: 100%) 
+]
 
 ===  glibc vs uclibc-ng vs musl - small static executables Let’s
 compile and strip a ``` hello.c ``` program #strong[statically] and
@@ -114,10 +127,8 @@ Notes:
 
 - Compiling with shared libraries will mostly eliminate size differences
 
-=== 
+===  Other smaller C libraries
 
-=== Other smaller C libraries
-<other-smaller-c-libraries>
 - Several other smaller C libraries have been developed, but none of
   them have the goal of allowing the compilation of large existing
   applications
@@ -134,10 +145,8 @@ Notes:
     community, designed to implement small executables for use in an
     #emph[initramfs] at boot time.
 
-=== 
+===  Advice for choosing the C library
 
-=== Advice for choosing the C library
-<advice-for-choosing-the-c-library>
 - Advice to start developing and debugging your applications with
   #emph[glibc], which is the most standard solution, and is best
   supported by debugging tools (#emph[ltrace] not supported by
