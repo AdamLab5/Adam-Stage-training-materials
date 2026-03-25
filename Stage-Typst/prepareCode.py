@@ -57,8 +57,25 @@ def prepareDoc():
         document = f_In.read()
 
         document = re.sub(
+            r'\\begin\{frame\}\[fragile\]\s*\\frametitle\{([^}]*)\}',
+            r'=== \1',
+            document
+        )
+        document = re.sub(
             r'\\begin\{frame\}\s*\\frametitle\{([^}]*)\}',
             r'=== \1',
+            document
+        )
+
+        document = re.sub(
+            r'\\begin{frame}',
+            r'=== ',
+            document
+        )
+
+        document = re.sub(
+            r'\\mint\{c\}\+(.+?)\+',
+            r'```c \1 ```',
             document
         )
 
@@ -67,9 +84,10 @@ def prepareDoc():
             r'\1 \2',
             document
         )
+
         document = re.sub(
-            r'\\begin{frame}',
-            r'=== ',
+            r'(`[^`]*)\n\s*([^`]*`)',
+            r'\1 \2',
             document
         )
 
@@ -115,10 +133,9 @@ def prepareDoc():
             document
         )
 
-
         document = re.sub(
             r'#image\s*\{([^)]*)\}',
-            r'oui,\1',
+            r'#align(center, [#image(\1)])',
             document
         )
         f_Out.write(document)

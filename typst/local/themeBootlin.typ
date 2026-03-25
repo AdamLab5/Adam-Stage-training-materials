@@ -21,6 +21,11 @@
 //   bldarkblue
 // )
 
+#let codelink(body) = [
+  #set text(fill: bldarkblue)
+  #link(body)
+]
+
 #let codeblock(body) = block(
   fill: blcodebg,
   inset: 8pt,
@@ -38,7 +43,7 @@
       inset: 6pt,
       fill: white
     )[
-      #image("../../out/common/logo-penguins.pdf", width: 1cm)
+    '  #image("../../out/common/logo-penguins.pdf", width: 1cm)
       #h(1em)
       #title
     ]
@@ -121,6 +126,10 @@
     ]
   )
 )
+
+#let kfunc(body) = {
+    "https://elixir.bootlin.com/linux/latest/ident/" + body
+}
 
 #let setupdemoframe(title, body) = {
   heading("Demo - " + title, depth: 3)
