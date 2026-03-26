@@ -49,7 +49,8 @@ config-common(
     points to the proc folder associated to it.
 
 - When starting a process, it initially has one execution thread that is
-  represented by a and that can be scheduled.
+  represented by a #kstruct("task_struct") and that can be
+  scheduled.
 
   - A process is represented in the kernel by a thread associated to
     multiple resources.
@@ -61,14 +62,15 @@ config-common(
 
   - Same address space, file descriptors, etc.
 
-- A new process is created using the fork() system call () and a new
-  thread is created using ``` pthread_create() ``` ().
+- A new process is created using the fork() system call
+  (#manpage("fork", "2")) and a new thread is created using ```
+  pthread_create() ``` (#manpage("pthread_create", "3")).
 
   - Internally, both will call ``` clone() ``` with different flags
 
 - At any moment, only one task is executing on a CPU core and is
-  accessible using function (defined by architecture and often stored in
-  a register).
+  accessible using #kfunc("get_current") function (defined by
+  architecture and often stored in a register).
 
 - Each CPU core will execute a different task.
 
@@ -110,15 +112,15 @@ config-common(
 - Page size is fixed and depends on the architecture/kernel
   configuration.
 
-- Linux can work without an MMU (), useful for old SoCs without an MMU,
-  but with many limitations
+- Linux can work without an MMU (#kconfigval("CONFIG_MMU", "n")),
+  useful for old SoCs without an MMU, but with many limitations
 
 ===  Userspace/Kernel memory layout
 
 #columns(gutter: 8pt)[
 
 - Each process has its own set of virtual memory areas (``` mm ``` field
-  of ).
+  of #kstruct("task_struct")).
 
 - Also have their own page table
 
@@ -167,7 +169,8 @@ user memory spaces
 ===  Userspace memory segments
 
 - When starting a process, the kernel sets up several #emph[Virtual
-  Memory Area]s (VMA), backed by , with different execution attributes.
+  Memory Area]s (VMA), backed by #kstruct("vm_area_struct"), with
+  different execution attributes.
 
 - VMA are actually memory zones that are mapped with specific attributes
   (R/W/X).
@@ -180,7 +183,8 @@ user memory spaces
 
   - Executing data from a non-executable segment
 
-- New memory zones can be created using ``` mmap() ``` ()
+- New memory zones can be created using ``` mmap() ```
+  (#manpage("mmap", "2"))
 
 - Per application mappings are visible in #emph[/proc/<pid>/maps] 
 
@@ -281,8 +285,9 @@ user memory spaces
 
 - A process that is executing in process context can be preempted.
 
-- While executing in such context, the current process can be accessed
-  using .
+- While executing in such context, the current process
+  #kstruct("task_struct") can be accessed using
+  #kfunc("get_current").
 
 #align(center, [#image("../../out/slides/debugging-linux-application-stack/process_context.pdf", height: 20%)])
 
@@ -292,21 +297,23 @@ user memory spaces
 
 - The scheduler can be invoked for various reasons
 
-  - On a periodic tick caused by interrupt ()
+  - On a periodic tick caused by interrupt (#kconfig("HZ"))
 
-  - On a programmed interrupt on tickless systems ()
+  - On a programmed interrupt on tickless systems
+    (#kconfigval("CONFIG_NO_HZ", "y"))
 
-  - Voluntarily by calling in code
+  - Voluntarily by calling #kfunc("schedule") in code
 
   - Implicitly by calling functions that can sleep (blocking operations
-    such as , ).
+    such as #kfunc("kmalloc"), #kfunc("wait_event")).
 
-- When entering the schedule function, the scheduler will elect a new to
-  run and will eventually call the macro.
+- When entering the schedule function, the scheduler will elect a new
+  #kstruct("task_struct") to run and will eventually call the
+  #kfunc("switch_to") macro.
 
-- is defined by architecture code and it will save the current task
-  process context and restore the one of the next task to be run while
-  setting the new current task running.
+- #kfunc("switch_to") is defined by architecture code and it will
+  save the current task process context and restore the one of the next
+  task to be run while setting the new current task running.
 
 == Execution mode switching
 <execution-mode-switching>
@@ -336,7 +343,7 @@ user memory spaces
 - Exceptions designate the kind of events that will trigger a CPU
   execution mode change to handle the exception.
 
-- Two main types of exceptions exist: synchronous and asynchronous.                      
+- Two main types of exceptions exist: synchronous and asynchronous.
 
   - Asynchronous exceptions when a fault happens while executing (MMU,
     bus abort, etc) or when an interrupt is received (either software or
@@ -368,7 +375,7 @@ user memory spaces
 - This is called "IRQ affinity" and it allows to control the IRQ load
   for each CPU
 
-  - See and
+  - See #kdochtml("core-api/irq/irq-affinity") and
     #link("https://linux.die.net/man/1/irqbalance")[man irqbalance(1)]
 
 ===  Interrupt context
@@ -376,7 +383,8 @@ user memory spaces
 - While handling the interrupts, the kernel is executing in a specific
   context named #emph[interrupt context].
 
-- This context does not have access to userspace and should not use #kfunc2("get_current").
+- This context does not have access to userspace and should not use
+  #kfunc("get_current").
 
 - Depending on the architecture, might use an IRQ stack.
 
@@ -388,7 +396,7 @@ user memory spaces
 
 - A system call allows the user space to request services from the
   kernel by executing a special instruction that will switch to the
-  kernel mode ()
+  kernel mode (#manpage("syscall", "2"))
 
   - When executing functions provided by the libc (``` read() ```, ```
     write() ```, etc), they often end up executing a system call.
@@ -415,7 +423,8 @@ user memory spaces
 - When executing this instruction the CPU will change its execution
   state and switch to the kernel mode.
 
-- Each architecture uses a specific hardware mechanism ()
+- Each architecture uses a specific hardware mechanism
+  (#manpage("syscall", "2"))
 
 ```asm
     mov w8, #__NR_getpid
@@ -434,11 +443,12 @@ user memory spaces
 
 ===  Kernel threads
 
-- Kernel threads (kthreads) are a special kind of that do not have any
-  user resources associated (``` mm == NULL ```).
+- Kernel threads (kthreads) are a special kind of
+  #kstruct("task_struct") that do not have any user resources
+  associated (``` mm == NULL ```).
 
 - These processes are cloned from the ``` kthreadd ``` process and can be
-  created using .
+  created using #kfunc("kthread_create").
 
 - Kernel threads are scheduled and are allowed to sleep much like a
   process executing in process context.
@@ -498,7 +508,8 @@ root          11       2 [rcu_tasks_kthread]          TS
 - Threaded interrupts are a mecanism that allows to handle the interrupt
   using a hard IRQ handler and a threaded IRQ handler.
 
-  - Created calling instead of
+  - Created calling #kfunc("request_threaded_irq") instead of
+    #kfunc("request_irq")
 
 - A threaded IRQ handler will allow to execute work that can potentially
   sleep in a kthread.
@@ -523,10 +534,11 @@ root          11       2 [rcu_tasks_kthread]          TS
 - All allocation functions take a ``` gfp_mask ``` parameter which allows
   to designate the kind of memory that is needed.
 
-  - : Normal allocation, can sleep while allocating memory (can not be
-    used in interrupt context).
+  - #ksym("GFP_KERNEL"): Normal allocation, can sleep while
+    allocating memory (can not be used in interrupt context).
 
-  - : Atomic allocation, won’t sleep while allocating data.
+  - #ksym("GFP_ATOMIC"): Atomic allocation, won’t sleep while
+    allocating data.
 
 Preparing the system
 

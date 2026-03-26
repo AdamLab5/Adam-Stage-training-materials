@@ -21,9 +21,9 @@
 //   bldarkblue
 // )
 
-#let codelink(body) = [
+#let codelink(title, body) = [
   #set text(fill: bldarkblue)
-  #link(body)
+  #link(body)[#title]
 ]
 
 #let codeblock(body) = block(

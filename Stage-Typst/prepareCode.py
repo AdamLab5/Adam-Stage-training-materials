@@ -56,6 +56,8 @@ def prepareDoc():
     with open(sys.argv[1], "r") as f_In, open(sys.argv[2], "w") as f_Out:
         document = f_In.read()
 
+
+
         document = re.sub(
             r'\\begin\{frame\}\[fragile\]\s*\\frametitle\{([^}]*)\}',
             r'=== \1',
@@ -100,6 +102,162 @@ def prepareDoc():
         document = re.sub(
             r'\\column\s*\{([^}]*)\}',
             r' #colbreak()',
+            document
+        )
+
+        document = re.sub(
+            r'\\manpage\{([^}]*)\}\{([^}]*)\}',
+            r'#manpage("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projdir\{([^}]*)\}\{([^}]*)\}',
+            r'#projdir("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projfile\{([^}]*)\}\{([^}]*)\}',
+            r'#projfile("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projsym\{([^}]*)\}\{([^}]*)\}',
+            r'#projsym("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projfunc\{([^}]*)\}\{([^}]*)\}',
+            r'#projfunc("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projconfig\{([^}]*)\}\{([^}]*)\}',
+            r'#projconfig("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projconfigval\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}',
+            r'#projconfigval("\1", "\2", "\3")',
+            document
+        )
+
+        document = re.sub(
+            r'\\projconfignotset\{([^}]*)\}\{([^}]*)\}',
+            r'#projconfignotset("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kfunc\{([^}]*)\}',
+            r'#kfunc("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\ksym\{([^}]*)\}',
+            r'#ksym("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kcompat\{([^}]*)\}\{([^}]*)\}',
+            r'#kcompat("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kstruct\{([^}]*)\}',
+            r'#kstruct("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kfile\{([^}]*)\}',
+            r'#kfile("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\krelfile\{([^}]*)\}\{([^}]*)\}',
+            r'#krelfile("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kfileversion\{([^}]*)\}\{([^}]*)\}',
+            r'#kfileversion("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kdir\{([^}]*)\}',
+            r'#kdir("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kreldir\{([^}]*)\}\{([^}]*)\}',
+            r'#kreldir("\1", "\2")',
+            document
+        )
+
+        document = re.sub(
+            r'\\ksubarch\{([^}]*)\}',
+            r'#ksubarch("\1")',
+            document
+        )
+        
+        document = re.sub(
+            r'\\kconfig\{([^}]*)\}',
+            r'#kconfig("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kconfigval\{([^}]*)\}\{([^}]*)\}',
+            r'#kconfigval("\1", "\2")',
+            document
+        )
+        
+        document = re.sub(
+            r'\\kconfignotset\{([^}]*)\}',
+            r'#kconfignotset("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kdoctext\{([^}]*)\}',
+            r'#kdoctext("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kdochtml\{([^}]*)\}',
+            r'#kdochtml("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kdochtmldir\{([^}]*)\}',
+            r'#kdochtmldir("\1")',
+            document
+        )
+
+        document = re.sub(
+            r'\\kdochtmlsection\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}',
+            r'#kdochtmlsection("\1", "\2", "\3")',
+            document
+        )
+
+        document = re.sub(
+            r'\\yoctovar\{([^}]*)\}',
+            r'#yoctovar("\1")',
             document
         )
 

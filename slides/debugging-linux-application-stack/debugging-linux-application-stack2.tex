@@ -35,7 +35,7 @@
             points to the proc folder associated to it.
     \end{itemize}
     \item When starting a process, it initially has one execution thread that
-          is represented by a \kstruct{task_struct} and that can be scheduled.
+          is represented by a #kstruct("task_struct") and that can be scheduled.
     \begin{itemize}
       \item A process is represented in the kernel by a thread associated to
             multiple resources.
@@ -51,13 +51,13 @@
       \item Same address space, file descriptors, etc.
     \end{itemize}
     \item A new process is created using the fork() system call
-          (\manpage{fork}{2}) and a new thread is created using
-          ``` pthread_create() ``` (\manpage{pthread_create}{3}).
+          (#manpage("fork", "2")) and a new thread is created using
+          ``` pthread_create() ``` (#manpage("pthread_create", "3")).
     \begin{itemize}
       \item Internally, both will call ``` clone() ``` with different flags
     \end{itemize}
     \item At any moment, only one task is executing on a CPU core and is
-          accessible using \kfunc{get_current} function (defined by
+          accessible using #kfunc("get_current") function (defined by
           architecture and often stored in a register).
     \item Each CPU core will execute a different task.
     \item A task can only be executing on one core at a time.
@@ -94,7 +94,7 @@
     \item The MMU base unit for mappings is called a page
     \item Page size is fixed and depends on the architecture/kernel
           configuration.
-    \item Linux can work without an MMU (\kconfigval{CONFIG_MMU}{n}),
+    \item Linux can work without an MMU (#kconfigval("CONFIG_MMU", "n")),
       useful for old SoCs without an MMU, but with many limitations
   \end{itemize}
 
@@ -104,7 +104,7 @@
 #columns(gutter: 8pt)[
     \begin{itemize}
       \item Each process has its own set of virtual memory areas (``` mm ```
-            field of \kstruct{task_struct}).
+            field of #kstruct("task_struct")).
       \item Also have their own page table
       \begin{itemize}
         \item But share the same kernel mappings
@@ -150,7 +150,7 @@
 === Userspace memory segments
   \begin{itemize}
     \item When starting a process, the kernel sets up several {\em Virtual
-          Memory Area}s (VMA), backed by \kstruct{vm_area_struct}, with
+          Memory Area}s (VMA), backed by #kstruct("vm_area_struct"), with
           different execution attributes.
     \item VMA are actually memory zones that are mapped with specific
           attributes (R/W/X).
@@ -162,7 +162,7 @@
       \item Executing data from a non-executable segment
     \end{itemize}
     \item New memory zones can be created using ``` mmap() ```
-          (\manpage{mmap}{2})
+          (#manpage("mmap", "2"))
     \item Per application mappings are visible in {\em /proc/<pid>/maps}\\
     \begin{minted}[fontsize=\small]{console}
 7f1855b2a000-7f1855b2c000 rw-p 00030000 103:01 3408650  ld-2.33.so
@@ -260,7 +260,7 @@
           inside kernel mode.
     \item A process that is executing in process context can be preempted.
     \item While executing in such context, the current process
-          \kstruct{task_struct} can be accessed using \kfunc{get_current}.
+          #kstruct("task_struct") can be accessed using #kfunc("get_current").
   \end{itemize}
   \vspace{0.5cm}
   \includegraphics[height=0.2\textheight]{slides/debugging-linux-application-stack/process_context.pdf}
@@ -272,16 +272,16 @@
   \begin{itemize}
     \item The scheduler can be invoked for various reasons
     \begin{itemize}
-      \item On a periodic tick caused by interrupt (\kconfig{HZ})
-      \item On a programmed interrupt on tickless systems (\kconfigval{CONFIG_NO_HZ}{y})
-      \item Voluntarily by calling \kfunc{schedule} in code
+      \item On a periodic tick caused by interrupt (#kconfig("HZ"))
+      \item On a programmed interrupt on tickless systems (#kconfigval("CONFIG_NO_HZ", "y"))
+      \item Voluntarily by calling #kfunc("schedule") in code
       \item Implicitly by calling functions that can sleep (blocking
-            operations such as \kfunc{kmalloc}, \kfunc{wait_event}).
+            operations such as #kfunc("kmalloc"), #kfunc("wait_event")).
     \end{itemize}
     \item When entering the schedule function, the scheduler will elect a new
-          \kstruct{task_struct} to run and will eventually call the
-          \kfunc{switch_to} macro.
-    \item \kfunc{switch_to} is defined by architecture code and it will save
+          #kstruct("task_struct") to run and will eventually call the
+          #kfunc("switch_to") macro.
+    \item #kfunc("switch_to") is defined by architecture code and it will save
           the current task process context and restore the one of the next task
           to be run while setting the new current task running.
   \end{itemize}
@@ -347,7 +347,7 @@
     \item This is called "IRQ affinity" and it allows to control the IRQ load for
           each CPU
     \begin{itemize}
-      \item See \kdochtml{core-api/irq/irq-affinity} and
+      \item See #kdochtml("core-api/irq/irq-affinity") and
             \href{https://linux.die.net/man/1/irqbalance}{man irqbalance(1)}
     \end{itemize}
   \end{itemize}
@@ -358,7 +358,7 @@
     \item While handling the interrupts, the kernel is executing in a
           specific context named {\em interrupt context}.
     \item This context does not have access to userspace and should not use
-          \kfunc{get_current}.
+          #kfunc("get_current").
     \item Depending on the architecture, might use an IRQ stack.
     \item Interrupts are disabled (no nested interrupt support)!
   \end{itemize}
@@ -371,7 +371,7 @@
   \begin{itemize}
     \item A system call allows the user space to request services from the
           kernel by executing a special instruction that will switch to the
-          kernel mode (\manpage{syscall}{2})
+          kernel mode (#manpage("syscall", "2"))
     \begin{itemize}
       \item When executing functions provided by the libc (``` read() ```,
             ``` write() ```, etc), they often end up executing a system call.
@@ -400,7 +400,7 @@
     \item When executing this instruction the CPU will change its execution
     state and switch to the kernel mode.
     \item Each architecture uses a specific hardware mechanism
-    (\manpage{syscall}{2})
+    (#manpage("syscall", "2"))
   \end{itemize}
   \begin{block}{}
     \begin{minted}[fontsize=\small]{asm}
@@ -423,10 +423,10 @@
 
 === Kernel threads
   \begin{itemize}
-    \item Kernel threads (kthreads) are a special kind of \kstruct{task_struct} that do not
+    \item Kernel threads (kthreads) are a special kind of #kstruct("task_struct") that do not
           have any user resources associated (``` mm == NULL ```).
     \item These processes are cloned from the ``` kthreadd ``` process and can be
-          created using \kfunc{kthread_create}.
+          created using #kfunc("kthread_create").
     \item Kernel threads are scheduled and are allowed to sleep much like a
           process executing in process context.
     \item Kernel threads are visible and their names are displayed between
@@ -488,7 +488,7 @@ root          11       2 [rcu_tasks_kthread]          TS
     \item Threaded interrupts are a mecanism that allows to handle the interrupt
           using a hard IRQ handler and a threaded IRQ handler.
       \begin{itemize}
-        \item Created calling \kfunc{request_threaded_irq} instead of \kfunc{request_irq}
+        \item Created calling #kfunc("request_threaded_irq") instead of #kfunc("request_irq")
       \end{itemize}
     \item A threaded IRQ handler will allow to execute work that can potentially
           sleep in a kthread.
@@ -509,9 +509,9 @@ root          11       2 [rcu_tasks_kthread]          TS
     \item All allocation functions take a ``` gfp_mask ``` parameter which allows to
           designate the kind of memory that is needed.
     \begin{itemize}
-      \item \ksym{GFP_KERNEL}: Normal allocation, can sleep while allocating
+      \item #ksym("GFP_KERNEL"): Normal allocation, can sleep while allocating
             memory (can not be used in interrupt context).
-      \item \ksym{GFP_ATOMIC}: Atomic allocation, won't sleep while allocating
+      \item #ksym("GFP_ATOMIC"): Atomic allocation, won't sleep while allocating
             data.
     \end{itemize}
   \end{itemize}
