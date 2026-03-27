@@ -31,8 +31,30 @@ def relecture():
             path_obj = Path(path)
             filename = path_obj.stem
 
-            svg_same_dir = path_obj.with_suffix(".svg")
-            svg_out_dir = Path("../../out") / (filename + ".svg")
+            # svg_same_dir = path_obj.with_suffix(".svg")
+            # svg_out_dir = Path("../../out") / (filename + ".svg")
+
+            # if path_obj.exists():
+            #     ligne = ligne.replace(path, path_obj.name)
+
+            # else:
+            #     ligne = ligne.replace('#image("common/', '#image("../../out/common/')
+            #     ligne = ligne.replace('#image("slides/', '#image("../../out/slides/')
+
+            #     if path_obj.suffix == ".pdf":
+                    
+            #         if svg_same_dir.exists():
+            #             subprocess.run(["inkscape ", "-D", "-o", str(svg_same_dir), " --export-type=pdf"])
+                    
+            #         elif svg_out_dir.exists():
+            #             subprocess.run(["inkscape ", "-D", "-o", str(svg_out_dir), " --export-type=pdf"])
+
+            dia_same_dir = path_obj.with_suffix(".dia")
+            eps_same_dir = path_obj.with_suffix(".eps")
+            pdf_same_dir = path_obj.with_suffix(".pdf")
+            dia_out_dir = Path("../../out") / (filename + ".dia")
+            eps_out_dir = Path("../../out") / (filename + ".eps")
+            pdf_out_dir = Path("../../out") / (filename + ".pdf")
 
             if path_obj.exists():
                 ligne = ligne.replace(path, path_obj.name)
@@ -43,11 +65,38 @@ def relecture():
 
                 if path_obj.suffix == ".pdf":
                     
-                    if svg_same_dir.exists():
-                        subprocess.run(["inkscape ", str(svg_same_dir), " --export-type=pdf"])
+                    if dia_same_dir.exists():
+                        ligne = ligne.replace(path, filename)
+                        subprocess.run(["dia", "-e", str(eps_same_dir), "-t", "eps", str(dia_same_dir)])
+                        subprocess.run(["epstopdf", "--outfile="+str(pdf_same_dir), str(eps_same_dir)])
                     
-                    elif svg_out_dir.exists():
-                        subprocess.run(["inkscape ", str(svg_out_dir), " --export-type=pdf"])
+                    
+                    elif dia_out_dir.exists():
+                        subprocess.run(["dia", "-e", str(eps_out_dir), "-t", "eps", str(dia_out_dir)])
+                        subprocess.run(["epstopdf", "--outfile="+str(pdf_out_dir), str(eps_out_dir)])
+                    
+                    else:
+                        # I'm here
+                        print("A")
+
+                        
+            # jpg_same_dir = path_obj.with_suffix(".jpg")
+            # jpg_out_dir = Path("../../out") / (filename + ".jpg")
+
+            # if path_obj.exists():
+            #     ligne = ligne.replace(path, path_obj.name)
+
+            # else:
+            #     ligne = ligne.replace('#image("common/', '#image("../../out/common/')
+            #     ligne = ligne.replace('#image("slides/', '#image("../../out/slides/')
+
+            #     if path_obj.suffix == ".pdf":
+                    
+            #         if svg_same_dir.exists():
+            #             subprocess.run(["inkscape ", "-D", "-o", str(jpg_same_dir), " --export-type=pdf"])
+                    
+            #         elif svg_out_dir.exists():
+            #             subprocess.run(["inkscape ", "-D", "-o", str(jpg_out_dir), " --export-type=pdf"])
         
         ligne = ligne.replace("""“‘""", "```")
         ligne = ligne.replace("\\[fragile\\]", "")

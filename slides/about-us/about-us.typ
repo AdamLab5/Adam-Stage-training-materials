@@ -1,7 +1,8 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
-#import "../audio-alsa-utils/themeBootlin.typ": *
+#import "../../typst/local/themeBootlin.typ": *
+#import "../../typst/local/common.typ": *
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
 
@@ -113,7 +114,7 @@ config-common(
 #colbreak()
 
 #align(center, [#image("www.png", width: 50%)]) 
-#emph[Icon by Freepik, Flaticon]
+#align(center, [#emph[Icon by Freepik, Flaticon]])
 
 
 ]

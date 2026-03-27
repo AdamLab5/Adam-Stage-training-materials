@@ -7,7 +7,7 @@
 
 // Colors
 #let bootlin-orange = rgb("#FF631A")
-#let color-link = luma(127)
+#let color-link = rgb("#4B6FA9")
 
 #let link(dest, ..body) = {
   if body == none {body = dest}

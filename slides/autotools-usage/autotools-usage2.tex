@@ -1,0 +1,566 @@
+\section{Autotools usage}
+
+=== {Why do we need {\em autotools}?}
+  \begin{itemize}
+  \item {\bf Portability} accross UNIX systems, architectures, Linux
+    distributions
+    \begin{itemize}
+    \item Some C functions do not exist everywhere, or have different
+      names or prototypes, can behave differently
+    \item Header files can be organized differently
+    \item All libraries may not be available everywhere
+    \end{itemize}
+  \item {\bf Standardized} build procedure
+    \begin{itemize}
+    \item Standard options
+    \item Standard environment variables
+    \item Standard behavior
+    \end{itemize}
+  \end{itemize}
+
+
+=== {Alternatives to {\em autotools}}
+  \begin{itemize}
+  \item Regular {\em Makefiles}
+    \begin{itemize}
+    \item Not very portable
+    \item No configuration tests, or options
+    \item Hard to take into account all dependencies (e.g. dependencies
+      on header files)
+    \item No standardized behavior
+    \end{itemize}
+  \item CMake
+    \begin{itemize}
+    \item A more modern build system
+    \item One language, instead of several for {\em autotools}
+    \item More straightforward to use and understand
+    \item Much less widely used than {\em autotools}, but growing in
+      popularity
+    \item Also generates Makefiles, like {\em autotools}
+    \end{itemize}
+  \end{itemize}
+
+
+=== {Using {\em autotools} based packages}
+  \begin{itemize}
+  \item The basic steps to build an {\em autotools} based software
+    component are:
+    \begin{enumerate}
+    \item {\bf Configuration}\\
+      ``` ./configure ```\\
+      Will look at the available build environment, verify required
+      dependencies, generate ``` Makefile ```s and a ``` config.h ```
+    \item {\bf Compilation}\\
+      ``` make ```\\
+      Actually builds the software component, using the generated
+      Makefiles.
+    \item {\bf Installation}\\
+      ``` make install ```\\
+      Installs what has been built.
+    \end{enumerate}
+  \end{itemize}
+
+
+=== {What is {\tt configure} doing?}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/autotools-usage/what-configure-does.pdf}
+  \end{center}
+
+
+=== {Standard Makefile targets}
+  \begin{itemize}
+  \item ``` all ```, builds everything. The default target.
+  \item ``` install ```, installs everything that should be installed.
+  \item ``` install-strip ```, same as ``` install ```, but then strips
+    debugging symbols
+  \item ``` uninstall ```
+  \item ``` clean ```, remove what was built
+  \item ``` distclean ```, same as ``` clean ```, but also removes the
+    generated {\em autotools} files
+  \item ``` check ```, run the test suite
+  \item ``` installcheck ```, check the installation
+  \item ``` dist ```, create a tarball
+  \end{itemize}
+
+
+=== {Standard filesystem hierarchy}
+  \begin{itemize}
+  \item ``` prefix ```, defaults to {\em /usr/local}
+    \begin{itemize}
+    \item ``` exec-prefix ```, defaults to ``` prefix ```
+      \begin{itemize}
+      \item ``` bindir ```, for programs, defaults to ``` exec-prefix/ ```{\em bin}
+      \item ``` libdir ```, for libraries, defaults to ``` exec-prefix/ ```{\em lib}
+      \end{itemize}
+    \end{itemize}
+  \item ``` includedir ```, for headers, defaults to ``` prefix/ ```{\em include}
+  \item ``` datarootdir ```, defaults to ``` prefix/ ```{\em share}
+    \begin{itemize}
+    \item ``` datadir ```, defaults to ``` datarootdir ```
+    \item ``` mandir ```, for man pages, defaults to ``` datarootdir/ ```{\em man}
+    \item ``` infodir ```, for info documents, defaults to ``` datarootdir/ ```{\em info}
+    \end{itemize}
+  \item ``` sysconfdir ```, for configuration files, defaults to
+    ``` prefix/ ```{\em etc}
+  \item ``` --<option> ``` available for each of them
+    \begin{itemize}
+    \item E.g: ``` ./configure --prefix=~/sys/ ```
+    \end{itemize}
+  \end{itemize}
+
+
+=== {Standard configuration variables}
+  \begin{itemize}
+  \item ``` CC ```, C compiler command
+  \item ``` CFLAGS ```, C compiler flags
+  \item ``` CXX ```, C++ compiler command
+  \item ``` CXXFLAGS ```, C++ compiler flags
+  \item ``` LDFLAGS ```, linker flags
+  \item ``` CPPFLAGS ```, C/C++ preprocessor flags
+  \item and many more, see ``` ./configure --help ```
+  \item E.g: ``` ./configure CC=arm-linux-gcc ```
+  \end{itemize}
+
+
+=== {System types: build, host, target}
+  \begin{itemize}
+  \item {\em autotools} identify three {\bf system types}:
+    \begin{itemize}
+    \item {\bf build}, which is the system where the build takes place
+    \item {\bf host}, which is the system where the execution of the
+      compiled code will take place
+    \item {\bf target}, which is the system for which the program will
+      generate code. This is only used for compilers, assemblers,
+      linkers, etc.
+    \end{itemize}
+  \item Corresponding ``` --build ```, ``` --host ``` and
+    ``` --target ``` {\em configure} options.
+    \begin{itemize}
+    \item They are all automatically {\em guessed} to the current
+      machine by default
+    \item ``` --build ```, generally does not need to be changed
+    \item ``` --host ```, must be overridden to do cross-compilation
+    \item ``` --target ```, needs to be overridden if needed (to
+      generate a cross-compiler, for example)
+    \end{itemize}
+  \item Arguments to these options are {\em configuration names}, also
+    called {\em system tuples}
+  \end{itemize}
+
+
+=== {System type: {\em configuration names}}
+  \begin{itemize}
+  \item A string identifying a combination of architecture, operating
+    system, ABI and C library
+  \item General format: ``` <arch>-<vendor>-<kernel>-<operating_system> ```
+    \begin{itemize}
+    \item ``` <arch> ``` is the type of processor, i.e. ``` arm ```,
+      ``` i686 ```, etc.
+    \item ``` <vendor> ``` is a free form string, which can be omitted
+    \item ``` <kernel> ``` is always ``` linux ``` when working with
+      Linux systems, or ``` none ``` for bare metal systems
+    \item ``` <operating_system> ``` generally identifies the C library
+      and ABI, i.e. ``` gnu ```, ``` gnueabi ```, ``` eabi ```,
+      ``` gnueabihf ```, ``` uclibcgnueabihf ```
+    \end{itemize}
+  \item Also often used as the {\em prefix} for cross-compilation
+    tools.
+  \item Examples
+    \begin{itemize}
+    \item ``` x86_64-amd-linux-gnu ```
+    \item ``` powerpc-mentor-linux-gnu ```
+    \item ``` armeb-linux-gnueabihf ```
+    \item ``` i486-linux-musl ```
+    \end{itemize}
+  \end{itemize}
+
+
+=== [fragile]{System type: native compilation example}
+
+\begin{block}{}
+{\small
+\begin{verbatim}
+$ ./configure
+[...]
+checking build system type... x86_64-unknown-linux-gnu checking host system type... x86_64-unknown-linux-gnu checking for gcc... gcc
+[...]
+checking how to run the C preprocessor... gcc -E
+[...]
+\end{verbatim}}
+\end{block}
+
+
+
+=== {Cross-compilation}
+  \begin{itemize}
+  \item By default, {\em autotools} will guess the {\bf host} machine
+    as being the current machine
+  \item To cross-compile, it must be overridden by passing the
+    ``` --host ``` option with the appropriate {\em configuration name}
+  \item By default, {\em autotools} will try to use the
+    cross-compilation tools that use the {\em configuration name} as
+    their prefix.
+  \item If not, the variables ``` CC ```, ``` CXX ```, ``` LD ```,
+    ``` AR ```, etc. can be used to point to the cross-compilation
+    tools.
+  \end{itemize}
+
+
+=== [fragile]{System type: cross compilation example}
+
+\begin{block}{}
+{\scriptsize
+\begin{verbatim}
+$ which arm-linux-gnueabihf-gcc
+/usr/bin/arm-linux-gnueabihf-gcc
+$ ./configure --host=arm-linux-gnueabihf
+[...]
+checking build system type... x86_64-unknown-linux-gnu checking host system type... arm-unknown-linux-gnueabihf checking for arm-linux-gnueabihf-gcc... arm-linux-gnueabihf-gcc
+[...]
+checking how to run the C preprocessor... arm-linux-gnueabihf-gcc -E
+[...]
+\end{verbatim}}
+\end{block}
+
+
+
+=== {Out of tree build}
+  \begin{itemize}
+  \item {\em autotools} support out of tree compilation by default
+  \item Consists in doing the build in a directory separate from the
+    source directory
+  \item Allows to:
+    \begin{itemize}
+    \item Build different configurations without having to rebuild
+      from scratch each time.
+    \item Not clutter the source directory with build related files
+    \end{itemize}
+  \item To use out of tree compilation, simply run the configure
+    script from another empty directory
+    \begin{itemize}
+    \item This directory will become the build directory
+    \end{itemize}
+  \end{itemize}
+
+
+=== [fragile]{Out of tree build: example}
+
+  \begin{block}{}
+{\scriptsize
+\begin{verbatim}
+strace-4.9 $ ls configure configure.ac Makefile.am system.c NEWS
+AUTHORS   COPYING     file.c       ioprio.c config.h strace-4.9 $ mkdir ../strace-build-x86 ../strace-build-arm strace-4.9 $ cd ../strace-build-x86
+strace-build-x86 $ ../strace-4.9/configure
+[...]
+strace-build-x86 $ make
+[...]
+strace-build-x86 $ cd ../strace-build-arm strace-build-arm $ ../strace-4.9/configure --host=arm-linux-gnueabihf
+[...]
+strace-build-arm $ make
+[...]
+\end{verbatim}}
+\end{block}
+
+
+
+=== [fragile]{Diverted installation with DESTDIR}
+
+  \begin{itemize}
+
+  \item By default, ``` make install ``` installs to the directories
+    given in ``` --prefix ``` and related options.
+
+  \item In some situations, it is useful to {\em divert} the
+    installation to another directory
+    \begin{itemize}
+    \item Cross-compilation, where the build machine is not the
+      machine where applications will be executed.
+    \item Packaging, where the installation needs to be done in a
+      temporary directory.
+    \end{itemize}
+
+  \item Achieved using the ``` DESTDIR ``` variable.
+  \end{itemize}
+
+  \begin{block}{}
+{\tiny
+\begin{verbatim}
+strace-4.9 $ make DESTDIR=/tmp/test install
+[...]
+strace-4.9 $ find  /tmp/test/ -type f
+/tmp/test/usr/local/share/man/man1/strace.1
+/tmp/test/usr/local/bin/strace-log-merge
+/tmp/test/usr/local/bin/strace-graph
+/tmp/test/usr/local/bin/strace
+\end{verbatim}}
+\end{block}
+
+
+
+=== {{\tt --prefix} or {\tt DESTDIR}?}
+  \begin{itemize}
+  \item ``` --prefix ``` and ``` DESTDIR ``` are often misunderstood
+  \item ``` --prefix ``` is the location where the programs/libraries
+    will be placed when executed on the {\em host machine}
+  \item ``` DESTDIR ``` is a way of temporarily diverting the
+    installation to a different location.
+
+  \item For example, if you use ``` --prefix=/home/<foo>/sys/usr ```,
+    then binaries/libraries will look for icons in
+    ``` /home/<foo>/sys/usr/share/icons ```
+    \begin{itemize}
+    \item Good for native installation in ``` /home/<foo>/sys ```
+    \item {\bf Bad} for cross-compilation where the binaries will
+      ultimately be in ``` /usr ```
+    \end{itemize}
+
+  \end{itemize}
+
+
+=== [fragile]{{\tt --prefix} or {\tt DESTDIR} use cases}
+  \begin{itemize}
+  \item Native compilation, install system-wide in ``` /usr ```
+    \begin{block}{}
+{\tiny
+\begin{verbatim}
+$ ./configure --prefix=/usr
+$ make
+$ sudo make install
+\end{verbatim}}
+\end{block}
+\item Native compilation, install in a user-specific directory:
+  \begin{block}{}
+{\tiny
+\begin{verbatim}
+$ ./configure --prefix=/home/<foo>/sys/
+$ make
+$ make install
+\end{verbatim}}
+\end{block}
+\item Cross-compilation, install in ``` /usr ```, diverted to a
+  temporary directory where the system for the target is built
+  \begin{block}{}
+{\tiny
+\begin{verbatim}
+$ ./configure --prefix=/usr
+$ make
+$ make DESTDIR=/home/<foo>/target-rootfs/ install
+\end{verbatim}}
+\end{block}
+
+\end{itemize}
+
+
+
+=== {Analyzing issues}
+  \begin{itemize}
+  \item ``` autoconf ``` keeps a log of all the tests it runs in a file
+    called ``` config.log ```
+  \item Very useful for analysis of ``` autoconf ``` issues
+  \item It contains several sections: {\em Platform}, {\em Core
+      tests}, {\em Running config.status}, {\em Cache variables}, {\em
+      Output variables}, {\em confdefs.h}
+  \item The end of the {\em Core tests} section is usually the most
+    interesting part
+    \begin{itemize}
+    \item This is where you would get more details about the reason of
+      the {\em configure} script failure
+    \end{itemize}
+  \item At the beginning of
+    ``` config.log ``` you can also see the
+    ``` ./configure ``` line that was used, with all options and environment variables.
+  \end{itemize}
+
+
+=== [fragile]{{\tt config.log} example}
+
+\begin{block}{}
+{\tiny
+\begin{verbatim}
+$ ./configure ...
+[...]
+checking for TIFFFlushData in -ltiff34... no configure: WARNING: *** TIFF loader will not be built (TIFF library not found) ***
+configure: error: 
+*** Checks for TIFF loader failed. You can build without it by passing
+*** --without-libtiff to configure but some programs using GTK+ may
+*** not work properly
+
+$ cat config.log
+[...]
+configure:18177: .../usr/bin/x86_64-linux-gcc -std=gnu99 -o conftest -D_LARGEFILE_SOURCE
+   -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -Os  -static -Wall -D_LARGEFILE_SOURCE
+    -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DG_DISABLE_SINGLE_INCLUDES  -static
+    conftest.c -ltiff34 -ljpeg -lz -lm  >&5
+.../host/opt/ext-toolchain/bin/../lib/gcc/x86_64-buildroot-linux-uclibc/4.8.4/../../../../
+    x86_64-buildroot-linux-uclibc/bin/ld: cannot find -ltiff34
+.../host/opt/ext-toolchain/bin/../lib/gcc/x86_64-buildroot-linux-uclibc/4.8.4/../../../../
+   x86_64-buildroot-linux-uclibc/bin/ld: cannot find -ljpeg collect2: error: ld returned 1 exit status configure:18177: $? = 1
+configure: failed program was:
+[...]
+configure:18186: result: no configure:18199: WARNING: *** TIFF loader will not be built (TIFF library not found) ***
+configure:18210: error: 
+*** Checks for TIFF loader failed. You can build without it by passing
+*** --without-libtiff to configure but some programs using GTK+ may
+*** not work properly
+\end{verbatim}}
+\end{block}
+
+
+
+=== {autotools: {\em autoconf} and {\em automake}}
+  \begin{itemize}
+  \item The ``` configure ``` script is a shell script generated from
+    ``` configure.ac ``` by a program called ``` autoconf ```
+    \begin{itemize}
+    \item ``` configure.ac ``` used to be named ``` configure.in ``` but
+      this name is now deprecated
+    \item written in shell script, augmented with numerous {\em m4}
+      macros
+    \end{itemize}
+  \item The ``` Makefile.in ``` are generated from ``` Makefile.am ```
+    files by a program called ``` automake ```
+    \begin{itemize}
+    \item Uses special ``` make ``` variables that are expanded in
+      standard ``` make ``` constructs
+    \end{itemize}
+  \item Some auxiliary tools like ``` autoheader ``` or ``` aclocal ```
+    are also used
+    \begin{itemize}
+    \item ``` autoheader ``` is responsible for generating the {\em
+        configuration header} template, ``` config.h.in ```
+    \end{itemize}
+  \item Generated files (``` configure ```, ``` Makefile.in ```,
+    ``` Makefile ```) should not be modified.
+    \begin{itemize}
+    \item Reading them is also very difficult. Read the real source
+      instead!
+    \end{itemize}
+  \end{itemize}
+
+
+=== [fragile]{Cache variables}
+
+  \begin{itemize}
+
+  \item Each test done by a ``` configure.ac ``` script is associated
+    with a {\em cache variable}
+
+  \item The list of such variables and their values is visible in
+    ``` config.log ```:
+    \begin{block}{}
+{\tiny
+\begin{verbatim}
+## ---------------- ##
+## Cache variables. ##
+## ---------------- ##
+ac_cv_build=x86_64-unknown-linux-gnu ac_cv_c_compiler_gnu=yes
+[...]
+ac_cv_path_SED=/bin/sed
+\end{verbatim}}
+    \end{block}
+
+  \item If the autodetected value is not correct for some reason, you
+    can override any of these variables in the environment:
+    \begin{block}{}
+{\scriptsize
+\begin{verbatim}
+$ ac_cv_path_SED=/path/to/sed ./configure
+\end{verbatim}}
+    \end{block}
+
+  \item This is sometimes useful when cross-compiling, since some
+    tests are not always cross-compilation friendly.
+
+  \end{itemize}
+
+
+
+=== {Distribution}
+  \begin{itemize}
+  \item In general:
+    \begin{itemize}
+    \item When a software is published as a {\em tarball}, the
+      ``` configure ``` script and ``` Makefile.in ``` files are already
+      generated and part of the tarball.
+    \item When a software is published through {\em version control
+        system}, only the real sources ``` configure.ac ``` and
+      ``` Makefile.am ``` are available.
+    \end{itemize}
+  \item There are some exceptions (like tarballs not having
+    pre-generated ``` configure ```/``` Makefile.in ```)
+  \item Do not version control generated files!
+  \end{itemize}
+
+
+=== {Regenerating {\em autotools} files: {\tt autoreconf}}
+  \begin{itemize}
+  \item To generate all the files used by {\em autotools}, you could
+    call ``` automake ```, ``` autoconf ```, ``` aclocal ```,
+    ``` autoheader ```, etc. manually.
+    \begin{itemize}
+    \item But it is not very easy and efficient.
+    \end{itemize}
+  \item A tool called ``` autoreconf ``` automates this process
+    \begin{itemize}
+    \item Useful option: ``` -i ``` or ``` --install ```, to ask
+      ``` autoreconf ``` to copy missing auxiliary files
+    \end{itemize}
+  \item Always use ``` autoreconf ```!
+  \end{itemize}
+
+
+=== [fragile]{{\tt autoreconf} example}
+
+\begin{block}{}
+{\tiny
+\begin{verbatim}
+$ find . -type f
+./src/main.c
+./Makefile.am
+./configure.ac
+
+$ autoreconf -i configure.ac:4: installing './compile'
+configure.ac:3: installing './install-sh'
+configure.ac:3: installing './missing'
+Makefile.am: installing './depcomp'
+
+$ find . -type f
+./install-sh
+./src/main.c
+./config.h.in
+./configure
+./missing
+./depcomp
+./aclocal.m4
+./Makefile.am
+./autom4te.cache/traces.0
+./autom4te.cache/output.1
+./autom4te.cache/output.0
+./autom4te.cache/requests
+./autom4te.cache/traces.1
+./compile
+./Makefile.in
+./configure.ac
+\end{verbatim}}
+\end{block}
+
+
+
+=== {Overall organization}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/autotools-usage/autoreconf.pdf}
+  \end{center}
+
+
+
+\setuplabframe
+{Usage of existing {\em autotools} projects}
+{
+  \begin{itemize}
+  \item First build of an {\em autotools} package
+  \item Out of tree build and cross-compilation
+  \item Overriding cache variables
+  \item Using {\em autoreconf}
+  \end{itemize}
+}

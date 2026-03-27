@@ -35,14 +35,14 @@
   string.
   \begin{itemize}
   \item The DT bindings are documented in
-    \kfile{Documentation/devicetree/bindings/sound/simple-card.yaml}
-  \item The driver handling it is \kfile{sound/soc/generic/simple-card.c}
+    #kfile("Documentation/devicetree/bindings/sound/simple-card.yaml")
+  \item The driver handling it is #kfile("sound/soc/generic/simple-card.c")
   \end{itemize}
   Since 2017, OF-graph based bindings are available.
   \begin{itemize}
   \item They are documented in
-    \kfile{Documentation/devicetree/bindings/sound/audio-graph-card.yaml}
-  \item The driver handling it is \kfile{sound/soc/generic/audio-graph-card.c}
+    #kfile("Documentation/devicetree/bindings/sound/audio-graph-card.yaml")
+  \item The driver handling it is #kfile("sound/soc/generic/audio-graph-card.c")
   \end{itemize}
   Both required a few changes in the SoC DAI drivers to be usable for
   example to select the audio mode for the SSC on Microchip SoCs or
@@ -296,13 +296,11 @@
 \subsection{Machine driver}
 
 === [fragile]{Machine driver}
-The machine driver registers a \kstruct{snd_soc_card}.
-      \begin{block}{\kfile{include/sound/soc.h}}
+The machine driver registers a #kstruct("snd_soc_card").
+      \begin{block}{#kfile("include/sound/soc.h")}
         \fontsize{8}{8}\selectfont
         \begin{minted}{c}
-int snd_soc_register_card(struct snd_soc_card *card);
-int snd_soc_unregister_card(struct snd_soc_card *card);
-int devm_snd_soc_register_card(struct device *dev, struct snd_soc_card *card);
+int snd_soc_register_card(struct snd_soc_card *card); int snd_soc_unregister_card(struct snd_soc_card *card); int devm_snd_soc_register_card(struct device *dev, struct snd_soc_card *card);
 [...]
 /* SoC card */
 struct snd_soc_card {
@@ -323,10 +321,10 @@ struct snd_soc_card {
       \end{block}
 
 
-=== [fragile]{\kstruct{snd_soc_dai_link}}
-\kstruct{snd_soc_dai_link} is used to create the link between the
+=== [fragile]{#kstruct("snd_soc_dai_link")}
+#kstruct("snd_soc_dai_link") is used to create the link between the
   CPU DAI and the codec DAI.
-  \begin{block}{\kfile{include/sound/soc.h}}
+  \begin{block}{#kfile("include/sound/soc.h")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 struct snd_soc_dai_link {
@@ -352,7 +350,7 @@ struct snd_soc_dai_link {
    \end{block}
 
 
-=== [fragile]{\kstruct{snd_soc_dai_link}}
+=== [fragile]{#kstruct("snd_soc_dai_link")}
   \begin{block}{}
     \fontsize{10}{10}\selectfont
     \begin{minted}{c}
@@ -372,7 +370,7 @@ struct snd_soc_dai_link {
 
 
 === [fragile]{Example 1}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 SND_SOC_DAILINK_DEFS(pcm,
@@ -404,7 +402,7 @@ static struct snd_soc_card atmel_asoc_wm8904_card = {
 
 
 === [fragile]{Example 1}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
@@ -437,7 +435,7 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 
 
 === [fragile]{Example 1}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 static int atmel_asoc_wm8904_probe(struct platform_device *pdev)
@@ -478,7 +476,7 @@ static int atmel_asoc_wm8904_probe(struct platform_device *pdev)
 
   \begin{itemize}
   \item statically: using the ``` .dapm_routes ``` and
-    ``` .num_dapm_routes ``` members of \kstruct{snd_soc_card}
+    ``` .num_dapm_routes ``` members of #kstruct("snd_soc_card")
   \item from device tree:
     \begin{minted}{c}
     int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
@@ -488,7 +486,7 @@ static int atmel_asoc_wm8904_probe(struct platform_device *pdev)
 
 
 === [fragile]{Routing example: static}
-  \begin{block}{\kfile{sound/soc/rockchip/rockchip_max98090.c}}
+  \begin{block}{#kfile("sound/soc/rockchip/rockchip_max98090.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 static const struct snd_soc_dapm_route rk_audio_map[] = {
@@ -509,7 +507,7 @@ static struct snd_soc_card snd_soc_card_rk = {
         .num_links = 1,
 [...]
         .dapm_widgets = rk_dapm_widgets,
-        .num_dapm_widgets = ARRAY_SIZE(rk_dapm_widgets),
+        .num_dapm_widgets = ARRAY_SIZE(rk_dapmg_widgets),
         .dapm_routes = rk_audio_map,
         .num_dapm_routes = ARRAY_SIZE(rk_audio_map),
         .controls = rk_mc_controls,
@@ -520,7 +518,7 @@ static struct snd_soc_card snd_soc_card_rk = {
 
 
 === [fragile]{Routing example: DT}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{10}{10}\selectfont
     \begin{minted}{c}
 
@@ -545,7 +543,7 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 
 
 === [fragile]{Routing example: DT}
-  \begin{block}{\kfile{Documentation/devicetree/bindings/sound/atmel-wm8904.txt}}
+  \begin{block}{#kfile("Documentation/devicetree/bindings/sound/atmel-wm8904.txt")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
   - atmel,audio-routing: A list of the connections between audio components.
@@ -577,7 +575,7 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 
 
 === [fragile]{Routing example}
-  \begin{block}{\kfile{Documentation/devicetree/bindings/sound/atmel-wm8904.txt}}
+  \begin{block}{#kfile("Documentation/devicetree/bindings/sound/atmel-wm8904.txt")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 Example:
@@ -608,25 +606,17 @@ sound {
   the ``` SND_SOC_DAPM_INPUT ``` and ``` SND_SOC_DAPM_OUTPUT ```
   definitions.
 
-  \begin{block}{\kfile{sound/soc/codecs/wm8904.c}}
+  \begin{block}{#kfile("sound/soc/codecs/wm8904.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
 static const struct snd_soc_dapm_widget wm8904_adc_dapm_widgets[] = {
-SND_SOC_DAPM_INPUT("IN1L"),
-SND_SOC_DAPM_INPUT("IN1R"),
-SND_SOC_DAPM_INPUT("IN2L"),
-SND_SOC_DAPM_INPUT("IN2R"),
-SND_SOC_DAPM_INPUT("IN3L"),
-SND_SOC_DAPM_INPUT("IN3R"),
+SND_SOC_DAPM_INPUT("IN1L"), SND_SOC_DAPM_INPUT("IN1R"), SND_SOC_DAPM_INPUT("IN2L"), SND_SOC_DAPM_INPUT("IN2R"), SND_SOC_DAPM_INPUT("IN3L"), SND_SOC_DAPM_INPUT("IN3R"),
 [...]
 };
 
 static const struct snd_soc_dapm_widget wm8904_dac_dapm_widgets[] = {
 [...]
-SND_SOC_DAPM_OUTPUT("HPOUTL"),
-SND_SOC_DAPM_OUTPUT("HPOUTR"),
-SND_SOC_DAPM_OUTPUT("LINEOUTL"),
-SND_SOC_DAPM_OUTPUT("LINEOUTR"),
+SND_SOC_DAPM_OUTPUT("HPOUTL"), SND_SOC_DAPM_OUTPUT("HPOUTR"), SND_SOC_DAPM_OUTPUT("LINEOUTL"), SND_SOC_DAPM_OUTPUT("LINEOUTR"),
 };
     \end{minted}
   \end{block}
@@ -634,9 +624,9 @@ SND_SOC_DAPM_OUTPUT("LINEOUTR"),
 
 === [fragile]{Routing: board connectors}
   The board connectors are defined in the machine driver, in the
-  \kstruct{snd_soc_dapm_widget} part of the registered
-  \kstruct{snd_soc_card}.
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  #kstruct("snd_soc_dapm_widget") part of the registered
+  #kstruct("snd_soc_card").
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{10}{10}\selectfont
     \begin{minted}{c}
 static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
@@ -650,8 +640,8 @@ static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
 
 === [fragile]{Clocking: producer/consumer}
   The producer/consumer relationship is declared part of the
-  ``` .dai_fmt ``` field of \kstruct{snd_soc_dai_link}.
-  \begin{block}{\kfile{include/sound/soc.h}}
+  ``` .dai_fmt ``` field of #kstruct("snd_soc_dai_link").
+  \begin{block}{#kfile("include/sound/soc.h")}
     \fontsize{6}{6}\selectfont
     \begin{minted}{c}
 /*
@@ -673,7 +663,7 @@ static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
 #define SND_SOC_DAIFMT_CBS_CFS                SND_SOC_DAIFMT_CBC_CFC
     \end{minted}
   \end{block}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{9}{9}\selectfont
     \begin{minted}{c}
           .dai_fmt = SND_SOC_DAIFMT_I2S
@@ -684,9 +674,9 @@ static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
 
 
 === [fragile]{Clocking: dynamically changing clocks}
-  The ``` .ops ``` member of \kstruct{snd_soc_dai_link} contains
+  The ``` .ops ``` member of #kstruct("snd_soc_dai_link") contains
   useful callbacks.
-  \begin{block}{\kfile{include/sound/soc.h}}
+  \begin{block}{#kfile("include/sound/soc.h")}
     \fontsize{10}{10}\selectfont
     \begin{minted}{c}
 /* SoC audio ops */
@@ -701,7 +691,7 @@ struct snd_soc_ops {
     \end{minted}
   \end{block}
   ``` .hw_params ``` is called when setting up the audio stream. The
-  \kstruct{snd_pcm_hw_params} contains the audio characteristics.
+  #kstruct("snd_pcm_hw_params") contains the audio characteristics.
   Use ``` params_rate() ``` to get the sample rate,
   ``` params_channels ``` for the number of channels and
   ``` params_format ``` to get the format (including the bit depth).
@@ -728,8 +718,7 @@ int snd_soc_dai_set_sysclk(struct snd_soc_dai *dai, int clk_id,
       \fontsize{9}{9}\selectfont
       \begin{minted}{c}
 int snd_soc_dai_set_clkdiv(struct snd_soc_dai *dai,
-        int div_id, int div);
-int snd_soc_dai_set_pll(struct snd_soc_dai *dai,
+        int div_id, int div); int snd_soc_dai_set_pll(struct snd_soc_dai *dai,
         int pll_id, int source, unsigned int freq_in, unsigned int freq_out);
       \end{minted}
     \end{block}
@@ -737,7 +726,7 @@ int snd_soc_dai_set_pll(struct snd_soc_dai *dai,
 
 
 === [fragile]{Clocking example}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{9}{9}\selectfont
     \begin{minted}{c}
 static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
@@ -758,7 +747,7 @@ static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
 
 
 === [fragile]{Clocking example}
-  \begin{block}{\kfile{sound/soc/atmel/atmel_wm8904.c}}
+  \begin{block}{#kfile("sound/soc/atmel/atmel_wm8904.c")}
     \fontsize{9}{9}\selectfont
     \begin{minted}{c}
         /*

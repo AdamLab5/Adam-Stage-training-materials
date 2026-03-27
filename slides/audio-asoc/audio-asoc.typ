@@ -1,7 +1,8 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
-#import "../audio-alsa-utils/themeBootlin.typ": *
+#import "../../typst/local/themeBootlin.typ": *
+#import "../../typst/local/common.typ": *
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
 
@@ -42,35 +43,24 @@ interface.
 Note: The codec can be part of another IC (PMIC, Bluetooth or MODEM
 chips).
 
-#import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../audio-alsa-utils/themeBootlin.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
-
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
-= simple-audio-card
+== simple-audio-card
 <simple-audio-card>
 ===  simple-card Most sound cards, can now be described
 using device tree. This is done using a sound node with a ```
 simple-audio-card ``` compatible string.
 
 - The DT bindings are documented in
+  #kfile("Documentation/devicetree/bindings/sound/simple-card.yaml")
 
-- The driver handling it is
+- The driver handling it is #kfile("sound/soc/generic/simple-card.c")
 
 Since 2017, OF-graph based bindings are available.
 
 - They are documented in
+  #kfile("Documentation/devicetree/bindings/sound/audio-graph-card.yaml")
 
 - The driver handling it is
+  #kfile("sound/soc/generic/audio-graph-card.c")
 
 Both required a few changes in the SoC DAI drivers to be usable for
 example to select the audio mode for the SSC on Microchip SoCs or
@@ -293,28 +283,15 @@ the board connector is then done using ``` simple-audio-card,routing ```
 Look for ``` SND_SOC_DAPM_OUTPUT ``` and ``` SND_SOC_DAPM_INPUT ``` to
 know what the codec is providing.
 
-#import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../audio-alsa-utils/themeBootlin.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
-
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
-= Machine driver
+== Machine driver
 <machine-driver>
-===  Machine driver The machine driver registers a .
+===  Machine driver The machine driver registers a
+#kstruct("snd_soc_card").
+
+#kfile("include/sound/soc.h")
 
 ```c
-int snd_soc_register_card(struct snd_soc_card *card);
-int snd_soc_unregister_card(struct snd_soc_card *card);
-int devm_snd_soc_register_card(struct device *dev, struct snd_soc_card *card);
+int snd_soc_register_card(struct snd_soc_card *card); int snd_soc_unregister_card(struct snd_soc_card *card); int devm_snd_soc_register_card(struct device *dev, struct snd_soc_card *card);
 [...]
 /* SoC card */
 struct snd_soc_card {
@@ -333,8 +310,11 @@ struct snd_soc_card {
 };
 ```
 
-===   is used to create the link between the CPU DAI and
-the codec DAI.
+===  #kstruct("snd_soc_dai_link")
+#kstruct("snd_soc_dai_link") is used to create the link between
+the CPU DAI and the codec DAI.
+
+#kfile("include/sound/soc.h")
 
 ```c
 struct snd_soc_dai_link {
@@ -358,7 +338,7 @@ struct snd_soc_dai_link {
         unsigned int num_cpus;
 ```
 
-===  
+===  #kstruct("snd_soc_dai_link")
 
 ```c
         /*
@@ -375,6 +355,8 @@ struct snd_soc_dai_link {
 ```
 
 ===  Example 1
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
 SND_SOC_DAILINK_DEFS(pcm,
@@ -405,6 +387,8 @@ static struct snd_soc_card atmel_asoc_wm8904_card = {
 
 ===  Example 1
 
+#kfile("sound/soc/atmel/atmel_wm8904.c")
+
 ```c
 static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 {
@@ -434,6 +418,8 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 ```
 
 ===  Example 1
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
 static int atmel_asoc_wm8904_probe(struct platform_device *pdev)
@@ -470,7 +456,7 @@ DAI driver, it is still necessary to define what are the codec outputs
 and inputs that are actually used on the board. This is called routing.
 
 - statically: using the ``` .dapm_routes ``` and ``` .num_dapm_routes ```
-  members of
+  members of #kstruct("snd_soc_card")
 
 - from device tree:
 
@@ -480,6 +466,8 @@ and inputs that are actually used on the board. This is called routing.
   ```
 
 ===  Routing example: static
+
+#kfile("sound/soc/rockchip/rockchip_max98090.c")
 
 ```c
 static const struct snd_soc_dapm_route rk_audio_map[] = {
@@ -500,7 +488,7 @@ static struct snd_soc_card snd_soc_card_rk = {
         .num_links = 1,
 [...]
         .dapm_widgets = rk_dapm_widgets,
-        .num_dapm_widgets = ARRAY_SIZE(rk_dapm_widgets),
+        .num_dapm_widgets = ARRAY_SIZE(rk_dapmg_widgets),
         .dapm_routes = rk_audio_map,
         .num_dapm_routes = ARRAY_SIZE(rk_audio_map),
         .controls = rk_mc_controls,
@@ -509,6 +497,8 @@ static struct snd_soc_card snd_soc_card_rk = {
 ```
 
 ===  Routing example: DT
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
 
@@ -531,6 +521,8 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 ```
 
 ===  Routing example: DT
+
+#kfile("Documentation/devicetree/bindings/sound/atmel-wm8904.txt")
 
 ```c
   - atmel,audio-routing: A list of the connections between audio components.
@@ -561,6 +553,8 @@ static int atmel_asoc_wm8904_dt_init(struct platform_device *pdev)
 
 ===  Routing example
 
+#kfile("Documentation/devicetree/bindings/sound/atmel-wm8904.txt")
+
 ```c
 Example:
 sound {
@@ -587,28 +581,26 @@ sound {
 defined in the codec driver. Look for the ``` SND_SOC_DAPM_INPUT ```
 and ``` SND_SOC_DAPM_OUTPUT ``` definitions.
 
+#kfile("sound/soc/codecs/wm8904.c")
+
 ```c
 static const struct snd_soc_dapm_widget wm8904_adc_dapm_widgets[] = {
-SND_SOC_DAPM_INPUT("IN1L"),
-SND_SOC_DAPM_INPUT("IN1R"),
-SND_SOC_DAPM_INPUT("IN2L"),
-SND_SOC_DAPM_INPUT("IN2R"),
-SND_SOC_DAPM_INPUT("IN3L"),
-SND_SOC_DAPM_INPUT("IN3R"),
+SND_SOC_DAPM_INPUT("IN1L"), SND_SOC_DAPM_INPUT("IN1R"), SND_SOC_DAPM_INPUT("IN2L"), SND_SOC_DAPM_INPUT("IN2R"), SND_SOC_DAPM_INPUT("IN3L"), SND_SOC_DAPM_INPUT("IN3R"),
 [...]
 };
 
 static const struct snd_soc_dapm_widget wm8904_dac_dapm_widgets[] = {
 [...]
-SND_SOC_DAPM_OUTPUT("HPOUTL"),
-SND_SOC_DAPM_OUTPUT("HPOUTR"),
-SND_SOC_DAPM_OUTPUT("LINEOUTL"),
-SND_SOC_DAPM_OUTPUT("LINEOUTR"),
+SND_SOC_DAPM_OUTPUT("HPOUTL"), SND_SOC_DAPM_OUTPUT("HPOUTR"), SND_SOC_DAPM_OUTPUT("LINEOUTL"), SND_SOC_DAPM_OUTPUT("LINEOUTR"),
 };
 ```
 
 ===  Routing: board connectors The board connectors are
-defined in the machine driver, in the part of the registered .
+defined in the machine driver, in the
+#kstruct("snd_soc_dapm_widget") part of the registered
+#kstruct("snd_soc_card").
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
 static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
@@ -619,7 +611,10 @@ static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
 ```
 
 ===  Clocking: producer/consumer The producer/consumer
-relationship is declared part of the ``` .dai_fmt ``` field of .
+relationship is declared part of the ``` .dai_fmt ``` field of
+#kstruct("snd_soc_dai_link").
+
+#kfile("include/sound/soc.h")
 
 ```c
 /*
@@ -641,6 +636,8 @@ relationship is declared part of the ``` .dai_fmt ``` field of .
 #define SND_SOC_DAIFMT_CBS_CFS                SND_SOC_DAIFMT_CBC_CFC
 ```
 
+#kfile("sound/soc/atmel/atmel_wm8904.c")
+
 ```c
           .dai_fmt = SND_SOC_DAIFMT_I2S
                 | SND_SOC_DAIFMT_NB_NF
@@ -648,7 +645,9 @@ relationship is declared part of the ``` .dai_fmt ``` field of .
 ```
 
 ===  Clocking: dynamically changing clocks The ``` .ops ```
-member of contains useful callbacks.
+member of #kstruct("snd_soc_dai_link") contains useful callbacks.
+
+#kfile("include/sound/soc.h")
 
 ```c
 /* SoC audio ops */
@@ -663,10 +662,11 @@ struct snd_soc_ops {
 ```
 
 ``` .hw_params ``` is called when setting up the audio stream. The
-contains the audio characteristics. Use ``` params_rate() ``` to get the
-sample rate, ``` params_channels ``` for the number of channels and ```
-params_format ``` to get the format (including the bit depth). Finally,
-``` snd_soc_params_to_bclk ``` calculates the bit clock.
+#kstruct("snd_pcm_hw_params") contains the audio characteristics.
+Use ``` params_rate() ``` to get the sample rate, ``` params_channels ```
+for the number of channels and ``` params_format ``` to get the format
+(including the bit depth). Finally, ``` snd_soc_params_to_bclk ```
+calculates the bit clock.
 
 ===  Clocking: ``` hw_params ```
 
@@ -691,12 +691,13 @@ params_format ``` to get the format (including the bit depth). Finally,
 
   ```c
   int snd_soc_dai_set_clkdiv(struct snd_soc_dai *dai,
-          int div_id, int div);
-  int snd_soc_dai_set_pll(struct snd_soc_dai *dai,
+          int div_id, int div); int snd_soc_dai_set_pll(struct snd_soc_dai *dai,
           int pll_id, int source, unsigned int freq_in, unsigned int freq_out);
   ```
 
 ===  Clocking example
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
 static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
@@ -715,6 +716,8 @@ static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
 ```
 
 ===  Clocking example
+
+#kfile("sound/soc/atmel/atmel_wm8904.c")
 
 ```c
         /*
