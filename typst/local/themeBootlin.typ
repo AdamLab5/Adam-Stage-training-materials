@@ -1,3 +1,5 @@
+#import "./common.typ":
+
 #set page(
   margin: 1.5cm,
 )
@@ -127,6 +129,22 @@
   )
 )
 
+#let setuplabframe(title, body) = {
+
+    heading("Practical lab - "+ title, depth: 3)
+
+    grid(
+      columns: (0.4fr, 0.6fr),
+      column-gutter: 1cm,
+      align: horizon,
+      [
+        #image("../../common/lab-penguins.svg", width: 100%)
+      ],
+      body
+    )
+}
+
+
 #let kfunc(body) = {
     "https://elixir.bootlin.com/linux/latest/ident/" + body
 }
@@ -143,6 +161,10 @@
     ],
     body
   )
+}
+
+#let todo(arg1) = {
+   "TODO: " + arg1 // Ajouter large et color red
 }
 
 // \newcommand\titleframe
@@ -204,10 +226,6 @@
 //   \end{frame}
 // }
 
-#let todo(arg1) = {
-   "TODO: " + arg1 // Ajouter large et color red
-}
-
 // \newcommand\todo[1]{
 //   {\large \color{red}TODO: #1}
 // }
@@ -220,10 +238,6 @@
 // first argument: slide title (will be prepended by 'Practical lab - ')
 // second argument: contents of the slide.
 
-#let setuplabframe(arg1, arg2) = {
-    heading("Practical lab - "+arg1,depth:3)
-    image("../../common/lab-penguins.svg", width: 100%)
-}
 
 // \newcommand\setuplabframe[2]{
 //   \begin{frame}{Practical lab - #1}

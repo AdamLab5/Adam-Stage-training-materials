@@ -49,18 +49,18 @@ config-common(
 
 #colbreak()
 
-#align(center, [#image("../../out/common/bootlin-logo.pdf", width: 15%)])
+#align(center, [#image("bootlin-logo.pdf", width: 15%)])
 
 
 ]
 
 ===  Bootlin engineering services
 
-#align(center, [#image("../../out/slides/about-us/engineering-services.pdf", height: 80%)])
+#align(center, [#image("engineering-services.pdf", height: 80%)])
 
 ===  Bootlin training courses
 
-#align(center, [#image("../../out/slides/about-us/training-courses.pdf", height: 70%)])
+#align(center, [#image("training-courses.pdf", height: 70%)])
 
 ===  Bootlin, an open-source contributor
 
@@ -114,7 +114,7 @@ config-common(
 #colbreak()
 
 #align(center, [#image("www.png", width: 50%)]) 
-#align(center, [#emph[Icon by Freepik, Flaticon]])
+#emph[Icon by Freepik, Flaticon]
 
 
 ]

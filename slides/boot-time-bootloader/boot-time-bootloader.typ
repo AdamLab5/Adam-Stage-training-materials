@@ -53,7 +53,6 @@ skip U-Boot, using its #emph[Falcon Mode] (covered in the next section).
 ===  U-Boot - Simplify scripts Some boards have over-complicated
 scripts:
 
-A
 #align(center, [#image("u-boot-bad-scripts.pdf", width: 100%)])
 
 Let’s replace this by:
@@ -87,8 +86,7 @@ This saved 56 ms on this ARM9 system (400 MHz)!
 the uncompressed kernel is usually started at offset 0x8000 from the
 start of RAM. Load the compressed kernel at a far enough address!
 
-A
-#align(center, [#image("../../out/slides/boot-time-bootloader/kernel-overlap.pdf", width: 100%)])
+#align(center, [#image("kernel-overlap.pdf", width: 100%)])
 
 Source:
 #link("https://people.kernel.org/linusw/how-the-arm32-linux-kernel-decompresses")
@@ -96,7 +94,6 @@ Source:
 ===  Bootloader: load the compressed kernel far enough On ARM32, a
 usual kernel load address is at offset 0x01000000 (16 MB)
 
-A
 #align(center, [#image("no-kernel-overlap.pdf", height: 60%)])
 
 Tests on STM32MP157A (650 MHz): an overlap increases boot time by 107
