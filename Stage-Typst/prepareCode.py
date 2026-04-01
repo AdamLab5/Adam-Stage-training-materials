@@ -74,6 +74,12 @@ def prepareDoc():
         )
 
         document = re.sub(
+            r'(`[^`]*)\n\s*([^`]*`)',
+            r'\1 \2',
+            document
+        )
+
+        document = re.sub(
             r'\\mint\{c\}\+(.+?)\+',
             r'```c \1 ```',
             document
@@ -85,11 +91,7 @@ def prepareDoc():
             document
         )
 
-        document = re.sub(
-            r'(`[^`]*)\n\s*([^`]*`)',
-            r'\1 \2',
-            document
-        )
+        
 
         document = re.sub(
             r'\\begin{columns}\s*\\column\s*\{([^}]*)\}',

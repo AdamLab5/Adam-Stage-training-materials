@@ -1,4 +1,3 @@
-#import "./common.typ":
 
 #set page(
   margin: 1.5cm,
@@ -74,8 +73,8 @@
   )
 ]
 
-#let titleframe(title) = frame(
-  title + " training",
+#let titleframe(title) = {
+  heading(title + " training", depth: 3)
   grid(
     columns: 2,
     gutter: 1cm,
@@ -99,10 +98,10 @@
       ]
     ]
   )
-)
+}
 
-#let sectionframe(title) = frame(
-  title,
+#let sectionframe(title) = {
+  heading(title, depth: 3)
   grid(
     columns: 2,
     [
@@ -114,10 +113,10 @@
       ]
     ]
   )
-)
+}
 
-#let labframe(title, body) = frame(
-  "Practical lab - " + title,
+#let labframe(title, body) = {
+  heading("Practical lab - " + title, depth: 3)
   grid(
     columns: (0.4fr, 0.6fr),
     [
@@ -127,7 +126,7 @@
         #body
     ]
   )
-)
+}
 
 #let setuplabframe(title, body) = {
 

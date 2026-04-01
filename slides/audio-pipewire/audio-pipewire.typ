@@ -98,7 +98,7 @@ $ pw-cli ls Client
 
   - A ``` Link ``` connects an output port with an input port
 
-#align(center, [#image("../../out/slides/audio-pipewire/two-nodes.pdf", height: 40%)]) 
+#align(center, [#image("two-nodes.pdf", height: 40%)]) 
 
 ===  Concepts — nodes, ports & links (2)
 
@@ -252,7 +252,7 @@ $ pw-cli info 94
 
 - A good default is to set higher priority to capture driver nodes.
 
-#align(center, [#image("../../out/slides/audio-pipewire/graph-execution.pdf", height: 50%)])
+#align(center, [#image("graph-execution.pdf", height: 50%)])
 
 
 ===  Concepts — graph execution logic (3)
@@ -265,7 +265,7 @@ $ pw-cli info 94
   samples from a subgraph to another while still decoupling driver
   clocks.
 
-#align(center, [#image("../../out/slides/audio-pipewire/graph-execution2.pdf", height: 450%)])
+#align(center, [#image("graph-execution2.pdf", height: 450%)])
 
 
 ===  Concepts — graph execution logic (4)
@@ -767,7 +767,7 @@ $ pw-config --name custom.conf paths
   We then use socat on the host to bridge the TCP/IP to a Unix socket
   that we will use as our PipeWire Unix socket for Helvum.
 
-#align(center, [#image("../../out/slides/audio-pipewire/helvum-target.pdf", height: 30%)])
+#align(center, [#image("helvum-target.pdf", height: 30%)])
 
 ===  Tools rundown — ``` helvum ``` (3)
 
@@ -1342,7 +1342,7 @@ static void on_process(void *userdata, struct spa_io_position *position) {
   double *acc = data->out_port->accumulator;
   uint64_t n_samples = position->clock.duration;
 
-  /* Fetch the sample buffer. The first argument is the port user data
+  /* Fetch the sample buffer. The first argument is the port user dataé
    * (as returned by pw_filter_add_port), it is used to identify our
    * port (think container_of). */
   float *out = pw_filter_get_dsp_buffer(data->out_port, n_samples);

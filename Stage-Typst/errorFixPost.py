@@ -160,6 +160,9 @@ def relecture():
                     
             #         elif svg_out_dir.exists():
             #             subprocess.run(["inkscape ", "-D", "-o", str(jpg_out_dir), " --export-type=pdf"])
+
+
+            # with 
         
         ligne = ligne.replace("""“‘""", "```")
         ligne = ligne.replace("\\[fragile\\]", "")
