@@ -331,12 +331,12 @@ $ pw-cli info 94
 
 - Look-up order:
 
-  + ``` $XDG_CONFIG_HOME/pipewire/ ```
+  + ``` \$XDG_CONFIG_HOME/pipewire/ ```
           environment variable, often ``` ~/.config/pipewire/ ``` in distributions
-        item ```$sysconfdir/pipewire/ ``` 
+        item ```\$sysconfdir/pipewire/ ``` 
     compile-time variable, often ``` /etc/pipewire/ ```
 
-  + ``` $datadir/pipewire/ ```
+  + ``` \$datadir/pipewire/ ```
           compile-time variable, often ``` /usr/share/pipewire/ ```
         end{enumerate}
 
@@ -353,10 +353,10 @@ $ pw-cli info 94
         will also load all config sections from:
 
         begin{enumerate}
-        item ```$datadir/pipewire/client-rt.conf.d/ ```
+        item ```\$datadir/pipewire/client-rt.conf.d/ ```
 
-  + ``` $sysconfdir/pipewire/client-rt.conf.d/ ```
-        item ```$XDG_CONFIG_HOME/pipewire/client-rt.conf.d/ ```
+  + ``` \$sysconfdir/pipewire/client-rt.conf.d/ ```
+        item ```\$XDG_CONFIG_HOME/pipewire/client-rt.conf.d/ ```
 
 ===  Configuration — sections (1)
 
@@ -681,7 +681,7 @@ $ pw-config --name custom.conf paths
 
 - Status: ``` S ``` for stopped and ``` R ``` for running.
 
-#align(center, [#image("pw-top.jpg", height: 50%)]) 
+#align(center, [#image("graph-execution.pdf", height: 50%)]) 
 
 ===  Tools rundown — ``` pw-profiler ```
 
@@ -776,12 +776,12 @@ $ pw-config --name custom.conf paths
 ```text
 # We run socat on the target, creating a redirection from the Unix
 # socket /run/pipewire-0 to a TCP/IP server on port 8000.
-ssh $login@$ip "socat TCP4-LISTEN:8000 UNIX-CONNECT:/run/pipewire-0" &
+ssh \$login@\$ip "socat TCP4-LISTEN:8000 UNIX-CONNECT:/run/pipewire-0" &
 
 # We run socat on the host, creating the redirection from the TCP/IP
 # port 8000 on the target to the Unix socket /tmp/pipewire-0 on the
 # host.
-socat UNIX-LISTEN:/tmp/pipewire-0 TCP4:$ip:8000 &
+socat UNIX-LISTEN:/tmp/pipewire-0 TCP4:\$ip:8000 &
 
 # And we connect on the redirected Unix socket.
 PIPEWIRE_RUNTIME_DIR=/tmp helvum
@@ -1342,7 +1342,7 @@ static void on_process(void *userdata, struct spa_io_position *position) {
   double *acc = data->out_port->accumulator;
   uint64_t n_samples = position->clock.duration;
 
-  /* Fetch the sample buffer. The first argument is the port user dataé
+  /* Fetch the sample buffer. The first argument is the port user data
    * (as returned by pw_filter_add_port), it is used to identify our
    * port (think container_of). */
   float *out = pw_filter_get_dsp_buffer(data->out_port, n_samples);

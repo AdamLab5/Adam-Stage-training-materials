@@ -91,7 +91,13 @@ def prepareDoc():
             document
         )
 
-        
+        if "\\section" not in document:
+            document=re.sub(
+                r'\\subsection\{([^}]*)\}',
+                r'#import "@local/bootlin:0.1.0": * \n\n#import "@local/bootlin-yocto:0.1.0": *\n\n#import "@local/bootlin-utils:0.1.0": *\n\n#import "../../typst/local/themeBootlin.typ": *\n\n#import "../../typst/local/common.typ": *\n\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\nconfig-common(\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\\%) \n\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n == \1',
+                document,
+                count=1
+            )
 
         document = re.sub(
             r'\\begin{columns}\s*\\column\s*\{([^}]*)\}',

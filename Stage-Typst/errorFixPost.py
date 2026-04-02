@@ -13,7 +13,8 @@ def resolve_image(path_str, ligne):
 
     out_dir = Path("../../out")
     out_common_dir = Path("../../out/common")
-   
+    common_dir = Path("../../common")
+
     def try_convert_svg(svg_path, pdf_path):
         """Convertit svg -> pdf via inkscape"""
         subprocess.run(["inkscape", "--export-filename=" + str(pdf_path), str(svg_path)])
@@ -29,13 +30,19 @@ def resolve_image(path_str, ligne):
     pdf_same = path_obj.with_suffix(".pdf")
     pdf_out  = out_dir / (filename + ".pdf")
     pdf_out_common = out_common_dir / (filename + ".pdf")
+    pdf_common = common_dir / (filename + ".pdf")
 
     svg_same = path_obj.with_suffix(".svg")
     svg_out  = out_dir / (filename + ".svg")
+    svg_common = common_dir / (filename + ".svg")
 
     dia_same = path_obj.with_suffix(".dia")
     dia_out  = out_dir / (filename + ".dia")
 
+    if pdf_common.exists() and not pdf_same.exists():
+        print("A")
+        return ligne.replace(path_str, str(pdf_common))
+    
     if pdf_out_common.exists():
         ligne = ligne.replace(path_str, str(pdf_out_common))
         
@@ -54,8 +61,10 @@ def resolve_image(path_str, ligne):
     elif dia_out.exists() and not pdf_out.exists():
         try_convert_dia(dia_out, pdf_out)
     
+    
 
     if pdf_same.exists():
+        print("A")
         return ligne.replace(path_str, str(pdf_same))
     elif pdf_out.exists():
         return ligne.replace(path_str, str(pdf_out))
@@ -76,7 +85,9 @@ def relecture():
         if match:
             path = match.group(1)
             ligne = resolve_image(path, ligne)
-            match = patternImg.search(ligne)  # re-check après modification
+            match = patternImg.search(ligne)
+            
+              # re-check après modification
         #     path = match.group(1)
         #     filename = Path(path).name
         #     path2 = Path(path)
@@ -173,8 +184,7 @@ def relecture():
             ligne = ligne.replace("\\subsection{", "== ")
             ligne = ligne.replace("}", "")
         if ligne.startswith("= "):
-            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *\n#import "@local/bootlin-yocto:0.1.0": *\n#import "@local/bootlin-utils:0.1.0": *\n#import "../../typst/local/themeBootlin.typ": *\n#import "../../typst/local/common.typ": *\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\n\nconfig-common(\n  // Compile with `typst c --input handout=1 ...` to generate the handout.\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n=""")
-        
+            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *\n #import "@local/bootlin-yocto:0.1.0": *\n#import "@local/bootlin-utils:0.1.0": *\n#import "../../typst/local/themeBootlin.typ": *\n#import "../../typst/local/common.typ": *\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\n\nconfig-common(\n  // Compile with `typst c --input handout=1 ...` to generate the handout.\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n=""")
         ligne = ligne.replace("\\=\\=\\=", "=== ")
         if "```make" in ligne :
             ligne = ligne.replace("```make", "``` make")
@@ -194,9 +204,10 @@ def relecture():
 
         # output = '\n'.join(result)
 
-        ligne = re.sub(r'\$([A-Za-z_][A-Za-z0-9_]*|\d+)', r'\\$\1', ligne)
         if "\\" in ligne:
             ligne = ligne.replace("\\", "")
+        
+        ligne = re.sub(r'\$([A-Za-z_][A-Za-z0-9_]*|\d+)', r'\\$\1', ligne)
         if "#image" in ligne:
                 nv_ligne = ligne.replace("textheight", "0%")
                 nv_ligne = nv_ligne.replace("0.", "")
@@ -213,10 +224,10 @@ def relecture():
                 
                 sys.stdout.write(nv_ligne)
         
+        
 
         else:
             sys.stdout.write(ligne)
-
 
 if __name__ == "__main__":
     relecture()
