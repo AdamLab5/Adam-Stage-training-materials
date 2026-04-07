@@ -1,4 +1,6 @@
 
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 #set page(
   margin: 1.5cm,
 )

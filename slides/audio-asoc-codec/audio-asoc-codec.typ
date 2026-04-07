@@ -15,10 +15,8 @@ config-common(
 
 == CODEC driver
 <codec-driver>
-===  CODEC driver The CODEC driver registers a
-#kstruct("snd_soc_component_driver"). Before v4.17, it was ```
-struct snd_soc_codec_driver ```. Also registers a
-#kstruct("snd_soc_dai_driver")
+===  CODEC driver 
+The CODEC driver registers a #kstruct("snd_soc_component_driver"). Before v4.17, it was ``` struct snd_soc_codec_driver ```. Also registers a #kstruct("snd_soc_dai_driver")
 
 #kfile("include/sound/soc.h")
 

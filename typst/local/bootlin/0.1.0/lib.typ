@@ -374,7 +374,10 @@ Corrections, suggestions, contributions and translations are welcome!])
     marker: (text(size: 1.5em, fill: bootlin-orange, stroke: bootlin-orange, [#v(-0.2em)‣]),
              text(size: 1em, fill: bootlin-orange, stroke: bootlin-orange, [🞄]),
              text(size: 0.5em, fill: bootlin-orange, stroke: bootlin-orange, [#v(0.2em)■])),
-    indent: 1em
+    indent: 1em,
+    spacing: 0.5em,
+    tight: true,
+    body-indent: 0.5em
   )
 
   show: touying-slides.with(

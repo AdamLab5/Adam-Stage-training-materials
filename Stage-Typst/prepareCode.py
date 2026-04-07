@@ -298,6 +298,12 @@ def prepareDoc():
         )
 
         document = re.sub(
+            r'\\setuplabframe\s*\{([^}]*)\}\s*\{([\s\S]*?\\end\{itemize\}[\s\S]*?)\}',
+            r'#setuplabframe([\1],[\2])',
+            document
+        )
+
+        document = re.sub(
             r'#image\s*\{([^)]*)\}',
             r'#align(center, [#image(\1)])',
             document

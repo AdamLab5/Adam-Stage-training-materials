@@ -4,23 +4,16 @@
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
 #show: bootlin-theme.with(
-  aspect-ratio: "16-9",
-
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+  aspect-ratio: "16-9")
 
 = About Bootlin
 <about-bootlin>
 ===  Bootlin introduction
-
-#columns(gutter: 8pt)[
+#table(
+columns: (70%, 30%), stroke: none,
+[
 
 - Engineering company
-
   - In business since 2004
 
   - Before 2018: #emph[Free Electrons]
@@ -46,14 +39,14 @@ config-common(
   - #strong[Training] courses
 
 - #link("https://bootlin.com")
+],
+[
 
-#colbreak()
-
-#align(center, [#image("bootlin-logo.pdf", width: 15%)])
+#align(center, [#image("../../common/bootlin-logo.pdf", width: 100%)])
 
 
 ]
-
+)
 ===  Bootlin engineering services
 
 #align(center, [#image("engineering-services.pdf", height: 80%)])

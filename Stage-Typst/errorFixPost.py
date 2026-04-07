@@ -216,8 +216,6 @@ def relecture():
                 if "www.png" in ligne:
                     nv_ligne = nv_ligne.replace("textwidth", "50%")
                     nv_ligne = nv_ligne.replace("70%", "50%")
-                if "bootlin-logo.pdf" in ligne:
-                    nv_ligne = nv_ligne.replace("100%", "15%")
                 nv_ligne = nv_ligne.replace("#image", "#align(center, [#image")
                 nv_ligne = nv_ligne.replace("%)", "%)])")
                 nv_ligne = nv_ligne.replace("cm)", "cm)])")
