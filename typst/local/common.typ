@@ -51,7 +51,8 @@
 ]
 
 #let kfile(arg) = [
-  #projfile(arg, "linux")
+  #set text(14pt)
+  #projfile("linux", arg)
 ]
 
 #let krelfile(arg1, arg2) = [
@@ -63,7 +64,7 @@
 ]
 
 #let kdir(arg) = [
-  #projdir(arg, "linux")
+  #projdir("linux", arg)
 ]
 
 #let kreldir(arg1, arg2) = [

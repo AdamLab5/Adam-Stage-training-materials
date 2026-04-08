@@ -12,7 +12,14 @@ config-common(
 ))
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
+#show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
 = Userspace ALSA
 <userspace-alsa>
 == alsa-lib
@@ -38,11 +45,9 @@ config-common(
 
 - ``` name ``` is the name of the PCM to be opened.
 
-- ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or ```
-  SND_PCM_STREAM_CAPTURE ```
+- ``` stream ``` can be either ``` SND_PCM_STREAM_PLAYBACK ``` or ```SND_PCM_STREAM_CAPTURE ```
 
-- ``` mode ``` can be a combination of ``` SND_PCM_NONBLOCK ``` and ```
-  SND_PCM_ASYNC ```
+- ``` mode ``` can be a combination of ``` SND_PCM_NONBLOCK ``` and ```SND_PCM_ASYNC ```
 
 - ```c
   int snd_pcm_close(snd_pcm_t *pcm)
@@ -55,14 +60,11 @@ config-common(
 - This can be specified as a hardware device. The three arguments (in
   order: CARD,DEV,SUBDEV) specify card number or identifier, device
   number and subdevice number (-1 means any). For example: ``` hw:0 ``` or
-  ``` hw:1,0 ```. Instead of the index, the card name can be used: ```
-  hw:STM32MP15DK,0 ```
+  ``` hw:1,0 ```. Instead of the index, the card name can be used: ```hw:STM32MP15DK,0 ```
 
-- Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```, ``` plug:hw:0,0
-  ```.
+- Or through the ``` plug ``` plugin: ``` plug:mypcmdef ```, ``` plug:hw:0,0```.
 
-- The list of available names can be generated using ``` snd_card_next
-  ``` to iterate over all the physical cards. See ``` device_list ``` in
+- The list of available names can be generated using ``` snd_card_next``` to iterate over all the physical cards. See ``` device_list ``` in
   ``` aplay ```.
 
 ===  alsa-lib API - PCM

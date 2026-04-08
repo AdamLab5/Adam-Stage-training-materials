@@ -3,20 +3,25 @@
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
+
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
+)
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
+#show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 90%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
 == CODEC driver
 <codec-driver>
 ===  CODEC driver 
-The CODEC driver registers a #kstruct("snd_soc_component_driver"). Before v4.17, it was ``` struct snd_soc_codec_driver ```. Also registers a #kstruct("snd_soc_dai_driver")
+The CODEC driver registers a #kstruct("snd_soc_component_driver"). Before v4.17, it was ``` struct snd_soc_codec_driver```. Also registers a #kstruct("snd_soc_dai_driver")
 
 #kfile("include/sound/soc.h")
 

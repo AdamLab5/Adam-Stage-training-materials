@@ -176,6 +176,7 @@ def relecture():
             # with 
         
         ligne = ligne.replace("""“‘""", "```")
+        ligne = ligne.replace("‘", "`")
         ligne = ligne.replace("\\[fragile\\]", "")
         if ligne.startswith("\\section"):
             ligne = ligne.replace("\\section{", "= ")
@@ -184,7 +185,22 @@ def relecture():
             ligne = ligne.replace("\\subsection{", "== ")
             ligne = ligne.replace("}", "")
         if ligne.startswith("= "):
-            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *\n #import "@local/bootlin-yocto:0.1.0": *\n#import "@local/bootlin-utils:0.1.0": *\n#import "../../typst/local/themeBootlin.typ": *\n#import "../../typst/local/common.typ": *\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\n\nconfig-common(\n  // Compile with `typst c --input handout=1 ...` to generate the handout.\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n=""")
+            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *\n #import "@local/bootlin-yocto:0.1.0": *\n#import "@local/bootlin-utils:0.1.0": *\n#import "../../typst/local/themeBootlin.typ": *\n#import "../../typst/local/common.typ": *\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\n\nconfig-common(\n  // Compile with `typst c --input handout=1 ...` to generate the handout.\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n #show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
+#show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em, radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(9pt)
+  r
+}
+                \n=""")
         ligne = ligne.replace("\\=\\=\\=", "=== ")
         if "```make" in ligne :
             ligne = ligne.replace("```make", "``` make")

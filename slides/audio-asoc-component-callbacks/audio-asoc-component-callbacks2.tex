@@ -1,6 +1,39 @@
-\subsection{ASoC component callbacks}
+#import "@local/bootlin:0.1.0": * 
 
-=== [fragile]{``` snd_soc_dai_ops ```}
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
+config-common(
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\%) 
+
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+
+#show raw.where(lang: "c", block: true): r => \{
+
+set block(fill: luma(240),
+inset: 0.4em,
+radius: 0.5em,
+width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+\} 
+
+== ASoC component callbacks
+
+=== [fragile]{`snd_soc_dai_ops`}
   \begin{block}{#kfile("include/sound/soc-dai.h")}
     \fontsize{9}{9}\selectfont
     \begin{minted}{c}
@@ -30,7 +63,7 @@ struct snd_soc_dai_ops {
   \end{block}
 
 
-=== [fragile]{``` snd_soc_dai_ops ```}
+=== [fragile]{`snd_soc_dai_ops`}
   \begin{block}{#kfile("include/sound/soc-dai.h")}
     \fontsize{9}{9}\selectfont
     \begin{minted}{c}
@@ -60,7 +93,7 @@ struct snd_soc_dai_ops {
   \end{block}
 
 
-=== {``` hw_params ```}
+=== {`hw_params`}
   \begin{itemize}
   \item The most useful callback
   \item It is used to configure the component to match the parameters
@@ -68,26 +101,26 @@ struct snd_soc_dai_ops {
   \item Called when the stream is ready to be played, before any data
     is transferred.
   \item If the requested parameters cannot be supported by the
-    hardware, the ``` hw_params ``` callback can return an error code
+    hardware, the `hw_params` callback can return an error code
     to indicate that the stream cannot be opened. Otherwise, the
     callback returns successfully, and the audio stream can be
     started.
   \end{itemize}
 
 
-=== {``` snd_pcm_hw_params ```}
+=== {`snd_pcm_hw_params`}
   \begin{itemize}
   \item Holds the stream parameters
   \item Usually not accessed directly but through accessors:
     \begin{itemize}
-    \item ``` params_channels ```: the number of channels
-    \item ``` params_rate ```: the sample rate
-    \item ``` params_width ```: the number of bits per sample
+    \item `params_channels`: the number of channels
+    \item `params_rate`: the sample rate
+    \item `params_width`: the number of bits per sample
     \end{itemize}
   \end{itemize}
 
 
-=== [fragile]{``` hw_params ``` example}
+=== [fragile]{`hw_params` example}
   \begin{block}{#kfile("sound/soc/codecs/tlv320aic31xx.c")}
     \fontsize{8}{7}\selectfont
     \begin{minted}{c}
@@ -123,7 +156,7 @@ static int aic31xx_hw_params(struct snd_pcm_substream *substream,
   \end{block}
 
 
-=== [fragile]{``` hw_params ``` example}
+=== [fragile]{`hw_params` example}
   \begin{block}{#kfile("sound/soc/codecs/tlv320aic31xx.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
@@ -151,7 +184,7 @@ static int aic31xx_hw_params(struct snd_pcm_substream *substream,
   to register values.
 
 
-=== {``` set_sysclk ```}
+=== {`set_sysclk`}
   \begin{itemize}
   \item This sets the system clock parameters of the component, in
     particular which one is selected, its frequency and the direction.
@@ -166,7 +199,7 @@ static int aic31xx_hw_params(struct snd_pcm_substream *substream,
 
 
 
-=== [fragile]{``` set_sysclk ``` example}
+=== [fragile]{`set_sysclk` example}
   \begin{block}{}
     \fontsize{6}{6}\selectfont
     \begin{minted}{c}
@@ -209,7 +242,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
   \end{block}
 
 
-=== {``` set_fmt ```}
+=== {`set_fmt`}
   \begin{itemize}
   \item This sets the format of the PCM bus
   \item This is called from the machine driver, using
@@ -234,7 +267,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
   \end{itemize}
 
 
-=== [fragile]{``` set_fmt ```}
+=== [fragile]{`set_fmt`}
   \begin{itemize}
   \item The clock directions can also be set:
     \begin{itemize}
@@ -257,7 +290,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
   \end{itemize}
 
 
-=== [fragile]{``` set_fmt ``` example}
+=== [fragile]{`set_fmt` example}
   \begin{block}{}
     \fontsize{7}{7}\selectfont
     \begin{minted}{c}
@@ -295,12 +328,12 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
   \end{block}
 
 
-=== {``` set_tdm_slot ```}
+=== {`set_tdm_slot`}
   \begin{itemize}
   \item This callback configures the DAI for TDM operation.
-  \item ``` slots ``` is the total number of slots of the TDM stream and
-    ``` slot_width ``` the width of each slot in bit clock cycles.
-  \item ``` tx_mask ``` and ``` rx_mask ``` are bitmasks specifying the
+  \item `slots` is the total number of slots of the TDM stream and
+    `slot_width` the width of each slot in bit clock cycles.
+  \item `tx_mask` and `rx_mask` are bitmasks specifying the
     active slots of the TDM stream for the specified DAI, i.e. which slots the
     DAI should write to or read from. A set bit means the channel is
     active.
@@ -308,11 +341,11 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
     #kfunc("snd_soc_dai_set_tdm_slot")
   \item This allows to explicitly configure mismatching stream and bus
     sample width.
-  \item TDM mode must be disabled when ``` slots ``` is 0.
+  \item TDM mode must be disabled when `slots` is 0.
   \end{itemize}
 
 
-=== {``` trigger ```}
+=== {`trigger`}
   \begin{itemize}
   \item This callback is called when the stream status is updated.
   \item It allows to listen for events.
@@ -332,7 +365,7 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
   \end{itemize}
 
 
-=== {``` trigger ``` example}
+=== {`trigger` example}
   \begin{itemize}
   \item The \href{https://www.ti.com/lit/gpn/pcm1789}{PCM1789}
     needs the system clock, bit clock and frame clock
@@ -343,7 +376,7 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
   \end{itemize}
 
 
-=== [fragile]{``` trigger ``` example}
+=== [fragile]{`trigger` example}
   \begin{block}{#kfile("sound/soc/codecs/pcm1789.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
@@ -374,7 +407,7 @@ static int pcm1789_trigger(struct snd_pcm_substream *substream, int cmd,
   \end{block}
 
 
-=== [fragile]{``` trigger ``` example}
+=== [fragile]{`trigger` example}
   \begin{block}{#kfile("sound/soc/codecs/pcm1789.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
@@ -393,7 +426,7 @@ static void pcm1789_work_queue(struct work_struct *work)
   \end{block}
 
 
-=== {``` set_bias_level ```}
+=== {`set_bias_level`}
   \begin{itemize}
   \item This callback is called by DAPM through
     #kfunc("snd_soc_dapm_set_bias_level") and
@@ -402,22 +435,22 @@ static void pcm1789_work_queue(struct work_struct *work)
   \item It allows to listen for power events.
   \item Available events are:
     \begin{itemize}
-    \item ``` SND_SOC_BIAS_ON ```: Bias is fully on for audio playback
+    \item `SND_SOC_BIAS_ON`: Bias is fully on for audio playback
       and capture operations.
-    \item ``` SND_SOC_BIAS_PREPARE ```: Prepare for audio operations.
+    \item `SND_SOC_BIAS_PREPARE`: Prepare for audio operations.
       Called before DAPM switching for
       stream start and stop operations.
-    \item ``` SND_SOC_BIAS_STANDBY ```: Low power standby state when no
+    \item `SND_SOC_BIAS_STANDBY`: Low power standby state when no
       playback/capture operations are
       in progress. NOTE: The transition time between STANDBY and ON
       should be as fast as possible and no longer than 10ms.
-    \item ``` SND_SOC_BIAS_OFF ```: Power Off. No restrictions on
+    \item `SND_SOC_BIAS_OFF`: Power Off. No restrictions on
       transition times.
     \end{itemize}
   \end{itemize}
 
 
-=== {``` set_bias_level ``` example}
+=== {`set_bias_level` example}
   \begin{itemize}
   \item There are CODECs that won't even listen on the control
     bus until there are clocks on the PCM bus or that will stay
@@ -426,7 +459,7 @@ static void pcm1789_work_queue(struct work_struct *work)
   \end{itemize}
 
 
-=== [fragile]{``` set_bias_level ``` example}
+=== [fragile]{`set_bias_level` example}
   \begin{block}{#kfile("sound/soc/codecs/ssm2518.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}
@@ -456,7 +489,7 @@ static int ssm2518_set_bias_level(struct snd_soc_component *component,
   \end{block}
 
 
-=== [fragile]{``` set_bias_level ``` example}
+=== [fragile]{`set_bias_level` example}
   \begin{block}{#kfile("sound/soc/codecs/ssm2518.c")}
     \fontsize{8}{8}\selectfont
     \begin{minted}{c}

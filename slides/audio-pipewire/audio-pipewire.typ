@@ -1,5 +1,5 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
+ #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
@@ -12,7 +12,30 @@ config-common(
 ))
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+ #show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
+#show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em, radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(9pt)
+  r
+}
 
+#show raw.where(lang: "text", block:true) : r => {
+  set block(fill: luma(240),
+  inset: 0.4em, radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(10.3pt)
+  r
+}
+                
 = PipeWire
 <pipewire>
 == Introduction
@@ -41,19 +64,19 @@ config-common(
 
   - #link("https://jackaudio.org/")[JACK Audio Connection Kit]
 
-- Technical stack: C (``` gnu11 ```), Meson & Ninja
+- Technical stack: C (`gnu11`), Meson & Ninja
 
 ===  Concepts — objects
 
 - The graph state representation is a list of objects.
 
-- That object list is handled by the ``` Core ``` object, hosted by the
+- That object list is handled by the `Core` object, hosted by the
   PipeWire daemon.
 
-- Each connected process is represented by a ``` Client ``` object.
+- Each connected process is represented by a `Client` object.
 
-#columns(gutter: 8pt)[ Example with ``` pw-play audio.wav ``` and ```
-pw-record –target pw-play rec.wav ```:
+#columns(gutter: 8pt)[ Example with `pw-play audio.wav` and `pw-record
+–target pw-play rec.wav`:
 
 ```text
 $ pw-cli ls Core
@@ -92,11 +115,11 @@ $ pw-cli ls Client
 
 - The graph itself is represented by the following object types:
 
-  - A ``` Node ``` processes samples
+  - A `Node` processes samples
 
-  - A ``` Port ``` represents a node input or output
+  - A `Port` represents a node input or output
 
-  - A ``` Link ``` connects an output port with an input port
+  - A `Link` connects an output port with an input port
 
 #align(center, [#image("two-nodes.pdf", height: 40%)]) 
 
@@ -212,7 +235,7 @@ $ pw-cli info 94
 
 ===  Concepts — devices
 
-- Another object type is ``` Device ```. Those map to physical devices, to
+- Another object type is `Device`. Those map to physical devices, to
   which are assigned one or more nodes. Device configuration is done via
   those objects.
 
@@ -231,24 +254,24 @@ $ pw-cli info 94
 
 - Each node keeps two counters:
 
-  + ``` required ```: the number of dependencies on other nodes;
+  + `required`: the number of dependencies on other nodes;
 
-  + ``` pending ```: how many remaining nodes need to be executed before
-    it can run in this cycle. A value of zero means the node can be
-    executed. Its reset value is ``` required ```.
+  + `pending`: how many remaining nodes need to be executed before it
+    can run in this cycle. A value of zero means the node can be
+    executed. Its reset value is `required`.
 
 - Nodes also keep a list of nodes that depend on them (called targets);
-  a node is responsible for decrementing its targets’ ``` pending ```
-  counters and signal them using IPC.
+  a node is responsible for decrementing its targets’ `pending` counters
+  and signal them using IPC.
 
 - See
   #link("https://docs.pipewire.org/page_scheduling.html")[the documentation]
-  for more details. The graph evaluation is implemented by ```
-  pw_context_recalc_graph() ```.
+  for more details. The graph evaluation is implemented by
+  `pw_context_recalc_graph()`.
 
 ===  Concepts — graph execution logic (2)
 
-- The driver node is picked based on the ``` priority.driver ``` property.
+- The driver node is picked based on the `priority.driver` property.
 
 - A good default is to set higher priority to capture driver nodes.
 
@@ -291,20 +314,39 @@ $ pw-cli info 94
 
 - Example modules:
 
-  - ``` module-rt ```: requests realtime scheduling priority using ```
-    setpriority(2) ``` and ``` pthread_setschedparam(3) ```.
+  - `module-rt`: requests realtime scheduling priority using
+    `setpriority(2)` and `pthread_setschedparam(3)`.
 
-  - ``` module-loopback ```: create two virtual loopback nodes.
+  - `module-loopback`: create two virtual loopback nodes.
 
-  - ``` module-protocol-native ```: implements the communication between
-    the daemon and clients.
+  - `module-protocol-native`: implements the communication between the
+    daemon and clients.
 
-  - ``` module-profiler ```: implements the profiling logic, attached to
-    the daemon.
+  - `module-profiler`: implements the profiling logic, attached to the
+    daemon.
 
   - etc.
 
 ===  PipeWire communication protocols — IPC
+
+- `socket(AF_UNIX, SOCK_STREAM, 0)` for communication with the daemon
+  process. The socket is named `pipewire-0` by default or
+  `\$PIPEWIRE_REMOTE`. Directory look-up order:
+
+  + `\$PIPEWIRE_RUNTIME_DIR`
+
+  + `\$XDG_RUNTIME_DIR`
+
+  + `\$USERPROFILE`
+
+- `eventfd(2)` is the wakeup method.
+
+- `memfd_create(2)` is used for sharing multimedia data across related
+  clients (without data going through the daemon).
+
+- PipeWire provides an event-loop implementation that relies upon
+  `epoll(7)`. All clients use it. They also use `signalfd(2)` to handle
+  signals.
 
 ===  PipeWire communication protocols — D-Bus optional dependency
 
@@ -312,14 +354,14 @@ $ pw-cli info 94
 
 - Flatpak permission support through
   #link("https://docs.flatpak.org/en/latest/desktop-integration.html#portals")[ XDG Desktop Portal],
-  see ``` libpipewire-module-portal ```
+  see `libpipewire-module-portal`
 
 - Audio device reservation through the
   #link("https://git.0pointer.net/reserve.git/tree/reserve.txt")[ org.freedesktop.ReserveDevice1],
-  see ``` libwireplumber-module-reserve-device ```
+  see `libwireplumber-module-reserve-device`
 
 - For Bluetooth support through #link("https://www.bluez.org/")[BlueZ],
-  see PipeWire’s ``` libspa-bluez5 ```
+  see PipeWire’s `libspa-bluez5`
 
 == Configuration
 <configuration>
@@ -331,40 +373,34 @@ $ pw-cli info 94
 
 - Look-up order:
 
-  + ``` \$XDG_CONFIG_HOME/pipewire/ ```
-          environment variable, often ``` ~/.config/pipewire/ ``` in distributions
-        item ```\$sysconfdir/pipewire/ ``` 
-    compile-time variable, often ``` /etc/pipewire/ ```
+  + `\$XDG_CONFIG_HOME/pipewire/` 
+    environment variable, often ` /.config/pipewire/` in distributions
 
-  + ``` \$datadir/pipewire/ ```
-          compile-time variable, often ``` /usr/share/pipewire/ ```
-        end{enumerate}
+  + `\$sysconfdir/pipewire/` 
+    compile-time variable, often `/etc/pipewire/`
 
-      end{itemize}
+  + `\$datadir/pipewire/` 
+    compile-time variable, often `/usr/share/pipewire/`
 
+===  Configuration — location (2)
 
+- A client that loads a config file named `client-rt.conf` will load the
+  first file named as such in the above folders, but will also load all
+  config sections from:
 
+  + `\$datadir/pipewire/client-rt.conf.d/`
 
-    ===  {Configuration — location (2)}
-      begin{itemize}
+  + `\$sysconfdir/pipewire/client-rt.conf.d/`
 
-      item A client that loads a config file named ``` client-rt.conf ```
-        will load the first file named as such in the above folders, but
-        will also load all config sections from:
-
-        begin{enumerate}
-        item ```\$datadir/pipewire/client-rt.conf.d/ ```
-
-  + ``` \$sysconfdir/pipewire/client-rt.conf.d/ ```
-        item ```\$XDG_CONFIG_HOME/pipewire/client-rt.conf.d/ ```
+  + `\$XDG_CONFIG_HOME/pipewire/client-rt.conf.d/`
 
 ===  Configuration — sections (1)
 
-- ``` context.properties ``` configures the PipeWire instance.
+- `context.properties` configures the PipeWire instance.
 
-- Most properties target the daemon (``` default.clock.allowed-rates ```,
-  ``` default.clock.max-quantum ```, etc.) but some also apply to other
-  clients (``` log.level ```, ``` mem.mlock-all ```, etc.).
+- Most properties target the daemon (`default.clock.allowed-rates`,
+  `default.clock.max-quantum`, etc.) but some also apply to other
+  clients (`log.level`, `mem.mlock-all`, etc.).
 
 #columns(gutter: 8pt)[
 
@@ -392,8 +428,7 @@ context.properties = {
 
 ===  Configuration — sections (2)
 
-- ``` context.spa-libs ``` maps plugin features with globs to a SPA
-  library.
+- `context.spa-libs` maps plugin features with globs to a SPA library.
 
 - That defines the shared object to be used to implement the given
   factories. A way to look at this is that keys are interfaces used by
@@ -425,18 +460,18 @@ context.spa-libs = {
 
 ===  Configuration — sections (3)
 
-- ``` context.modules ``` is an array of dictionaries. It lists modules to
-  instantiate, with optional arguments (``` args ```), ``` flags ``` and a
-  conditional expression (``` condition ```).
+- `context.modules` is an array of dictionaries. It lists modules to
+  instantiate, with optional arguments (`args`), `flags` and a
+  conditional expression (`condition`).
 
 - A module can be loaded more than once: it will be instantiated
   multiple times.
 
 - Two flags exist to turn panics into warnings:
 
-  + ``` ifexists ``` on unknown modules;
+  + `ifexists` on unknown modules;
 
-  + ``` nofail ``` on module init failures.
+  + `nofail` on module init failures.
 
 #columns(gutter: 8pt)[
 
@@ -457,7 +492,7 @@ context.modules = [
 
 ===  Configuration — sections (4)
 
-- ``` context.modules ``` example:
+- `context.modules` example:
 
 #columns(gutter: 8pt)[
 
@@ -490,14 +525,14 @@ context.modules = [
 
 ===  Configuration — sections (5)
 
-- ``` context.objects ``` is an array of dictionaries. It lists objects
-  that should be statically created by this client. This requires a ```
-  factory ``` to be used and arguments (``` args ```) to be passed to it.
+- `context.objects` is an array of dictionaries. It lists objects that
+  should be statically created by this client. This requires a `factory`
+  to be used and arguments (`args`) to be passed to it.
 
-- As previously, the ``` flags ``` property can configure the reaction to
-  errors. For ``` context.objects ```, only ``` nofail ``` exists.
+- As previously, the `flags` property can configure the reaction to
+  errors. For `context.objects`, only `nofail` exists.
 
-- ``` condition ``` also exists for this section.
+- `condition` also exists for this section.
 
 #columns(gutter: 8pt)[
 
@@ -518,7 +553,7 @@ context.objects = [
 
 ===  Configuration — sections (6)
 
-- ``` context.objects ``` example:
+- `context.objects` example:
 
 #columns(gutter: 8pt)[
 
@@ -545,7 +580,7 @@ context.objects = [
 
 ===  Configuration — sections (7)
 
-- ``` context.exec ``` is an array of dictionaries. Each entry is an
+- `context.exec` is an array of dictionaries. Each entry is an
   executable that will be run on startup of the client as a child
   process.
 
@@ -574,40 +609,39 @@ context.exec = [
 
 == Tools rundown
 <tools-rundown>
-===  Tools rundown — the ``` PIPEWIRE_DEBUG ``` variable
+===  Tools rundown — the `PIPEWIRE_DEBUG` variable
 
-- Every client listens to the ``` PIPEWIRE_DEBUG ``` environment variable
-  which allows overwriting the ``` log.level ``` from the configuration
-  file.
+- Every client listens to the `PIPEWIRE_DEBUG` environment variable
+  which allows overwriting the `log.level` from the configuration file.
 
 - It takes as value the log level:
 
-  - ``` 0 ``` or ``` X ```: No logging is enabled.
+  - `0` or `X`: No logging is enabled.
 
-  - ``` 1 ``` or ``` E ```: Error logging is enabled.
+  - `1` or `E`: Error logging is enabled.
 
-  - ``` 2 ``` or ``` W ```: Warnings are enabled.
+  - `2` or `W`: Warnings are enabled.
 
-  - ``` 3 ``` or ``` I ```: Informational messages are enabled.
+  - `3` or `I`: Informational messages are enabled.
 
-  - ``` 4 ``` or ``` D ```: Debug messages are enabled.
+  - `4` or `D`: Debug messages are enabled.
 
-  - ``` 5 ``` or ``` T ```: Trace messages are enabled.
+  - `5` or `T`: Trace messages are enabled.
 
 - This should be #strong[the first debugging step] to increase verbosity
   and therefore better understand why a PipeWire client is facing
-  issues. Careful with ``` PIPEWIRE_DEBUG=5 ``` which most likely will
-  cause underruns issues. Level 3 is often good enough for debugging.
+  issues. Careful with `PIPEWIRE_DEBUG=5` which most likely will cause
+  underruns issues. Level 3 is often good enough for debugging.
 
-===  Tools rundown — ``` pw-config ```
+===  Tools rundown — `pw-config`
 
-- ``` pw-config ``` is a small utility that allows dumping a given config
+- `pw-config` is a small utility that allows dumping a given config
   file, taking into account its overrides. It is best used to ensure
   config changes are effective and overrides are applied as we expect.
 
-- ``` pw-config paths ``` lists config paths, including overrides.
+- `pw-config paths` lists config paths, including overrides.
 
-- ``` pw-config list ``` details all config sections.
+- `pw-config list` details all config sections.
 
 ```text
 $ pw-config --name custom.conf paths
@@ -618,135 +652,134 @@ $ pw-config --name custom.conf paths
 }
 ```
 
-===  Tools rundown — ``` pw-dump ```
+===  Tools rundown — `pw-dump`
 
-- ``` pw-dump ``` prints the graph as a JSON array of all exported objects
-  known to ``` Core ```.
+- `pw-dump` prints the graph as a JSON array of all exported objects
+  known to `Core`.
 
 - Its main goal is to allow sharing the graph’s overall state when
   reporting a bug or describing a situation.
 
-- Filtering: ``` pw-dump ``` takes a parameter which can be an object type
-  (careful, it must be capitalised), ID or name ( ``` object.path ```, ```
-  object.serial ``` or ``` *.name ```).
+- Filtering: `pw-dump` takes a parameter which can be an object type
+  (careful, it must be capitalised), ID or name ( `object.path`,
+  `object.serial` or `*.name`).
 
 - Its output is rather verbose and for more interactive debugging
-  sessions, ``` pw-cli ``` is more adapted.
+  sessions, `pw-cli` is more adapted.
 
-===  Tools rundown — ``` pw-cli ``` (1)
+===  Tools rundown — `pw-cli` (1)
 
-- ``` pw-cli ``` is the main command-line interface tool to interact with
+- `pw-cli` is the main command-line interface tool to interact with
   PipeWire. It connects to PipeWire as a new client.
 
 - It has two modes: (1) it can either answer to commands given as
-  argument such as ``` pw-cli help ``` and stop afterwards or (2) run in
+  argument such as `pw-cli help` and stop afterwards or (2) run in
   interactive mode when given no argument. In that second mode, it also
   logs new objects that join the core object list.
 
-- ``` pw-cli help ``` lists all existing commands. It includes arguments
+- `pw-cli help` lists all existing commands. It includes arguments
   (inbetween square brackets when optional) and command aliases.
 
-===  Tools rundown — ``` pw-cli ``` (2)
+===  Tools rundown — `pw-cli` (2)
 
 - It can expose many information about the graph:
 
-  - ``` pw-cli ls [<filter>] ``` lists objects with their ID, type and
-    a few of their core properties. ``` <filter> ``` is the same as ```
-    pw-dump ```’s argument.
+  - `pw-cli ls [<filter>]` lists objects with their ID, type and a
+    few of their core properties. `<filter>` is the same as
+    `pw-dump`’s argument.
 
-  - ``` pw-cli info <filter> ``` gives all possible information about a
+  - `pw-cli info <filter>` gives all possible information about a
     given object. That includes all of its properties and params.
 
-  - ``` pw-cli enum-params <filter> <param-id> ``` gives the content
-    of a param associated with an object.
+  - `pw-cli enum-params <filter> <param-id>` gives the content of a
+    param associated with an object.
 
 - But, it also allows modifying objects:
 
-  - ``` pw-cli set-param <filter> <param-id> <param-json> ``` to
-    edit a param value;
+  - `pw-cli set-param <filter> <param-id> <param-json>` to edit a
+    param value;
 
-  - ``` pw-cli permissions <client-id> <object> <permission> ``` to
+  - `pw-cli permissions <client-id> <object> <permission>` to
     modify permissions on a given object.
 
-- As well as creating objects dynamically, that will be hosted by the ```
-  pw-cli ``` client: ``` load-module ```, ``` create-device ```, ```
-  create-node ```, ``` create-link ```.
+- As well as creating objects dynamically, that will be hosted by the
+  `pw-cli` client: `load-module`, `create-device`, `create-node`,
+  `create-link`.
 
-===  Tools rundown — ``` pw-top ```
+===  Tools rundown — `pw-top`
 
-- ``` top ``` for PipeWire.
+- `top` for PipeWire.
 
 - Appropriate tool to get a quick overview of the current graph nodes
   and structure.
 
-- Status: ``` S ``` for stopped and ``` R ``` for running.
+- Status: `S` for stopped and `R` for running.
 
-#align(center, [#image("graph-execution.pdf", height: 50%)]) 
+#align(center, [#image("pw-top.jpeg", height: 50%)]) 
 
-===  Tools rundown — ``` pw-profiler ```
+===  Tools rundown — `pw-profiler`
 
 - Allows profiling of all running nodes: it records many time durations
   while running then generates graphs once the command is stopped.
 
-- Here is an example with a single ``` pw-play ``` node, first started
-  with ``` PIPEWIRE_CONFIG_NAME ``` equal to ``` client.conf ``` then with
-  ``` client-rt.conf ``` on a loaded system.
+- Here is an example with a single `pw-play` node, first started with
+  `PIPEWIRE_CONFIG_NAME` equal to `client.conf` then with
+  `client-rt.conf` on a loaded system.
 
 #align(center, [#image("pw-profiler-scheduling.pdf", height: 50%)])
 #align(center, [#image("pw-profiler-exectime.pdf", height: 50%)])
 
-===  Tools rundown — ``` pw-dot ```
+===  Tools rundown — `pw-dot`
 
-- ``` pw-dot ``` creates a file named ``` pw.dot ``` which is a
+- `pw-dot` creates a file named `pw.dot` which is a
   #link("https://graphviz.org/")[Graphviz] textual graph description
   file
   (#link("https://en.wikipedia.org/wiki/DOT_(graph_description_language)")[DOT]).
 
 - By default, it connects to the PipeWire daemon and creates a graph
   representation of the global objects. It can also work from the output
-  of ``` pw-dump ``` using the ``` –json ``` flag.
+  of `pw-dump` using the `–json` flag.
 
 - That file can be turned into a graphical representation and viewed on
   a host using: 
-  ``` dot -Tsvg pw.dot > pw.svg && xdg-open pw.svg ```
+  `dot -Tsvg pw.dot > pw.svg && xdg-open pw.svg`
 
-===  Tools rundown — ``` pw-cat ```
+===  Tools rundown — `pw-cat`
 
-- Aliased to ``` pw-play ```, ``` pw-record ``` and others, it is a simple
-  tool to play or record media files.
+- Aliased to `pw-play`, `pw-record` and others, it is a simple tool to
+  play or record media files.
 
 - It uses #link("https://libsndfile.github.io/libsndfile/")[libsndfile]
   for a large audio format support.
 
 - It has many options available to control the exposed props and params:
 
-  - ``` –target ``` allows asking to be routed to a given node;
+  - `–target` allows asking to be routed to a given node;
 
-  - ``` –latency ``` asks for a given latency (therefore buffer size);
+  - `–latency` asks for a given latency (therefore buffer size);
 
-  - ``` –quality ``` controls the adaptive resampling;
+  - `–quality` controls the adaptive resampling;
 
-  - ``` –rate ```, ``` –channels ```, ``` –channel-map ```, ``` –format ```, ```
-    –volume ``` are self-describing.
+  - `–rate`, `–channels`, `–channel-map`, `–format`, `–volume` are
+    self-describing.
 
   - etc.
 
 ===  Tools rundown — and a few others
 
-- ``` pw-link ```: it allows listing, creating and deleting links.
+- `pw-link`: it allows listing, creating and deleting links.
 
-- ``` pw-mon ```: it monitors and dumps various events: it prints when a
+- `pw-mon`: it monitors and dumps various events: it prints when a
   global object is added or removed, displays information relative to
-  the ``` Core ```, etc.
+  the `Core`, etc.
 
-- ``` pw-loopback ```: it creates two nodes that act as a virtual
-  loopback.
+- `pw-loopback`: it creates two nodes that act as a virtual loopback.
 
-- ``` pw-metadata ```: it allows editing metadata, which are
-  runtime-writable settings stored by the daemon. The allowed rates and
-  quantum can be controlled at runtime using that method.
+- `pw-metadata`: it allows editing metadata, which are runtime-writable
+  settings stored by the daemon. The allowed rates and quantum can be
+  controlled at runtime using that method.
 
-===  Tools rundown — ``` helvum ``` (1)
+===  Tools rundown — `helvum` (1)
 
 - #link("https://gitlab.freedesktop.org/pipewire/helvum")[Helvum] is a
   real-time 2D patchbay.
@@ -757,7 +790,7 @@ $ pw-config --name custom.conf paths
 
 #align(center, [#image("helvum.jpg", height: 50%)])
 
-===  Tools rundown — ``` helvum ``` (2)
+===  Tools rundown — `helvum` (2)
 
 - Helvum is a GUI software. We can however run it on our host and
   monitor our target if we have networking on the target.
@@ -769,7 +802,7 @@ $ pw-config --name custom.conf paths
 
 #align(center, [#image("helvum-target.pdf", height: 30%)])
 
-===  Tools rundown — ``` helvum ``` (3)
+===  Tools rundown — `helvum` (3)
 
 #columns(gutter: 8pt)[
 
@@ -796,7 +829,7 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 
 - Demo time!
 
-- We will play audio to an ``` alsa-lib ``` device from an audio file.
+- We will play audio to an `alsa-lib` device from an audio file.
 
 - We will let our session manager discover ALSA devices and connect an
   output node to the ALSA sink node.
@@ -807,17 +840,17 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 
   + Start a WirePlumber daemon;
 
-  + Start a ``` pw-play ``` client;
+  + Start a `pw-play` client;
 
-  + Study the graph status using various tools (``` pw-dot ```, ``` pw-top
-    ```, ``` pw-cli ```, etc).
+  + Study the graph status using various tools (`pw-dot`, `pw-top`,
+    `pw-cli`, etc).
 
 ===  Demo 1 — pointers
 
 + Start a PipeWire daemon.
 
-  - Running ``` pipewire ``` without arguments will start a client using
-    ``` pipewire.conf ```, which by default runs in daemon mode.
+  - Running `pipewire` without arguments will start a client using
+    `pipewire.conf`, which by default runs in daemon mode.
 
   - At this state, the graph is rather empty. Objects are mostly modules
     and factories attached to the core client, and the client objects.
@@ -829,14 +862,14 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   - Once started, we can notice that ALSA devices and attached nodes are
     created in the graph.
 
-  - Its log level is controlled using ``` WIREPLUMBER_DEBUG ```.
+  - Its log level is controlled using `WIREPLUMBER_DEBUG`.
 
-+ Start a ``` pw-play ``` client;
++ Start a `pw-play` client;
 
-  - ``` pw-play <file> ```
+  - `pw-play <file>`
 
-+ Study the graph status using various tools (``` pw-dot ```, ``` pw-top
-  ```, ``` pw-cli ```, etc).
++ Study the graph status using various tools (`pw-dot`, `pw-top`,
+  `pw-cli`, etc).
 
 == Demo 2 — PipeWire filter-chains
 <demo-2-pipewire-filter-chains>
@@ -852,33 +885,32 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 
   + Start a client using this config;
 
-  + Update links manually to make ``` pw-play ``` be routed to the effect,
+  + Update links manually to make `pw-play` be routed to the effect,
     then to the ALSA sink node.
 
 ===  Demo 2 — pointers
 
 + To create a new configuration file, for the client hosting the effect.
 
-  - Recent PipeWire versions have a ``` filter-chain.conf ``` example with
+  - Recent PipeWire versions have a `filter-chain.conf` example with
     snippets for various needs (LADSPA with RNNoise, builtin effects,
     etc.).
 
   - When modules spawn objects, they often give their own properties to
     children, and take arguments to set specific properties for each
-    node. See ``` capture.props ``` and ``` playback.props ```.
+    node. See `capture.props` and `playback.props`.
 
 + Start a client using this config.
 
-  - ``` pipewire -c filter-chain.conf ```
+  - `pipewire -c filter-chain.conf`
 
-+ Update links manually to make ``` pw-play ``` be routed to the effect,
-  then to the ALSA sink node.
++ Update links manually to make `pw-play` be routed to the effect, then
+  to the ALSA sink node.
 
   - This can be done using Helvum with its GUI.
 
-  - Otherwise, ``` pw-dot ``` or ``` pw-link –links ``` to get an overview
-    then ``` pw-link <output-port> <input-port> ``` to create a new
-    link.
+  - Otherwise, `pw-dot` or `pw-link –links` to get an overview then
+    `pw-link <output-port> <input-port>` to create a new link.
 
 == WirePlumber
 <wireplumber>
@@ -911,30 +943,29 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 - #strong[WirePlumber] has a default behavior that tries to replicate
   the PulseAudio behavior, i.e. a desktop setup.
 
-- It enumerates and adds ``` Device ``` objects for ALSA, BlueZ and
-  others. It also puts those devices into a best-guess profile.
+- It enumerates and adds `Device` objects for ALSA, BlueZ and others. It
+  also puts those devices into a best-guess profile.
 
 - Those devices get their associated nodes created automatically.
 
 - Audio routing is based on two default nodes:
 
-  - An ``` Audio/Sink ``` node is for applications that want to emit
-    audio. All ``` Output/Audio ``` nodes get routed to it.
+  - An `Audio/Sink` node is for applications that want to emit audio.
+    All `Output/Audio` nodes get routed to it.
 
-  - An ``` Audio/Source ``` node is for applications that require a
-    microphone input. All ``` Input/Audio ``` nodes get routed to it.
+  - An `Audio/Source` node is for applications that require a microphone
+    input. All `Input/Audio` nodes get routed to it.
 
 - Nodes can also request to be routed to:
 
-  + a target node using ``` target.object ``` (for example ``` pw-cat
-    –target ```);
+  + a target node using `target.object` (for example `pw-cat –target`);
 
-  + nothing automatically using ``` node.autoconnect ```. WirePlumber will
-    not create any automatic link, letting any PipeWire client create
-    the desired links;
+  + nothing automatically using `node.autoconnect`. WirePlumber will not
+    create any automatic link, letting any PipeWire client create the
+    desired links;
 
-  + a target node using ``` target.object ``` inside ``` default ```
-    metadata (at runtime).
+  + a target node using `target.object` inside `default` metadata (at
+    runtime).
 
 ===  WirePlumber — configuration (1)
 
@@ -949,14 +980,14 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   passed to scripts, including arrays matching object descriptions to
   behavior for such objects.
 
-- The default configuration is called ``` wireplumber.conf ```, see ```
-  /usr/share/wireplumber/wireplumber.conf ```. Default scripts are
-  located alongside, in ``` scripts/ ```.
+- The default configuration is called `wireplumber.conf`, see
+  `/usr/share/wireplumber/wireplumber.conf`. Default scripts are located
+  alongside, in `scripts/`.
 
 ===  WirePlumber — configuration (2)
 
-- Let’s look at the configuration of the ALSA monitor in ```
-  scripts/monitors/alsa.lua ```:
+- Let’s look at the configuration of the ALSA monitor in
+  `scripts/monitors/alsa.lua`:
 
 ```lua
 -- /usr/share/wireplumber/scripts/monitors/alsa.lua config = {}
@@ -1015,12 +1046,12 @@ monitor.alsa.rules = [
 - That is handled, in PipeWire >= 0.3.83, using two PipeWire daemon
   sockets:
 
-  - Clients joining ``` pipewire-0-manager ``` have full permissions, seen
-    using property ``` pipewire.access = "unrestricted" ```.
+  - Clients joining `pipewire-0-manager` have full permissions, seen
+    using property `pipewire.access = "unrestricted"`.
 
-  - Client joining ``` pipewire-0 ``` must be given permissions by the
-    session manager, i.e. WirePlumber. Propery ``` pipewire.access ``` is
-    ``` "default" ```.
+  - Client joining `pipewire-0` must be given permissions by the session
+    manager, i.e. WirePlumber. Propery `pipewire.access` is
+    `"default"`.
 
 - Permissions can be granted on a per-object-basis for each client. Else
   each client has a default permission assigned to it.
@@ -1034,8 +1065,7 @@ monitor.alsa.rules = [
   #link("https://pipewire.pages.freedesktop.org/wireplumber/policies/software_dsp.html")[documentation]
   about the topic.
 
-- Script implementing this behavior is ``` scripts/node/software-dsp.lua
-  ```.
+- Script implementing this behavior is `scripts/node/software-dsp.lua`.
 
 ===  WirePlumber — DSP filtering on sinks and sources (2)
 
@@ -1085,8 +1115,8 @@ node.software-dsp.rules = [
 
 + Target a specific node.
 
-  - This is done by nodes using ``` target.object ``` (previously ```
-    node.target ```).
+  - This is done by nodes using `target.object` (previously
+    `node.target`).
 
   - It can be a node ID, node name or object path (see WirePlumber
     scripts for the logic).
@@ -1096,30 +1126,29 @@ node.software-dsp.rules = [
 
 + Modify the default playback node.
 
-  - ``` wpctl set-default <id> ``` controls this.
+  - `wpctl set-default <id>` controls this.
 
-  - Nodes must have ``` media.class ``` equal to ``` Audio/Sink ``` (or
-    similar) to appear in this list. That does not include
-    filter-chains, which are handled specifically.
+  - Nodes must have `media.class` equal to `Audio/Sink` (or similar) to
+    appear in this list. That does not include filter-chains, which are
+    handled specifically.
 
 + Have a look at device profiles.
 
-  - Those are params on the device objects. See ``` EnumProfile ``` and ```
-    Profile ```.
+  - Those are params on the device objects. See `EnumProfile` and
+    `Profile`.
 
 == C API
 <c-api>
 ===  C API — introduction
 
-- ``` libpipewire ```: reference implementation, and currently the only
-  one.
+- `libpipewire`: reference implementation, and currently the only one.
 
 - Allows connecting to the daemon as a client.
 
 - Rust bindings:
   #link("https://gitlab.freedesktop.org/pipewire/pipewire-rs")[pipewire-rs].
 
-- See ``` pkg-config ``` for CFLAGS and LDFLAGS:
+- See `pkg-config` for CFLAGS and LDFLAGS:
 
   ```text
   $ pkg-config --cflags --libs libpipewire-0.3
@@ -1159,10 +1188,9 @@ node.software-dsp.rules = [
 
 ===  C API — event-loop
 
-- At the core of each client: an ``` epoll(2) ```-based event-loop is
-  running.
+- At the core of each client: an `epoll(2)`-based event-loop is running.
 
-- ``` pw_main_loop ``` is a wrapper around ``` pw_loop ``` providing a
+- `pw_main_loop` is a wrapper around `pw_loop` providing a
   simple-to-use API.
 
 ```c
@@ -1185,7 +1213,7 @@ int pw_main_loop_quit(struct pw_main_loop *loop);
 
 ===  C API — context
 
-- A ``` pw_context ``` instance is at the heart of the C API. It allows
+- A `pw_context` instance is at the heart of the C API. It allows
   connection to the daemon and it manages locally available resources.
 
 - It does the following:
@@ -1216,20 +1244,19 @@ struct pw_core * pw_context_connect(struct pw_context *context,
 
 - A client starts with two proxies:
 
-  + One pointing to the ``` Core ``` object.
+  + One pointing to the `Core` object.
 
-  + Another one to the global ``` Client ``` object that represents
-    itself.
+  + Another one to the global `Client` object that represents itself.
 
 ===  C API — registry
 
 - The PipeWire daemon handles a list of objects. Those are known as
-  #strong[global] objects and are represented by ``` pw_global ```
+  #strong[global] objects and are represented by `pw_global`
   structures.
 
-- ``` pw_registry ``` is a singleton structure that allows clients to
-  track existing globals. It works by registering a callback to be
-  called on new global object events.
+- `pw_registry` is a singleton structure that allows clients to track
+  existing globals. It works by registering a callback to be called on
+  new global object events.
 
 ```c
 struct pw_registry_events {
@@ -1305,16 +1332,14 @@ int main(int argc, char **argv) {
 ===  C API — node implementations
 
 - Implementing a raw node is not straight-forward, requiring to
-  implement many book-keeping methods (see ``` struct spa_node_methods
-  ```).
+  implement many book-keeping methods (see `struct spa_node_methods`).
 
 - PipeWire provides two abstractions for implementing nodes:
 
-  - ``` pw_filter ```: DSP-type work, works on raw ``` f32 ``` samples,
-    without additional buffering.
+  - `pw_filter`: DSP-type work, works on raw `f32` samples, without
+    additional buffering.
 
-  - ``` pw_stream ```: more high level, it provides the following
-    features:
+  - `pw_stream`: more high level, it provides the following features:
 
     - #strong[Buffering:] a stream can emit more samples than the
       current cycle quantum and those will be buffered.
@@ -1328,11 +1353,11 @@ int main(int argc, char **argv) {
 
 - See example implementations of source nodes:
 
-  - Filter: ``` src/examples/audio-dsp-src.c ```
+  - Filter: `src/examples/audio-dsp-src.c`
 
-  - Stream: ``` src/examples/audio-src.c ```
+  - Stream: `src/examples/audio-src.c`
 
-===  C API — ``` pw_filter ``` process event
+===  C API — `pw_filter` process event
 
 #columns(gutter: 8pt)[
 
@@ -1365,7 +1390,7 @@ static const struct pw_filter_events filter_events = {
 
 ]
 
-===  C API — ``` pw_stream ``` process event
+===  C API — `pw_stream` process event
 
 #columns(gutter: 8pt)[
 
@@ -1427,7 +1452,7 @@ static const struct pw_stream_events stream_events = {
 <going-further>
 ===  Going further
 
-- For MIDI support, see ``` pw-cat –midi ```, ``` pw-mididump ``` and
+- For MIDI support, see `pw-cat –midi`, `pw-mididump` and
   #link("https://docs.pipewire.org/page_midi.html")[the documentation].
 
 - For the PulseAudio compatibility layer, see
@@ -1435,13 +1460,13 @@ static const struct pw_stream_events stream_events = {
   and
   #link("https://docs.pipewire.org/page_pulseaudio.html")[this documentation page].
 
-- For the JACK compatibility layer, look at ``` pw-jack ```.
+- For the JACK compatibility layer, look at `pw-jack`.
 
-- For video support, see many examples in ``` src/examples/ ```.
+- For video support, see many examples in `src/examples/`.
 
-- For audio over IP, see modules ``` roc-* ```, ``` pulse-tunnel ```, ```
-  netjack2-* ```, ``` rtp-* ```, ``` protocol-simple ```, ``` avb ```.
+- For audio over IP, see modules `roc-*`, `pulse-tunnel`,
+  `netjack2-*`, `rtp-*`, `protocol-simple`, `avb`.
 
-- To understand why timer-based audio scheduling (``` tsched ```) is
-  useful, see
+- To understand why timer-based audio scheduling (`tsched`) is useful,
+  see
   #link("https://0pointer.net/blog/projects/pulse-glitch-free.html")[this blog post].

@@ -1,5 +1,5 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
+ #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
@@ -10,12 +10,29 @@ config-common(
   // Compile with `typst c --input handout=1 ...` to generate the handout.
   handout: "handout" in sys.inputs and sys.inputs.handout == "1",
 ))
+#set text(17pt)
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
+#show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 12pt, below: 12pt) 
+  set text(9.5pt)
+  r
+}
+ #show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(9pt)
+  r
+}
 = ASoC
 <asoc>
-===  ASoC ASoC, ALSA System on Chip: is a Linux kernel subsystem
+===  ASoC 
+ASoC, ALSA System on Chip: is a Linux kernel subsystem
 created to provide better ALSA support for system-on-chip and portable
 audio codecs. It allows to reuse codec drivers across multiple
 architectures and provides an API to integrate them with the SoC audio
@@ -45,9 +62,9 @@ chips).
 
 == simple-audio-card
 <simple-audio-card>
-===  simple-card Most sound cards, can now be described
-using device tree. This is done using a sound node with a ```
-simple-audio-card ``` compatible string.
+===  simple-card 
+Most sound cards, can now be described
+using device tree. This is done using a sound node with a ```simple-audio-card ``` compatible string.
 
 - The DT bindings are documented in
   #kfile("Documentation/devicetree/bindings/sound/simple-card.yaml")
@@ -66,7 +83,8 @@ Both required a few changes in the SoC DAI drivers to be usable for
 example to select the audio mode for the SSC on Microchip SoCs or
 configure properly the i.MX audmux.
 
-===  simple-card - example 1 Let’s say we have an ADAU1372
+===  simple-card - example 1 
+Let’s say we have an ADAU1372
 codec connected to an i.Mx6UL SAI. First, enable the SAI and the codec:
 
 ```c
@@ -95,7 +113,8 @@ codec connected to an i.Mx6UL SAI. First, enable the SAI and the codec:
 };
 ```
 
-===  simple-card - example 1 Now, describe the sound card:
+===  simple-card - example 1 
+Now, describe the sound card:
 
 ```c
         sound {
@@ -121,7 +140,8 @@ codec connected to an i.Mx6UL SAI. First, enable the SAI and the codec:
 For convenience, the codec is the producer, it generates both BCLK and
 FSCLK.
 
-===  simple-card - example 2 The ADAU1372 has actually 4
+===  simple-card - example 2 
+The ADAU1372 has actually 4
 channels and can do TDM:
 
 ```c
@@ -149,7 +169,8 @@ channels and can do TDM:
         };
 ```
 
-===  simple-card - example 3 However, the ADAU1372 has an
+===  simple-card - example 3 
+However, the ADAU1372 has an
 hardware issue and doesn’t generate the proper BCLK when doing TDM4 with
 a 32kHz sample rate. The SAI has to be master:
 
@@ -178,7 +199,8 @@ a 32kHz sample rate. The SAI has to be master:
         };
 ```
 
-===  simple-card - example 3 The result is not what is
+===  simple-card - example 3 
+The result is not what is
 expected:
 
 ```console
@@ -205,9 +227,9 @@ expected:
 Indeed, there is no way for the SAI to divide 63529412 to get the proper
 BCLK!
 
-===  device tree - clocks It is possible to reparent clocks
-using ``` assigned-clock-parents ``` and set the clock rate using ```
-assigned-clock-rates ```.
+===  device tree - clocks 
+It is possible to reparent clocks
+using ``` assigned-clock-parents ``` and set the clock rate using ``` assigned-clock-rates```.
 
 ```c
 &sai2 {
@@ -223,10 +245,9 @@ assigned-clock-rates ```.
 Notice that 24.576MHz was selected for the sai input clock as it is not
 able to divide by 3 to obtain the 4.096MHz BCLK.
 
-===  simple-card - example 4 There is a possible cost
-reduction, the SAI is able to output its clock to feed to the codec MCLK
-instead of the crystal:
-
+===  simple-card - example 4
+There is a possible cost reduction, the SAI is able to output its clock to feed to the codec MCLK instead of the crystal:
+#text(0.2em)[
 ```c
 &sai2 {
         pinctrl-names = "default";
@@ -248,13 +269,15 @@ instead of the crystal:
         };
 };
 ```
+]
 
 This replaces the 12.288MHz crystal by the 24.576 MCLK from the SAI.
 This works because the codec has a configurable divider for MCLK and can
 divide by 2. Also the clock parents and rates assignment has moved to
 the codec because of probing order.
 
-===  simple-card - routing It is possible but not mandatory
+===  simple-card - routing 
+It is possible but not mandatory
 to list the actual audio connections present on the board, this is
 called routing. The first step is to define the board connectors, in
 this case two stereo line input jack (Line0 and Line1) and a stereo jack
@@ -267,7 +290,8 @@ output.
                 "Headphone", "Headphone Jack",
 ```
 
-===  simple-card - routing Routing audio from the codec to
+===  simple-card - routing 
+Routing audio from the codec to
 the board connector is then done using ``` simple-audio-card,routing ```
 
 ```c
@@ -285,7 +309,8 @@ know what the codec is providing.
 
 == Machine driver
 <machine-driver>
-===  Machine driver The machine driver registers a
+===  Machine driver 
+The machine driver registers a
 #kstruct("snd_soc_card").
 
 #kfile("include/sound/soc.h")
@@ -451,7 +476,8 @@ static int atmel_asoc_wm8904_probe(struct platform_device *pdev)
 }
 ```
 
-===  Routing After linking the codec driver with the SoC
+===  Routing 
+After linking the codec driver with the SoC
 DAI driver, it is still necessary to define what are the codec outputs
 and inputs that are actually used on the board. This is called routing.
 
@@ -577,7 +603,8 @@ sound {
 };
 ```
 
-===  Routing: codec pins The available codec pins are
+===  Routing: codec pins 
+The available codec pins are
 defined in the codec driver. Look for the ``` SND_SOC_DAPM_INPUT ```
 and ``` SND_SOC_DAPM_OUTPUT ``` definitions.
 
@@ -595,7 +622,8 @@ SND_SOC_DAPM_OUTPUT("HPOUTL"), SND_SOC_DAPM_OUTPUT("HPOUTR"), SND_SOC_DAPM_OUTPU
 };
 ```
 
-===  Routing: board connectors The board connectors are
+===  Routing: board connectors 
+The board connectors are
 defined in the machine driver, in the
 #kstruct("snd_soc_dapm_widget") part of the registered
 #kstruct("snd_soc_card").
@@ -610,7 +638,8 @@ static const struct snd_soc_dapm_widget atmel_asoc_wm8904_dapm_widgets[] = {
 };
 ```
 
-===  Clocking: producer/consumer The producer/consumer
+===  Clocking: producer/consumer 
+The producer/consumer
 relationship is declared part of the ``` .dai_fmt ``` field of
 #kstruct("snd_soc_dai_link").
 
@@ -644,7 +673,8 @@ relationship is declared part of the ``` .dai_fmt ``` field of
                 | SND_SOC_DAIFMT_CBM_CFM,
 ```
 
-===  Clocking: dynamically changing clocks The ``` .ops ```
+===  Clocking: dynamically changing clocks 
+The ``` .ops ```
 member of #kstruct("snd_soc_dai_link") contains useful callbacks.
 
 #kfile("include/sound/soc.h")

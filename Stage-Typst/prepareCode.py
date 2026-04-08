@@ -94,7 +94,7 @@ def prepareDoc():
         if "\\section" not in document:
             document=re.sub(
                 r'\\subsection\{([^}]*)\}',
-                r'#import "@local/bootlin:0.1.0": * \n\n#import "@local/bootlin-yocto:0.1.0": *\n\n#import "@local/bootlin-utils:0.1.0": *\n\n#import "../../typst/local/themeBootlin.typ": *\n\n#import "../../typst/local/common.typ": *\n\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\nconfig-common(\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\\%) \n\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n == \1',
+                r'#import "@local/bootlin:0.1.0": * \n\n#import "@local/bootlin-yocto:0.1.0": *\n\n#import "@local/bootlin-utils:0.1.0": *\n\n#import "../../typst/local/themeBootlin.typ": *\n\n#import "../../typst/local/common.typ": *\n\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\nconfig-common(\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\\%) \n\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n\n#show raw.where(lang: "c", block: true): r => \{\n\nset block(fill: luma(240),\ninset: 0.4em,\nradius: 0.5em,\nwidth: 95\%, breakable: true, above: 12pt, below: 12pt)\n\nset text(11pt)\n\nr\n\n\} \n\n\n#show raw.where(lang: "console", block: true): r => \{\nset block(fill: luma(240),\ninset: 0.4em,\nradius: 0.5em,\nwidth: 95\%, breakable: true, above: 6pt)\nset text(9pt)\nr\n\n\} \n\n == \1',
                 document,
                 count=1
             )
@@ -281,7 +281,7 @@ def prepareDoc():
 
         document = re.sub(
             r'\\code\{([^}]*)\}',
-            r'``` \1 ```',
+            r'`\1`',
             document
         )
 

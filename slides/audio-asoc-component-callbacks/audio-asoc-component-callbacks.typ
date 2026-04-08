@@ -1,21 +1,35 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
+radius:0.5em, width:100%)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+}
 
 == ASoC component callbacks
-<asoc-component-callbacks>
-===  ``` snd_soc_dai_ops ```
+
+===  `snd_soc_dai_ops`
 
 #kfile("include/sound/soc-dai.h")
 
@@ -44,7 +58,7 @@ struct snd_soc_dai_ops {
                 int slots, int slot_width);
 ```
 
-===  ``` snd_soc_dai_ops ```
+===  `snd_soc_dai_ops`
 
 #kfile("include/sound/soc-dai.h")
 
@@ -73,7 +87,7 @@ struct snd_soc_dai_ops {
 };
 ```
 
-===  ``` hw_params ```
+===  `hw_params`
 
 - The most useful callback
 
@@ -84,23 +98,23 @@ struct snd_soc_dai_ops {
   transferred.
 
 - If the requested parameters cannot be supported by the hardware, the
-  ``` hw_params ``` callback can return an error code to indicate that
-  the stream cannot be opened. Otherwise, the callback returns
-  successfully, and the audio stream can be started.
+  `hw_params` callback can return an error code to indicate that the
+  stream cannot be opened. Otherwise, the callback returns successfully,
+  and the audio stream can be started.
 
-===  ``` snd_pcm_hw_params ```
+===  `snd_pcm_hw_params`
 
 - Holds the stream parameters
 
 - Usually not accessed directly but through accessors:
 
-  - ``` params_channels ```: the number of channels
+  - `params_channels`: the number of channels
 
-  - ``` params_rate ```: the sample rate
+  - `params_rate`: the sample rate
 
-  - ``` params_width ```: the number of bits per sample
+  - `params_width`: the number of bits per sample
 
-===  ``` hw_params ``` example
+===  `hw_params` example
 
 #kfile("sound/soc/codecs/tlv320aic31xx.c")
 
@@ -135,7 +149,7 @@ static int aic31xx_hw_params(struct snd_pcm_substream *substream,
         }
 ```
 
-===  ``` hw_params ``` example
+===  `hw_params` example
 
 #kfile("sound/soc/codecs/tlv320aic31xx.c")
 
@@ -163,7 +177,7 @@ CODEC PLLs and clocks properly. The usual ways to achieve that are to
 either do the calculations or prepare an array matching parameters to
 register values.
 
-===  ``` set_sysclk ```
+===  `set_sysclk`
 
 - This sets the system clock parameters of the component, in particular
   which one is selected, its frequency and the direction.
@@ -179,7 +193,7 @@ register values.
 - A component wide version exists, called using
   #kfunc("snd_soc_component_set_sysclk"), very rarely used.
 
-===  ``` set_sysclk ``` example
+===  `set_sysclk` example
 
 ```c
 static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
@@ -219,7 +233,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 }
 ```
 
-===  ``` set_fmt ```
+===  `set_fmt`
 
 - This sets the format of the PCM bus
 
@@ -256,7 +270,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
   - #ksym("SND_SOC_DAIFMT_IB_IF"): invert bit clock + invert
     frame
 
-===  ``` set_fmt ```
+===  `set_fmt`
 
 - The clock directions can also be set:
 
@@ -284,8 +298,7 @@ static int aic31xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
   #define SND_SOC_DAIFMT_CBS_CFS                SND_SOC_DAIFMT_CBC_CFC
   ```
 
-===  ``` set_fmt ``` example
-
+===  `set_fmt` example
 ```c
 static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
                                unsigned int fmt)
@@ -317,19 +330,18 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
                             AIC31XX_IFACE1_DATATYPE_MASK |
                             AIC31XX_IFACE1_MASTER_MASK,
                             iface_reg1);
-```
 
-===  ``` set_tdm_slot ```
+```
+===  `set_tdm_slot`
 
 - This callback configures the DAI for TDM operation.
 
-- ``` slots ``` is the total number of slots of the TDM stream and ```
-  slot_width ``` the width of each slot in bit clock cycles.
+- `slots` is the total number of slots of the TDM stream and
+  `slot_width` the width of each slot in bit clock cycles.
 
-- ``` tx_mask ``` and ``` rx_mask ``` are bitmasks specifying the active
-  slots of the TDM stream for the specified DAI, i.e. which slots the
-  DAI should write to or read from. A set bit means the channel is
-  active.
+- `tx_mask` and `rx_mask` are bitmasks specifying the active slots of
+  the TDM stream for the specified DAI, i.e. which slots the DAI should
+  write to or read from. A set bit means the channel is active.
 
 - This is called from the machine driver, using
   #kfunc("snd_soc_dai_set_tdm_slot")
@@ -337,9 +349,9 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
 - This allows to explicitly configure mismatching stream and bus sample
   width.
 
-- TDM mode must be disabled when ``` slots ``` is 0.
+- TDM mode must be disabled when `slots` is 0.
 
-===  ``` trigger ```
+===  `trigger`
 
 - This callback is called when the stream status is updated.
 
@@ -366,7 +378,7 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
 
   - #ksym("SNDRV_PCM_TRIGGER_DRAIN")
 
-===  ``` trigger ``` example
+===  `trigger` example
 
 - The #link("https://www.ti.com/lit/gpn/pcm1789")[PCM1789] needs the
   system clock, bit clock and frame clock to be synchronized as soon as
@@ -377,7 +389,7 @@ static int aic31xx_set_dai_fmt(struct snd_soc_dai *codec_dai,
 
 - A solution is to reset the device when a stream is played.
 
-===  ``` trigger ``` example
+===  `trigger` example
 
 #kfile("sound/soc/codecs/pcm1789.c")
 
@@ -407,7 +419,7 @@ static int pcm1789_trigger(struct snd_pcm_substream *substream, int cmd,
 }
 ```
 
-===  ``` trigger ``` example
+===  `trigger` example
 
 #kfile("sound/soc/codecs/pcm1789.c")
 
@@ -425,7 +437,7 @@ static void pcm1789_work_queue(struct work_struct *work)
 }
 ```
 
-===  ``` set_bias_level ```
+===  `set_bias_level`
 
 - This callback is called by DAPM through
   #kfunc("snd_soc_dapm_set_bias_level") and
@@ -436,21 +448,21 @@ static void pcm1789_work_queue(struct work_struct *work)
 
 - Available events are:
 
-  - ``` SND_SOC_BIAS_ON ```: Bias is fully on for audio playback and
+  - `SND_SOC_BIAS_ON`: Bias is fully on for audio playback and
     capture operations.
 
-  - ``` SND_SOC_BIAS_PREPARE ```: Prepare for audio operations. Called
+  - `SND_SOC_BIAS_PREPARE`: Prepare for audio operations. Called
     before DAPM switching for stream start and stop operations.
 
-  - ``` SND_SOC_BIAS_STANDBY ```: Low power standby state when no
+  - `SND_SOC_BIAS_STANDBY`: Low power standby state when no
     playback/capture operations are in progress. NOTE: The transition
     time between STANDBY and ON should be as fast as possible and no
     longer than 10ms.
 
-  - ``` SND_SOC_BIAS_OFF ```: Power Off. No restrictions on transition
+  - `SND_SOC_BIAS_OFF`: Power Off. No restrictions on transition
     times.
 
-===  ``` set_bias_level ``` example
+===  `set_bias_level` example
 
 - There are CODECs that won’t even listen on the control bus until there
   are clocks on the PCM bus or that will stay powered off as much as
@@ -458,7 +470,7 @@ static void pcm1789_work_queue(struct work_struct *work)
 
 - A solution is to use regcache.
 
-===  ``` set_bias_level ``` example
+===  `set_bias_level` example
 
 #kfile("sound/soc/codecs/ssm2518.c")
 
@@ -487,7 +499,7 @@ static int ssm2518_set_bias_level(struct snd_soc_component *component,
 }
 ```
 
-===  ``` set_bias_level ``` example
+===  `set_bias_level` example
 
 #kfile("sound/soc/codecs/ssm2518.c")
 

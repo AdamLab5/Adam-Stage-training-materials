@@ -1,10 +1,22 @@
 
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#show raw.where(lang: "c"): r => {
+  set block(fill: luma(240),
+  inset: 1em,
+  radius: 0.5em,
+  width: 100%)
+  show "snd_soc_dapm_widget": strong
+  
+  r
+}
 #set page(
   margin: 1.5cm,
 )
-
+#let texte(body)= [
+  #set text(12pt)
+  #body
+]
 #set text(
   font: "Latin Modern Roman",
   size: 1pt

@@ -1,5 +1,5 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
+ #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
@@ -12,185 +12,109 @@ config-common(
 ))
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+ #show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
+#show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em, radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(14pt)
+  r
+}
+                
+= Troubleshooting
+<troubleshooting>
+===  Troubleshooting: no sound Audio seems to play for the correct
+duration but there is no sound:
 
-= GStreamer
-<gstreamer>
-===  Introduction
+- Unmute `Master` and the relevant controls
 
-- ``` Gstreamer ``` is an open-source multimedia framework that provides a
-  pipeline-based architecture for handling multimedia data such as audio
-  and video.
+- Turn up the volume
 
-- #link("https://gstreamer.freedesktop.org/")
+- Check the codec analog muxing and mixing (use alsamixer)
 
-- ``` GStreamer ``` provides a unified framework for handling various
-  multimedia formats and tasks.
+- Check the amplifier configuration
 
-- It supports a wide range of codecs, formats, and protocols.
+- Check the routing
 
-- Its modular architecture supports plugins and allows the addition of
-  new elements, codecs, and functionality.
+===  Troubleshooting: no sound When trying to play sound but it seems
+stuck:
 
-===  Architecture
+- Check pinmuxing
 
-- ``` GStreamer ``` is object oriented, it adheres to the ``` GObject ```
-  model of ``` GLib 2.0 ```.
+- Check the configured clock directions
 
-- The main object is an ``` Element ```. Each element has a specific
-  function e.g. reading, writing, encoding or decoding data. By chaining
-  elements, its is possible to create a ``` pipeline ``` to achieve a
-  task.
+- Check the producer/consumer configuration
 
-- Elements communicate with each other through ``` pads ```. A pad is a
-  connection point that can be an input (``` sink ```) or output (```
-  source ```). Elements are linked by connecting pads. A pad can restrict
-  the type of data that flows through it. Links are only allowed between
-  two pads when the allowed data types (capabilities) of the two pads
-  are compatible.
+- Check the clocks using an oscilloscope
 
-- A ``` bin ``` is a container for a collection of elements. It can be
-  controlled just like an element
+- Check pinmuxing
 
-- A ``` pipeline ``` is a top level bin. Allowing to control and
-  synchronize all its children.
+- Some SoCs also have more muxing (NXP i.Mx AUDMUX, TI McASP)
 
-===  Example
+===  Troubleshooting: write error
 
-#align(center, [#image("simple-player.png", width: 100%)]) 
-#emph[E]xample of a GStreamer pipeline
+```console
+# aplay test.wav Playing WAVE 'test.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo aplay: pcm_write:1737: write error: Input/output error
+```
 
-===  Plugins
+- Usually caused by an issue in the routing
 
-- Plugins are selfcontained libraries loaded at runtime.
+- Check that the codec driver exposes a stream named "Playback"
 
-- All relevant aspects of plugins can be queried at run-time.
+- Use `vizdapm`: #link("https://github.com/mihais/asoc-tools")
 
-- All the properties can be set using the GObject properties, there is
-  no need for header files.
+===  Troubleshooting: over/underruns
 
-- Core plugins:
+```console
+# aplay test.wav 
+Playing WAVE 'test.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo underrun!!! (at least 1.899 ms long)
+underrun!!! (at least 0.818 ms long)
+underrun!!! (at least 2.912 ms long)
+underrun!!! (at least 8.558 ms long)
+```
 
-  - audiotestsrc, videotestsrc: Generates test audio or video patterns.
+- Usually caused by an imprecise BCLK
 
-  - autoaudiosink, autovideosink: Automatically selects an output and
-    plays audio or displays video.
+- Try to find a better PLL and dividers combination
 
-  - filesrc, filesink: Read from and write to files.
+===  Troubleshooting: going further
 
-  - decodebin: Automatically selects and configures decoders based on
-    media content.
+- Use `speaker-test` to generate audio and play tones.
 
-  - playbin: Automatically plays audio and video from a location
+- Be careful with the 440Hz tone, it may not expose all the errors.
+  Rather play something that is not commonly divisible (e.g. 441Hz)
 
-===  Useful Plugins
+- Generate tone with fade in and fade out as this allows to catch DMA
+  transfer issues more easily.
 
-#align(center)[#table(
-  columns: 3,
-  align: (col, row) => (left,left,left,).at(col),
-  inset: 6pt,
-  [alsasink],
-  [Sink Audio],
-  [Output to a sound card via ALSA],
-  [alsasrc],
-  [Source Audio],
-  [Read from a sound card via ALSA],
-  [audioconvert],
-  [Filter Converter Audio],
-  [Convert audio to different formats],
-  [audiodynamic],
-  [Filter Effect Audio],
-  [Compressor and Expander],
-  [audiolatency],
-  [Audio Util],
-  [Measures the audio latency between the source and the sink],
-  [audioloudnorm],
-  [Filter Effect Audio],
-  [Normalizes perceived loudness of an audio stream],
-  [audiomixmatrix],
-  [Filter Audio],
-  [Mixes a number of input channels into a number of output channels
-  according to a transformation matrix],
-  [audioresample],
-  [Filter Converter Audio],
-  [Resamples audio],
-  [clocksync],
-  [Generic],
-  [Synchronise buffers to the clock],
-  [dtmfdetect],
-  [Filter Analyzer Audio],
-  [This element detects DTMF tones],
-  [dtmfsrc],
-  [Source Audio],
-  [Generates DTMF tones],
-  [jackaudiosink],
-  [Sink Audio],
-  [Output audio to a JACK server],
-  [jackaudiosrc],
-  [Source Audio],
-  [Captures audio from a JACK server],
-)
-]
+===  Troubleshooting: going further
 
-===  Command line tools
+- Have a look at the CPU DAI driver and its callback. In particular:
+  `.set_clkdiv` and `.set_sysclk` to understand how the various clock
+  dividers are setup. `.hw_params` or `.set_dai_fmt` may do some
+  muxing
 
-- ``` gst-inspect-1.0 ``` is a tool that prints out information on
-  GStreamer plugins and elements.
+- Have a look at the codec driver callbacks, `.set_sysclk` as the
+  `clk_id` parameter is codec specific.
 
-- Without any arguments, it prints a list of all plugins and elements it
-  knows about.
+- Remember using a codec as a clock consumer is an uncommon
+  configuration and is probably untested.
 
-- ``` gst-launch-1.0 ``` builds and runs a GStreamer pipeline on GStreamer
-  plugins and elements.
+- When in doubt, use `devmem` or `i2cget`
 
-- It takes a pipeline description as an argument, this is a list of
-  elements separated by exclamation marks (!). Properties may be
-  appended to elements in the form property=value.
+#setupdemoframe([Troubleshooting],[
 
-- ``` gst-launch-1.0 ``` is a tool useful for debugging but shouldn’t be
-  used as a standalone application.
+- Using debugfs to find issues
 
-- For example, to play an ogg file using ALSA: ``` gst-launch-1.0 filesrc
-  location=music.ogg ! oggdemux ! vorbisdec ! audioconvert !
-  audioresample ! alsasink ```
+- Using vizdapm
 
-===  Debugging
-
-- ``` gst-launch-1.0 ``` has a ``` -v ``` option to make it verbose
-
-- GStreamer also uses the ``` GST_DEBUG ``` environment variable. It
-  takes a debug level from 0 (none) to 9 (memdump). This can also be
-  filtered by element and categories. For example, ```
-  GST_DEBUG=2,audiotestsrc:6 ```, will use level 6 for the ```
-  audiotestsrc ``` element, and 2 for all the others.
-
-- When ``` GST_DEBUG_DUMP_DOT_DIR ``` environment variable is set and
-  point to a folder, ``` gst-launch-1.0 ``` will create a ``` .dot ``` file
-  at each state change. ``` graphviz ``` can then be used to generate a
-  graph.
-
-  - ``` gst-launch-1.0 filesrc location=Media/test_32_16.wav !
-    decodebin ! alsasink ```
-
-  - ``` dot -Kfdp -Tpng -o pipeline.png
-    0.00.00.021721659-gst-launch.PAUSED_PLAYING.dot ```
-
-===  Debugging - graph
-
-#align(center, [#image("pipeline.png", height: 80%)]) 
-
-===  Resources
-
-- Documentation:
-  #link("https://gstreamer.freedesktop.org/documentation/"). This
-  includes documentation of the API to write application and plugins.
-
-- Plugin list:
-  #link("https://gstreamer.freedesktop.org/documentation/plugins_doc.html")[https://gstreamer.freedesktop.org/documentation/plugins_doc.html]
-
-#setupdemoframe([Gstreamer],[
-
-- Inspect plugins and elements using ``` gst-inspect ```
-
-- Prepare multiple pipelines with ``` gst-launch ```
+- Using ftrace to trace register writes and DAPM states
 
 ])

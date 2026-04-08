@@ -19,7 +19,7 @@
     \item \href{https://www.freedesktop.org/wiki/Software/PulseAudio/}{PulseAudio}
     \item \href{https://jackaudio.org/}{JACK Audio Connection Kit}
     \end{itemize}
-  \item Technical stack: C (``` gnu11 ```), Meson \& Ninja
+  \item Technical stack: C (`gnu11`), Meson \& Ninja
   \end{itemize}
 
 
@@ -29,15 +29,15 @@
 
   \begin{itemize}
   \item The graph state representation is a list of objects.
-  \item That object list is handled by the ``` Core ``` object, hosted
+  \item That object list is handled by the `Core` object, hosted
     by the PipeWire daemon.
-  \item Each connected process is represented by a ``` Client ``` object.
+  \item Each connected process is represented by a `Client` object.
   \end{itemize}
 
   
 #columns(gutter: 8pt)[
-      Example with ``` pw-play audio.wav ``` and
-      ``` pw-record --target pw-play rec.wav ```:
+      Example with `pw-play audio.wav` and
+      `pw-record --target pw-play rec.wav`:
 
       \begin{block}{}
         \fontsize{8}{8}\selectfont
@@ -85,9 +85,9 @@ $ pw-cli ls Client
   \item The graph itself is represented by the following object types:
 
     \begin{itemize}
-    \item A ``` Node ``` processes samples
-    \item A ``` Port ``` represents a node input or output
-    \item A ``` Link ``` connects an output port with an input port
+    \item A `Node` processes samples
+    \item A `Port` represents a node input or output
+    \item A `Link` connects an output port with an input port
     \end{itemize}
 
   \end{itemize}
@@ -228,7 +228,7 @@ $ pw-cli info 94
 === {Concepts — devices}
   \begin{itemize}
 
-  \item Another object type is ``` Device ```. Those map to physical
+  \item Another object type is `Device`. Those map to physical
     devices, to which are assigned one or more nodes. Device
     configuration is done via those objects.
 
@@ -253,19 +253,19 @@ $ pw-cli info 94
 
   \item Each node keeps two counters:
     \begin{enumerate}
-    \item ``` required ```: the number of dependencies on other nodes;
-    \item ``` pending ```: how many remaining nodes need to be executed
+    \item `required`: the number of dependencies on other nodes;
+    \item `pending`: how many remaining nodes need to be executed
       before it can run in this cycle. A value of zero means the node
-      can be executed. Its reset value is ``` required ```.
+      can be executed. Its reset value is `required`.
     \end{enumerate}
 
   \item Nodes also keep a list of nodes that depend on them (called
     targets); a node is responsible for decrementing its targets'
-    ``` pending ``` counters and signal them using IPC.
+    `pending` counters and signal them using IPC.
 
   \item See \href{https://docs.pipewire.org/page_scheduling.html}{the
     documentation} for more details. The graph evaluation is
-    implemented by ``` pw_context_recalc_graph() ```.
+    implemented by `pw_context_recalc_graph()`.
 
   \end{itemize}
 
@@ -274,7 +274,7 @@ $ pw-cli info 94
 
 === {Concepts — graph execution logic (2)}
   \begin{itemize}
-  \item The driver node is picked based on the ``` priority.driver ``` property.
+  \item The driver node is picked based on the `priority.driver` property.
   \item A good default is to set higher priority to capture driver nodes.
   \end{itemize}
 
@@ -337,12 +337,12 @@ $ pw-cli info 94
   \item Example modules:
 
     \begin{itemize}
-    \item ``` module-rt ```: requests realtime scheduling priority using
-      ``` setpriority(2) ``` and ``` pthread_setschedparam(3) ```.
-    \item ``` module-loopback ```: create two virtual loopback nodes.
-    \item ``` module-protocol-native ```: implements the communication
+    \item `module-rt`: requests realtime scheduling priority using
+      `setpriority(2)` and `pthread_setschedparam(3)`.
+    \item `module-loopback`: create two virtual loopback nodes.
+    \item `module-protocol-native`: implements the communication
       between the daemon and clients.
-    \item ``` module-profiler ```: implements the profiling logic,
+    \item `module-profiler`: implements the profiling logic,
       attached to the daemon.
     \item etc.
     \end{itemize}
@@ -355,20 +355,20 @@ $ pw-cli info 94
 === {PipeWire communication protocols — IPC}
   \begin{itemize}
 
-  \item ``` socket(AF_UNIX, SOCK_STREAM, 0) ``` for communication with
-    the daemon process. The socket is named ``` pipewire-0 ``` by
-    default or ``` $PIPEWIRE_REMOTE ```. Directory look-up order:
+  \item `socket(AF_UNIX, SOCK_STREAM, 0)` for communication with
+    the daemon process. The socket is named `pipewire-0` by
+    default or `\$PIPEWIRE_REMOTE`. Directory look-up order:
     \begin{enumerate}
-    \item ``` $PIPEWIRE_RUNTIME_DIR ```
-    \item ``` $XDG_RUNTIME_DIR ```
-    \item ``` $USERPROFILE ```
+    \item `\$PIPEWIRE_RUNTIME_DIR`
+    \item `\$XDG_RUNTIME_DIR`
+    \item `\$USERPROFILE`
     \end{enumerate}
-  \item ``` eventfd(2) ``` is the wakeup method.
-  \item ``` memfd_create(2) ``` is used for sharing multimedia data
+  \item `eventfd(2)` is the wakeup method.
+  \item `memfd_create(2)` is used for sharing multimedia data
     across related clients (without data going through the daemon).
   \item PipeWire provides an event-loop implementation that relies
-    upon ``` epoll(7) ```. All clients use it. They also use
-    ``` signalfd(2) ``` to handle signals.
+    upon `epoll(7)`. All clients use it. They also use
+    `signalfd(2)` to handle signals.
 
   \end{itemize}
 
@@ -381,14 +381,14 @@ $ pw-cli info 94
   \item Happens on the session bus
   \item Flatpak permission support through
     \href{https://docs.flatpak.org/en/latest/desktop-integration.html\#portals}{
-    XDG Desktop Portal}, see ``` libpipewire-module-portal ```
+    XDG Desktop Portal}, see `libpipewire-module-portal`
   \item Audio device reservation through the
     \href{https://git.0pointer.net/reserve.git/tree/reserve.txt}{
     org.freedesktop.ReserveDevice1}, see
-    ``` libwireplumber-module-reserve-device ```
+    `libwireplumber-module-reserve-device`
   \item For Bluetooth support through
     \href{https://www.bluez.org/}{BlueZ}, see PipeWire's
-    ``` libspa-bluez5 ```
+    `libspa-bluez5`
 
   \end{itemize}
 
@@ -408,12 +408,12 @@ $ pw-cli info 94
 
   \item Look-up order:
     \begin{enumerate}
-    \item ``` $XDG_CONFIG_HOME/pipewire/ ```\\
-      environment variable, often ``` ~/.config/pipewire/ ``` in distributions
-    \item ``` $sysconfdir/pipewire/ ```\\
-      compile-time variable, often ``` /etc/pipewire/ ```
-    \item ``` $datadir/pipewire/ ```\\
-      compile-time variable, often ``` /usr/share/pipewire/ ```
+    \item `\$XDG_CONFIG_HOME/pipewire/`\\
+      environment variable, often `~/.config/pipewire/` in distributions
+    \item `\$sysconfdir/pipewire/`\\
+      compile-time variable, often `/etc/pipewire/`
+    \item `\$datadir/pipewire/`\\
+      compile-time variable, often `/usr/share/pipewire/`
     \end{enumerate}
 
   \end{itemize}
@@ -424,14 +424,14 @@ $ pw-cli info 94
 === {Configuration — location (2)}
   \begin{itemize}
 
-  \item A client that loads a config file named ``` client-rt.conf ```
+  \item A client that loads a config file named `client-rt.conf`
     will load the first file named as such in the above folders, but
     will also load all config sections from:
 
     \begin{enumerate}
-    \item ``` $datadir/pipewire/client-rt.conf.d/ ```
-    \item ``` $sysconfdir/pipewire/client-rt.conf.d/ ```
-    \item ``` $XDG_CONFIG_HOME/pipewire/client-rt.conf.d/ ```
+    \item `\$datadir/pipewire/client-rt.conf.d/`
+    \item `\$sysconfdir/pipewire/client-rt.conf.d/`
+    \item `\$XDG_CONFIG_HOME/pipewire/client-rt.conf.d/`
     \end{enumerate}
 
   \end{itemize}
@@ -442,12 +442,12 @@ $ pw-cli info 94
 === [fragile]{Configuration — sections (1)}
 
   \begin{itemize}
-  \item ``` context.properties ``` configures the PipeWire instance.
+  \item `context.properties` configures the PipeWire instance.
 
   \item Most properties target the daemon
-    (``` default.clock.allowed-rates ```,
-    ``` default.clock.max-quantum ```, etc.) but some also apply to
-    other clients (``` log.level ```, ``` mem.mlock-all ```, etc.).
+    (`default.clock.allowed-rates`,
+    `default.clock.max-quantum`, etc.) but some also apply to
+    other clients (`log.level`, `mem.mlock-all`, etc.).
   \end{itemize}
 
   
@@ -482,7 +482,7 @@ context.properties = {
 === [fragile]{Configuration — sections (2)}
 
   \begin{itemize}
-  \item ``` context.spa-libs ``` maps plugin features with globs to a SPA
+  \item `context.spa-libs` maps plugin features with globs to a SPA
     library.
   \item That defines the shared object to be used to implement the
     given factories. A way to look at this is that keys are interfaces
@@ -522,9 +522,9 @@ context.spa-libs = {
 
   \begin{itemize}
 
-  \item ``` context.modules ``` is an array of dictionaries. It lists
-    modules to instantiate, with optional arguments (``` args ```),
-    ``` flags ``` and a conditional expression (``` condition ```).
+  \item `context.modules` is an array of dictionaries. It lists
+    modules to instantiate, with optional arguments (`args`),
+    `flags` and a conditional expression (`condition`).
 
   \item A module can be loaded more than once: it will be instantiated
     multiple times.
@@ -532,8 +532,8 @@ context.spa-libs = {
   \item Two flags exist to turn panics into warnings:
 
     \begin{enumerate}
-    \item ``` ifexists ``` on unknown modules;
-    \item ``` nofail ``` on module init failures.
+    \item `ifexists` on unknown modules;
+    \item `nofail` on module init failures.
     \end{enumerate}
 
   \end{itemize}
@@ -563,7 +563,7 @@ context.modules = [
 === [fragile]{Configuration — sections (4)}
 
   \begin{itemize}
-  \item ``` context.modules ``` example:
+  \item `context.modules` example:
   \end{itemize}
 
   
@@ -604,16 +604,16 @@ context.modules = [
 
   \begin{itemize}
 
-  \item ``` context.objects ``` is an array of dictionaries. It lists
+  \item `context.objects` is an array of dictionaries. It lists
     objects that should be statically created by this client. This
-    requires a ``` factory ``` to be used and arguments (``` args ```) to
+    requires a `factory` to be used and arguments (`args`) to
     be passed to it.
 
-  \item As previously, the ``` flags ``` property can configure the
-    reaction to errors. For ``` context.objects ```, only ``` nofail ```
+  \item As previously, the `flags` property can configure the
+    reaction to errors. For `context.objects`, only `nofail`
     exists.
 
-  \item ``` condition ``` also exists for this section.
+  \item `condition` also exists for this section.
 
   \end{itemize}
 
@@ -642,7 +642,7 @@ context.objects = [
 === [fragile]{Configuration — sections (6)}
 
   \begin{itemize}
-  \item ``` context.objects ``` example:
+  \item `context.objects` example:
   \end{itemize}
 
   
@@ -677,7 +677,7 @@ context.objects = [
 
   \begin{itemize}
 
-  \item ``` context.exec ``` is an array of dictionaries. Each entry
+  \item `context.exec` is an array of dictionaries. Each entry
     is an executable that will be run on startup of the client as a
     child process.
 
@@ -716,27 +716,27 @@ context.exec = [
 
 
 
-=== {Tools rundown — the ``` PIPEWIRE_DEBUG ``` variable}
+=== {Tools rundown — the `PIPEWIRE_DEBUG` variable}
   \begin{itemize}
 
-  \item Every client listens to the ``` PIPEWIRE_DEBUG ``` environment
-    variable which allows overwriting the ``` log.level ``` from the
+  \item Every client listens to the `PIPEWIRE_DEBUG` environment
+    variable which allows overwriting the `log.level` from the
     configuration file.
 
   \item It takes as value the log level:
 
     \begin{itemize}
-    \item ``` 0 ``` or ``` X ```: No logging is enabled.
-    \item ``` 1 ``` or ``` E ```: Error logging is enabled.
-    \item ``` 2 ``` or ``` W ```: Warnings are enabled.
-    \item ``` 3 ``` or ``` I ```: Informational messages are enabled.
-    \item ``` 4 ``` or ``` D ```: Debug messages are enabled.
-    \item ``` 5 ``` or ``` T ```: Trace messages are enabled.
+    \item `0` or `X`: No logging is enabled.
+    \item `1` or `E`: Error logging is enabled.
+    \item `2` or `W`: Warnings are enabled.
+    \item `3` or `I`: Informational messages are enabled.
+    \item `4` or `D`: Debug messages are enabled.
+    \item `5` or `T`: Trace messages are enabled.
     \end{itemize}
 
   \item This should be \textbf{the first debugging step} to increase
     verbosity and therefore better understand why a PipeWire client is
-    facing issues. Careful with ``` PIPEWIRE_DEBUG=5 ``` which most
+    facing issues. Careful with `PIPEWIRE_DEBUG=5` which most
     likely will cause underruns issues. Level 3 is often good enough
     for debugging.
 
@@ -745,17 +745,17 @@ context.exec = [
 
 
 
-=== [fragile]{Tools rundown — ``` pw-config ```}
+=== [fragile]{Tools rundown — `pw-config`}
   \begin{itemize}
 
-  \item ``` pw-config ``` is a small utility that allows dumping a given
+  \item `pw-config` is a small utility that allows dumping a given
     config file, taking into account its overrides. It is best used to
     ensure config changes are effective and overrides are applied as we
     expect.
 
-  \item ``` pw-config paths ``` lists config paths, including overrides.
+  \item `pw-config paths` lists config paths, including overrides.
 
-  \item ``` pw-config list ``` details all config sections.
+  \item `pw-config list` details all config sections.
 
   \end{itemize}
 
@@ -774,39 +774,39 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` pw-dump ```}
+=== {Tools rundown — `pw-dump`}
   \begin{itemize}
 
-  \item ``` pw-dump ``` prints the graph as a JSON array of all exported
-    objects known to ``` Core ```.
+  \item `pw-dump` prints the graph as a JSON array of all exported
+    objects known to `Core`.
 
   \item Its main goal is to allow sharing the graph’s overall state
     when reporting a bug or describing a situation.
 
-  \item Filtering: ``` pw-dump ``` takes a parameter which can be an
+  \item Filtering: `pw-dump` takes a parameter which can be an
     object type (careful, it must be capitalised), ID or name (
-    ``` object.path ```, ``` object.serial ``` or ``` *.name ```).
+    `object.path`, `object.serial` or `*.name`).
 
   \item Its output is rather verbose and for more interactive debugging
-    sessions, ``` pw-cli ``` is more adapted.
+    sessions, `pw-cli` is more adapted.
 
   \end{itemize}
 
 
 
 
-=== {Tools rundown — ``` pw-cli ``` (1)}
+=== {Tools rundown — `pw-cli` (1)}
   \begin{itemize}
 
-  \item ``` pw-cli ``` is the main command-line interface tool to
+  \item `pw-cli` is the main command-line interface tool to
     interact with PipeWire. It connects to PipeWire as a new client.
 
   \item It has two modes: (1) it can either answer to commands given as
-    argument such as ``` pw-cli help ``` and stop afterwards or (2) run
+    argument such as `pw-cli help` and stop afterwards or (2) run
     in interactive mode when given no argument. In that second mode, it
     also logs new objects that join the core object list.
 
-  \item ``` pw-cli help ``` lists all existing commands. It includes
+  \item `pw-cli help` lists all existing commands. It includes
     arguments (inbetween square brackets when optional) and command
     aliases.
 
@@ -815,22 +815,22 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` pw-cli ``` (2)}
+=== {Tools rundown — `pw-cli` (2)}
   \begin{itemize}
 
   \item It can expose many information about the graph:
 
     \begin{itemize}
 
-    \item ``` pw-cli ls [<filter>] ``` lists objects with their ID,
-      type and a few of their core properties. ``` <filter> ``` is the
-      same as ``` pw-dump ```'s argument.
+    \item `pw-cli ls [<filter>]` lists objects with their ID,
+      type and a few of their core properties. `<filter>` is the
+      same as `pw-dump`'s argument.
 
-    \item ``` pw-cli info <filter> ``` gives all possible
+    \item `pw-cli info <filter>` gives all possible
       information about a given object. That includes all of its
       properties and params.
 
-    \item ``` pw-cli enum-params <filter> <param-id> ``` gives the
+    \item `pw-cli enum-params <filter> <param-id>` gives the
       content of a param associated with an object.
 
     \end{itemize}
@@ -838,30 +838,30 @@ $ pw-config --name custom.conf paths
   \item But, it also allows modifying objects:
 
     \begin{itemize}
-    \item ``` pw-cli set-param <filter> <param-id> <param-json> ``` to
+    \item `pw-cli set-param <filter> <param-id> <param-json>` to
       edit a param value;
-    \item ``` pw-cli permissions <client-id> <object> <permission> ```
+    \item `pw-cli permissions <client-id> <object> <permission>`
       to modify permissions on a given object.
     \end{itemize}
 
   \item As well as creating objects dynamically, that will be hosted by
-    the ``` pw-cli ``` client: ``` load-module ```, ``` create-device ```,
-    ``` create-node ```, ``` create-link ```.
+    the `pw-cli` client: `load-module`, `create-device`,
+    `create-node`, `create-link`.
 
   \end{itemize}
 
 
 
 
-=== {Tools rundown — ``` pw-top ```}
+=== {Tools rundown — `pw-top`}
   \begin{itemize}
 
-  \item ``` top ``` for PipeWire.
+  \item `top` for PipeWire.
 
   \item Appropriate tool to get a quick overview of the current graph
     nodes and structure.
 
-  \item Status: ``` S ``` for stopped and ``` R ``` for running.
+  \item Status: `S` for stopped and `R` for running.
 
   \end{itemize}
 
@@ -872,16 +872,16 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` pw-profiler ```}
+=== {Tools rundown — `pw-profiler`}
   \begin{itemize}
 
   \item Allows profiling of all running nodes: it records many time
     durations while running then generates graphs once the command is
     stopped.
 
-  \item Here is an example with a single ``` pw-play ``` node, first
-    started with ``` PIPEWIRE_CONFIG_NAME ``` equal to
-    ``` client.conf ``` then with ``` client-rt.conf ``` on a loaded
+  \item Here is an example with a single `pw-play` node, first
+    started with `PIPEWIRE_CONFIG_NAME` equal to
+    `client.conf` then with `client-rt.conf` on a loaded
     system.
 
   \end{itemize}
@@ -894,29 +894,29 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` pw-dot ```}
+=== {Tools rundown — `pw-dot`}
   \begin{itemize}
 
-  \item ``` pw-dot ``` creates a file named ``` pw.dot ``` which is a
+  \item `pw-dot` creates a file named `pw.dot` which is a
     \href{https://graphviz.org/}{Graphviz} textual graph description
     file (\href{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}{DOT}).
 
   \item By default, it connects to the PipeWire daemon and creates a
     graph representation of the global objects. It can also work from
-    the output of ``` pw-dump ``` using the ``` --json ``` flag.
+    the output of `pw-dump` using the `--json` flag.
 
   \item That file can be turned into a graphical representation and
-    viewed on a host using:\\``` dot -Tsvg pw.dot > pw.svg && xdg-open pw.svg ```
+    viewed on a host using:\\`dot -Tsvg pw.dot > pw.svg && xdg-open pw.svg`
 
   \end{itemize}
 
 
 
 
-=== {Tools rundown — ``` pw-cat ```}
+=== {Tools rundown — `pw-cat`}
   \begin{itemize}
 
-  \item Aliased to ``` pw-play ```, ``` pw-record ``` and others, it is a
+  \item Aliased to `pw-play`, `pw-record` and others, it is a
     simple tool to play or record media files.
 
   \item It uses \href{https://libsndfile.github.io/libsndfile/}{libsndfile}
@@ -926,11 +926,11 @@ $ pw-config --name custom.conf paths
     params:
 
     \begin{itemize}
-    \item ``` --target ``` allows asking to be routed to a given node;
-    \item ``` --latency ``` asks for a given latency (therefore buffer size);
-    \item ``` --quality ``` controls the adaptive resampling;
-    \item ``` --rate ```, ``` --channels ```, ``` --channel-map ```,
-      ``` --format ```, ``` --volume ``` are self-describing.
+    \item `--target` allows asking to be routed to a given node;
+    \item `--latency` asks for a given latency (therefore buffer size);
+    \item `--quality` controls the adaptive resampling;
+    \item `--rate`, `--channels`, `--channel-map`,
+      `--format`, `--volume` are self-describing.
     \item etc.
     \end{itemize}
 
@@ -942,16 +942,16 @@ $ pw-config --name custom.conf paths
 === {Tools rundown — and a few others}
   \begin{itemize}
 
-  \item ``` pw-link ```: it allows listing, creating and deleting links.
+  \item `pw-link`: it allows listing, creating and deleting links.
 
-  \item ``` pw-mon ```: it monitors and dumps various events: it prints
+  \item `pw-mon`: it monitors and dumps various events: it prints
     when a global object is added or removed, displays information
-    relative to the ``` Core ```, etc.
+    relative to the `Core`, etc.
 
-  \item ``` pw-loopback ```: it creates two nodes that act as a virtual
+  \item `pw-loopback`: it creates two nodes that act as a virtual
     loopback.
 
-  \item ``` pw-metadata ```: it allows editing metadata, which are
+  \item `pw-metadata`: it allows editing metadata, which are
     runtime-writable settings stored by the daemon. The allowed rates
     and quantum can be controlled at runtime using that method.
 
@@ -960,7 +960,7 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` helvum ``` (1)}
+=== {Tools rundown — `helvum` (1)}
   \begin{itemize}
 
   \item \href{https://gitlab.freedesktop.org/pipewire/helvum}{Helvum}
@@ -979,7 +979,7 @@ $ pw-config --name custom.conf paths
 
 
 
-=== {Tools rundown — ``` helvum ``` (2)}
+=== {Tools rundown — `helvum` (2)}
   \begin{itemize}
 
   \item Helvum is a GUI software. We can however run it on our host and
@@ -1001,7 +1001,7 @@ $ pw-config --name custom.conf paths
 
 
 
-=== [fragile]{Tools rundown — ``` helvum ``` (3)}
+=== [fragile]{Tools rundown — `helvum` (3)}
   
 #columns(gutter: 8pt)[
     \begin{block}{}
@@ -1035,7 +1035,7 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 
   \item Demo time!
 
-  \item We will play audio to an ``` alsa-lib ``` device from an audio
+  \item We will play audio to an `alsa-lib` device from an audio
     file.
 
   \item We will let our session manager discover ALSA devices and
@@ -1046,9 +1046,9 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
     \begin{enumerate}
     \item Start a PipeWire daemon;
     \item Start a WirePlumber daemon;
-    \item Start a ``` pw-play ``` client;
-    \item Study the graph status using various tools (``` pw-dot ```,
-      ``` pw-top ```, ``` pw-cli ```, etc).
+    \item Start a `pw-play` client;
+    \item Study the graph status using various tools (`pw-dot`,
+      `pw-top`, `pw-cli`, etc).
     \end{enumerate}
 
   \end{itemize}
@@ -1062,8 +1062,8 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   \item Start a PipeWire daemon.
 
     \begin{itemize}
-    \item Running ``` pipewire ``` without arguments will start a client
-      using ``` pipewire.conf ```, which by default runs in daemon mode.
+    \item Running `pipewire` without arguments will start a client
+      using `pipewire.conf`, which by default runs in daemon mode.
     \item At this state, the graph is rather empty. Objects are mostly
       modules and factories attached to the core client, and the
       client objects.
@@ -1074,17 +1074,17 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
     \item It also picks its config automatically, no arguments required.
     \item Once started, we can notice that ALSA devices and attached
       nodes are created in the graph.
-    \item Its log level is controlled using ``` WIREPLUMBER_DEBUG ```.
+    \item Its log level is controlled using `WIREPLUMBER_DEBUG`.
     \end{itemize}
 
-  \item Start a ``` pw-play ``` client;
+  \item Start a `pw-play` client;
 
     \begin{itemize}
-    \item ``` pw-play <file> ```
+    \item `pw-play <file>`
     \end{itemize}
 
-  \item Study the graph status using various tools (``` pw-dot ```,
-      ``` pw-top ```, ``` pw-cli ```, etc).
+  \item Study the graph status using various tools (`pw-dot`,
+      `pw-top`, `pw-cli`, etc).
 
   \end{enumerate}
 
@@ -1106,7 +1106,7 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
     \begin{enumerate}
     \item To create a new configuration file, for the client hosting the effect;
     \item Start a client using this config;
-    \item Update links manually to make ``` pw-play ``` be routed to the
+    \item Update links manually to make `pw-play` be routed to the
       effect, then to the ALSA sink node.
     \end{enumerate}
 
@@ -1121,29 +1121,29 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   \item To create a new configuration file, for the client hosting the effect.
 
     \begin{itemize}
-    \item Recent PipeWire versions have a ``` filter-chain.conf ```
+    \item Recent PipeWire versions have a `filter-chain.conf`
       example with snippets for various needs (LADSPA with RNNoise,
       builtin effects, etc.).
     \item When modules spawn objects, they often give their own
       properties to children, and take arguments to set specific
-      properties for each node. See ``` capture.props ``` and
-      ``` playback.props ```.
+      properties for each node. See `capture.props` and
+      `playback.props`.
     \end{itemize}
 
   \item Start a client using this config.
 
     \begin{itemize}
-    \item ``` pipewire -c filter-chain.conf ```
+    \item `pipewire -c filter-chain.conf`
     \end{itemize}
 
-  \item Update links manually to make ``` pw-play ``` be routed to the
+  \item Update links manually to make `pw-play` be routed to the
     effect, then to the ALSA sink node.
 
     \begin{itemize}
     \item This can be done using Helvum with its GUI.
     \item Otherwise,
-      ``` pw-dot ``` or ``` pw-link --links ``` to get an overview then
-      ``` pw-link <output-port> <input-port> ``` to create a new link.
+      `pw-dot` or `pw-link --links` to get an overview then
+      `pw-link <output-port> <input-port>` to create a new link.
     \end{itemize}
 
   \end{enumerate}
@@ -1193,7 +1193,7 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   \item \textbf{WirePlumber} has a default behavior that tries to
     replicate the PulseAudio behavior, i.e. a desktop setup.
 
-  \item It enumerates and adds ``` Device ``` objects for ALSA, BlueZ
+  \item It enumerates and adds `Device` objects for ALSA, BlueZ
     and others. It also puts those devices into a best-guess profile.
 
   \item Those devices get their associated nodes created automatically.
@@ -1201,21 +1201,21 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
   \item Audio routing is based on two default nodes:
 
     \begin{itemize}
-    \item An ``` Audio/Sink ``` node is for applications that want to
-      emit audio. All ``` Output/Audio ``` nodes get routed to it.
-    \item An ``` Audio/Source ``` node is for applications that require a
-      microphone input. All ``` Input/Audio ``` nodes get routed to it.
+    \item An `Audio/Sink` node is for applications that want to
+      emit audio. All `Output/Audio` nodes get routed to it.
+    \item An `Audio/Source` node is for applications that require a
+      microphone input. All `Input/Audio` nodes get routed to it.
     \end{itemize}
 
   \item Nodes can also request to be routed to:
 
     \begin{enumerate}
-    \item a target node using ``` target.object ``` (for example
-      ``` pw-cat --target ```);
-    \item nothing automatically using ``` node.autoconnect ```.
+    \item a target node using `target.object` (for example
+      `pw-cat --target`);
+    \item nothing automatically using `node.autoconnect`.
       WirePlumber will not create any automatic link, letting any
       PipeWire client create the desired links;
-    \item a target node using ``` target.object ``` inside ``` default ```
+    \item a target node using `target.object` inside `default`
       metadata (at runtime).
     \end{enumerate}
 
@@ -1239,9 +1239,9 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
     to scripts, including arrays matching object descriptions to behavior for
     such objects.
 
-  \item The default configuration is called ``` wireplumber.conf ```, see
-    ``` /usr/share/wireplumber/wireplumber.conf ```. Default scripts are located
-    alongside, in ``` scripts/ ```.
+  \item The default configuration is called `wireplumber.conf`, see
+    `/usr/share/wireplumber/wireplumber.conf`. Default scripts are located
+    alongside, in `scripts/`.
 
   \end{itemize}
 
@@ -1251,7 +1251,7 @@ PIPEWIRE_RUNTIME_DIR=/tmp helvum
 === [fragile]{WirePlumber — configuration (2)}
   \begin{itemize}
   \item Let's look at the configuration of the ALSA monitor
-    in ``` scripts/monitors/alsa.lua ```:
+    in `scripts/monitors/alsa.lua`:
   \end{itemize}
 
     \begin{block}{}
@@ -1332,11 +1332,11 @@ monitor.alsa.rules = [
   \item That is handled, in PipeWire >= 0.3.83, using two PipeWire daemon sockets:
 
     \begin{itemize}
-    \item Clients joining ``` pipewire-0-manager ``` have full permissions, seen
-      using property ``` pipewire.access = "unrestricted" ```.
-    \item Client joining ``` pipewire-0 ``` must be given permissions by the
-      session manager, i.e. WirePlumber. Propery ``` pipewire.access ``` is
-      ``` "default" ```.
+    \item Clients joining `pipewire-0-manager` have full permissions, seen
+      using property `pipewire.access = "unrestricted"`.
+    \item Client joining `pipewire-0` must be given permissions by the
+      session manager, i.e. WirePlumber. Propery `pipewire.access` is
+      `"default"`.
     \end{itemize}
 
   \item Permissions can be granted on a per-object-basis for each client. Else
@@ -1357,7 +1357,7 @@ monitor.alsa.rules = [
     \href{https://pipewire.pages.freedesktop.org/wireplumber/policies/software_dsp.html}{documentation}
     about the topic.
 
-  \item Script implementing this behavior is ``` scripts/node/software-dsp.lua ```.
+  \item Script implementing this behavior is `scripts/node/software-dsp.lua`.
 
   \end{itemize}
 
@@ -1439,8 +1439,8 @@ node.software-dsp.rules = [
   \item Target a specific node.
 
     \begin{itemize}
-    \item This is done by nodes using ``` target.object ``` (previously
-      ``` node.target ```).
+    \item This is done by nodes using `target.object` (previously
+      `node.target`).
     \item It can be a node ID, node name or object path (see
       WirePlumber scripts for the logic).
     \item A node's properties are controlled when spawning it, so by
@@ -1450,8 +1450,8 @@ node.software-dsp.rules = [
   \item Modify the default playback node.
 
     \begin{itemize}
-    \item ``` wpctl set-default <id> ``` controls this.
-    \item Nodes must have ``` media.class ``` equal to ``` Audio/Sink ```
+    \item `wpctl set-default <id>` controls this.
+    \item Nodes must have `media.class` equal to `Audio/Sink`
       (or similar) to appear in this list. That does not include filter-chains,
       which are handled specifically.
     \end{itemize}
@@ -1459,8 +1459,8 @@ node.software-dsp.rules = [
   \item Have a look at device profiles.
 
     \begin{itemize}
-    \item Those are params on the device objects. See ``` EnumProfile ```
-      and ``` Profile ```.
+    \item Those are params on the device objects. See `EnumProfile`
+      and `Profile`.
     \end{itemize}
 
   \end{enumerate}
@@ -1475,14 +1475,14 @@ node.software-dsp.rules = [
 === [fragile]{C API — introduction}
   \begin{itemize}
 
-  \item ``` libpipewire ```: reference implementation, and currently the only one.
+  \item `libpipewire`: reference implementation, and currently the only one.
 
   \item Allows connecting to the daemon as a client.
 
   \item Rust bindings:
     \href{https://gitlab.freedesktop.org/pipewire/pipewire-rs}{pipewire-rs}.
 
-  \item See ``` pkg-config ``` for CFLAGS and LDFLAGS:
+  \item See `pkg-config` for CFLAGS and LDFLAGS:
 
     \begin{minted}{text}
 $ pkg-config --cflags --libs libpipewire-0.3
@@ -1531,9 +1531,9 @@ void pw_init(int *argc, char **argv[]);
 
 === [fragile]{C API — event-loop}
   \begin{itemize}
-  \item At the core of each client: an ``` epoll(2) ```-based event-loop
+  \item At the core of each client: an `epoll(2)`-based event-loop
     is running.
-  \item ``` pw_main_loop ``` is a wrapper around ``` pw_loop ```
+  \item `pw_main_loop` is a wrapper around `pw_loop`
     providing a simple-to-use API.
   \end{itemize}
 
@@ -1564,7 +1564,7 @@ int pw_main_loop_quit(struct pw_main_loop *loop);
 === [fragile]{C API — context}
   \begin{itemize}
 
-  \item A ``` pw_context ``` instance is at the heart of the C API. It
+  \item A `pw_context` instance is at the heart of the C API. It
     allows connection to the daemon and it manages locally available
     resources.
 
@@ -1606,8 +1606,8 @@ struct pw_core * pw_context_connect(struct pw_context *context,
   \item A client starts with two proxies:
 
     \begin{enumerate}
-    \item One pointing to the ``` Core ``` object.
-    \item Another one to the global ``` Client ``` object that represents
+    \item One pointing to the `Core` object.
+    \item Another one to the global `Client` object that represents
       itself.
     \end{enumerate}
 
@@ -1621,9 +1621,9 @@ struct pw_core * pw_context_connect(struct pw_context *context,
 
   \item The PipeWire daemon handles a list of objects. Those are
     known as \textbf{global} objects and are represented by
-    ``` pw_global ``` structures.
+    `pw_global` structures.
 
-  \item ``` pw_registry ``` is a singleton structure that allows clients
+  \item `pw_registry` is a singleton structure that allows clients
     to track existing globals. It works by registering a callback to be
     called on new global object events.
 
@@ -1720,16 +1720,16 @@ int main(int argc, char **argv) {
   \begin{itemize}
 
   \item Implementing a raw node is not straight-forward, requiring to
-    implement many book-keeping methods (see ``` struct spa_node_methods ```).
+    implement many book-keeping methods (see `struct spa_node_methods`).
 
   \item PipeWire provides two abstractions for implementing nodes:
 
     \begin{itemize}
 
-    \item ``` pw_filter ```: DSP-type work, works on raw ``` f32 ```
+    \item `pw_filter`: DSP-type work, works on raw `f32`
       samples, without additional buffering.
 
-    \item ``` pw_stream ```: more high level, it provides the following
+    \item `pw_stream`: more high level, it provides the following
       features:
       \begin{itemize}
       \item \textbf{Buffering:} a stream can emit more samples than
@@ -1745,8 +1745,8 @@ int main(int argc, char **argv) {
 
   \item See example implementations of source nodes:
     \begin{itemize}
-    \item Filter: ``` src/examples/audio-dsp-src.c ```
-    \item Stream: ``` src/examples/audio-src.c ```
+    \item Filter: `src/examples/audio-dsp-src.c`
+    \item Stream: `src/examples/audio-src.c`
     \end{itemize}
 
   \end{itemize}
@@ -1754,7 +1754,7 @@ int main(int argc, char **argv) {
 
 
 
-=== [fragile]{C API — ``` pw_filter ``` process event}
+=== [fragile]{C API — `pw_filter` process event}
   
 #columns(gutter: 8pt)[
       \begin{block}{}
@@ -1790,7 +1790,7 @@ static const struct pw_filter_events filter_events = {
 
 
 
-=== [fragile]{C API — ``` pw_stream ``` process event}
+=== [fragile]{C API — `pw_stream` process event}
   
 #columns(gutter: 8pt)[
       \begin{block}{}
@@ -1860,7 +1860,7 @@ static const struct pw_stream_events stream_events = {
 === {Going further}
   \begin{itemize}
 
-  \item For MIDI support, see ``` pw-cat --midi ```, ``` pw-mididump ```
+  \item For MIDI support, see `pw-cat --midi`, `pw-mididump`
     and \href{https://docs.pipewire.org/page_midi.html}{the documentation}.
 
   \item For the PulseAudio compatibility layer, see
@@ -1868,14 +1868,14 @@ static const struct pw_stream_events stream_events = {
     and
     \href{https://docs.pipewire.org/page_pulseaudio.html}{this documentation page}.
 
-  \item For the JACK compatibility layer, look at ``` pw-jack ```.
+  \item For the JACK compatibility layer, look at `pw-jack`.
 
-  \item For video support, see many examples in ``` src/examples/ ```.
+  \item For video support, see many examples in `src/examples/`.
 
-  \item For audio over IP, see modules ``` roc-* ```, ``` pulse-tunnel ```,
-    ``` netjack2-* ```, ``` rtp-* ```, ``` protocol-simple ```, ``` avb ```.
+  \item For audio over IP, see modules `roc-*`, `pulse-tunnel`,
+    `netjack2-*`, `rtp-*`, `protocol-simple`, `avb`.
 
-  \item To understand why timer-based audio scheduling (``` tsched ```) is
+  \item To understand why timer-based audio scheduling (`tsched`) is
     useful, see
     \href{https://0pointer.net/blog/projects/pulse-glitch-free.html}{this blog post}.
 

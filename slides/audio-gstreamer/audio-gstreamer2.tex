@@ -2,11 +2,11 @@
 
 === {Introduction}
   \begin{itemize}
-  \item ``` Gstreamer ``` is an open-source multimedia framework that
+  \item `Gstreamer` is an open-source multimedia framework that
     provides a pipeline-based architecture for handling multimedia
     data such as audio and video.
   \item \url{https://gstreamer.freedesktop.org/}
-  \item ``` GStreamer ``` provides a unified framework for handling
+  \item `GStreamer` provides a unified framework for handling
     various multimedia formats and tasks.
   \item It supports a wide range of codecs, formats, and protocols.
   \item Its modular architecture supports plugins and allows the
@@ -16,21 +16,21 @@
 
 === {Architecture}
   \begin{itemize}
-  \item ``` GStreamer ``` is object oriented, it adheres to the
-    ``` GObject ``` model of ``` GLib 2.0 ```.
-  \item The main object is an ``` Element ```. Each element has a
+  \item `GStreamer` is object oriented, it adheres to the
+    `GObject` model of `GLib 2.0`.
+  \item The main object is an `Element`. Each element has a
     specific function e.g. reading, writing, encoding or decoding
     data. By chaining elements, its is possible to create a
-    ``` pipeline ``` to achieve a task.
-  \item Elements communicate with each other through ``` pads ```. A
-    pad is a connection point that can be an input (``` sink ```) or
-    output (``` source ```). Elements are linked by connecting pads. A
+    `pipeline` to achieve a task.
+  \item Elements communicate with each other through `pads`. A
+    pad is a connection point that can be an input (`sink`) or
+    output (`source`). Elements are linked by connecting pads. A
     pad can restrict the type of data that flows through it. Links are
     only allowed between two pads when the allowed data types
     (capabilities) of the two pads are compatible.
-  \item A ``` bin ``` is a container for a collection of elements. It
+  \item A `bin` is a container for a collection of elements. It
     can be controlled just like an element
-  \item A ``` pipeline ``` is a top level bin. Allowing to control and
+  \item A `pipeline` is a top level bin. Allowing to control and
     synchronize all its children.
   \end{itemize}
 
@@ -86,40 +86,40 @@
 
 === {Command line tools}
   \begin{itemize}
-  \item ``` gst-inspect-1.0 ``` is a tool that prints out information
+  \item `gst-inspect-1.0` is a tool that prints out information
     on GStreamer plugins and elements.
   \item Without any arguments, it prints a list of all plugins and
     elements it knows about.
-  \item ``` gst-launch-1.0 ``` builds and runs a GStreamer pipeline
+  \item `gst-launch-1.0` builds and runs a GStreamer pipeline
     on GStreamer plugins and elements.
   \item It takes a pipeline description as an argument, this is a list
     of elements separated by exclamation marks (!). Properties may be
     appended to elements in the form property=value.
-  \item ``` gst-launch-1.0 ``` is a tool useful for debugging but
+  \item `gst-launch-1.0` is a tool useful for debugging but
     shouldn't be used as a standalone application.
   \item For example, to play an ogg file using ALSA:
-    ``` gst-launch-1.0 filesrc location=music.ogg ! oggdemux ! vorbisdec !
-    audioconvert ! audioresample ! alsasink ```
+    `gst-launch-1.0 filesrc location=music.ogg ! oggdemux ! vorbisdec !
+    audioconvert ! audioresample ! alsasink`
   \end{itemize}
 
 
 === {Debugging}
   \begin{itemize}
-  \item ``` gst-launch-1.0 ``` has a ``` -v ``` option to make it
+  \item `gst-launch-1.0` has a `-v` option to make it
     verbose
-  \item GStreamer also uses the ``` GST_DEBUG ``` environment variable.
+  \item GStreamer also uses the `GST_DEBUG` environment variable.
     It takes a debug level from 0 (none) to 9 (memdump). This can also
     be filtered by element and categories. For example,
-    ``` GST_DEBUG=2,audiotestsrc:6 ```, will use level 6 for the
-    ``` audiotestsrc ``` element, and 2 for all the others.
-  \item When ``` GST_DEBUG_DUMP_DOT_DIR ``` environment variable is set
-    and point to a folder, ``` gst-launch-1.0 ``` will create a
-    ``` .dot ``` file at each state change. ``` graphviz ``` can then be
+    `GST_DEBUG=2,audiotestsrc:6`, will use level 6 for the
+    `audiotestsrc` element, and 2 for all the others.
+  \item When `GST_DEBUG_DUMP_DOT_DIR` environment variable is set
+    and point to a folder, `gst-launch-1.0` will create a
+    `.dot` file at each state change. `graphviz` can then be
     used to generate a graph.
     \begin{itemize}
-    \item ``` gst-launch-1.0 filesrc location=Media/test_32_16.wav !
-      decodebin ! alsasink ```
-    \item ``` dot -Kfdp -Tpng -o pipeline.png 0.00.00.021721659-gst-launch.PAUSED_PLAYING.dot ```
+    \item `gst-launch-1.0 filesrc location=Media/test_32_16.wav !
+      decodebin ! alsasink`
+    \item `dot -Kfdp -Tpng -o pipeline.png 0.00.00.021721659-gst-launch.PAUSED_PLAYING.dot`
     \end{itemize}
   \end{itemize}
 
@@ -143,7 +143,7 @@
 
 #setupdemoframe([Gstreamer],[
   \begin{itemize}
-  \item Inspect plugins and elements using ``` gst-inspect ```
-  \item Prepare multiple pipelines with ``` gst-launch ```
+  \item Inspect plugins and elements using `gst-inspect`
+  \item Prepare multiple pipelines with `gst-launch`
   \end{itemize}
 ])
