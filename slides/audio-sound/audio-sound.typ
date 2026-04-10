@@ -1,5 +1,5 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
+ #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
@@ -12,7 +12,22 @@ config-common(
 ))
 #show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
 #show raw.where(block: false): r => { text(fill: color-link)[#r] } 
-
+ #show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em,
+  radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
+#show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240),
+  inset: 0.4em, radius: 0.5em,
+  width: 95%, breakable: true, above: 6pt)
+  set text(9pt)
+  r
+}
+                
 = Sound and its representation
 <sound-and-its-representation>
 ===  What is sound?
@@ -28,7 +43,8 @@ config-common(
   longitudinal wave (compression/rarefaction) in air and water and a
   transversal wave in solids.
 
-#align(center, [#image("../../out/slides/audio-sound/CPT-sound-physical-manifestation.pdf", width: 60%)])
+A
+#align(center, [#image("CPT-sound-physical-manifestation.pdf", width: 60%)])
 
 ===  Sound characteristics
 
@@ -71,7 +87,8 @@ config-common(
 - The Human ear can hear sound frequencies between approximately 20 Hz
   and 20 kHz.
 
-#align(center, [#image("../../out/slides/audio-sound/aliasing-1d.pdf", width: 60%)]) 
+A
+#align(center, [#image("aliasing-1d.pdf", width: 60%)]) 
 #emph[Aliasing example, the sampled signal is in blue]
 
 ===  Sound digitization - sample size
@@ -144,7 +161,7 @@ and has the following header:
   [Sample rate],
   [29-32],
   [176400],
-  [Byte rate = (Sample rate*BitsPerSample*channels) / 8.],
+  [Byte rate = (Sample rate * BitsPerSample * channels) / 8.],
   [33-34],
   [4],
   [BlockAlign = (BitsPerSample*Channels) / 8],

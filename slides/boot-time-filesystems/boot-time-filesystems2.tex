@@ -1,0 +1,205 @@
+#import "@local/bootlin:0.1.0": *
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius: 0.5em, width: 100\%)
+
+#show raw.where(block: true): set text(size: 11pt)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+#show raw.where(lang: "c", block: true): set text(11pt)
+
+#show raw.where(lang: "console", block: true):set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 6pt)
+
+#show raw.where(lang:"console", block: true): set text(12pt)
+
+ = Filesystem optimizations
+
+=== Filesystem impact on performance Tuning the filesystem is usually one of the first things we work on in boot time projects.
+\begin{itemize}
+\item Different filesystems can have different initialization
+      and mount times. In particular, the type of filesystem
+      for the root filesystem directly impacts boot time.
+\item Different filesystems can exhibit different read, write
+      and access time performance, according to the type
+      of filesystem activity and to the type of files in the
+      system.
+\end{itemize}
+
+
+=== Different filesystem for different storage types
+\begin{itemize}
+\item Block storage (including memory cards, eMMC)
+      \begin{itemize}
+      \item ext2, ext4
+      \item xfs, btrfs
+      \item f2fs
+      \item SquashFS, EROFS
+      \end{itemize}
+\item Raw flash storage
+      \begin{itemize}
+      \item JFFS2
+      \item YAFFS2
+      \item UBIFS
+      \item ubiblock + (SquashFS or EROFS)
+      \end{itemize}
+\end{itemize}
+See our embedded Linux training materials for full details:
+{\small
+\url{https://bootlin.com/doc/training/embedded-linux/}
+}
+
+
+=== Block filesystems For block storage
+\begin{itemize}
+\item ext4: pretty good read and write performance.
+\item xfs: can be good in some read or write scenarii
+      as well.
+\item btrfs, f2fs: can achieve good read and write performance,
+      taking advantage of the characteristics of flash-based block
+      devices. However, btrfs is slow to initialize (see benchmarks later).
+\item SquashFS: very good mount time and read performance, for read-only
+      partitions. Gives priority to compression rate vs performance.
+\item EROFS: newer read-only file system for block storage. Gives
+      priority to read performance vs compression rate.
+\end{itemize}
+
+
+=== JFFS2
+For raw flash storage
+\begin{itemize}
+\item Mount time depending on filesystem size: the kernel has to
+      scan the whole storage at mount time, to read which block
+      belongs to each file.
+\item Need to use the #kconfig("CONFIG_JFFS2_SUMMARY") kernel option
+      to store such information in flash. This dramatically reduces
+      mount time.
+\item Benchmark on ARM:\\
+      from 16 s to 0.8 s for a 128 MB partition.
+\item Rather poor read and write performance,\\
+      compared to YAFFS2 and UBIFS.
+\item JFFS2 only makes sense on small storage space,
+      where UBI would have too much overhead.
+\end{itemize}
+
+
+=== YAFFS2
+For raw flash storage
+\begin{itemize}
+\item Good mount time
+\item Good read and write performance
+\item Drawbacks: no compression, not in the mainline Linux kernel
+\end{itemize}
+
+
+=== UBIFS
+For raw flash storage, on top of the UBI layer
+\begin{itemize}
+\item Advantages:
+      \begin{itemize}
+      \item Good read and write performance (similar to YAFFS2)
+      \item Other advantages: better for wear leveling (can operate on the
+	    whole UBI space, not only within a single partition).
+      \end{itemize}
+\item Drawbacks:
+      \begin{itemize}
+      \item Not appropriate for small partitions (too much metadata
+	    overhead). Use JFFS2 or YAFFS2 instead.
+      \item Not so good mount time, because of the time needed
+            to initialize UBI ({\em UBI Attach}: at boot time or running
+            `ubi_attach` in user space).
+      \item Addressed by {\em UBI Fastmap}, introduced in Linux 3.7. \\
+            See next slides.
+      \end{itemize}
+\end{itemize}
+
+
+=== How UBI Fastmap works
+\begin{itemize}
+\item {\em UBI Attach}: needs to read UBI metadata by
+      scanning all erase blocks. Time proportional
+      to the storage size.
+\item {\em UBI Fastmap} stores such information in a few flash
+      blocks (typically at UBI detach time during system
+      shutdown) and finds it there at boot time.
+\item This makes {\em UBI Attach} time constant.
+\item If {\em Fastmap} information is invalid (unclean system
+      shutdown, for example), it falls back to scanning
+      (slower, but correct, and {\em Fastmap} will work again
+      during the next boot).
+\item Details: ELCE 2012 presentation from Thomas Gleixner:
+      \url{https://elinux.org/images/a/ab/UBI_Fastmap.pdf}
+\end{itemize}
+
+
+=== Using UBI Fastmap
+\begin{itemize}
+\item Compile your kernel with #kconfig("CONFIG_MTD_UBI_FASTMAP")
+\item Boot your system at least once with the
+      `ubi.fm_autoconvert=1` kernel parameter.
+\item Reboot your system in a clean way
+\item You can now remove `ubi.fm_autoconvert=1`
+\end{itemize}
+
+
+=== UBI Fastmap benchmark
+\begin{itemize}
+\item Measured on the Microchip SAMA5D3 Xplained board (ARM), Linux 3.10
+\item UBI space: 216 MB
+\item Root filesystem: 80 MB used (Yocto)
+\item Average results:
+    \newline \newline
+    \begin{tabular}{| l || c | c | c |}
+    \hline
+    & Attach time & Diff & Total time\\
+    \hline
+    Without {\em UBI Fastmap} & 968 ms & & \\
+    With {\em UBI Fastmap} & 238 ms & -731 ms & -665 ms \\
+    \hline
+    \end{tabular}
+    \newline
+\item Expect to save more with bigger UBI spaces!
+\end{itemize}
+Note: total boot time reduction a bit lower probably because of other kernel threads executing during the attach process.
+
+
+=== ubiblock + (SquashFS or EROFS)
+For raw flash storage
+\begin{itemize}
+\item {\em ubiblock}: read-only block device on top of UBI
+      (#kconfig("CONFIG_MTD_UBI_BLOCK")).
+\item Allows to put SquashFS or EROFS on a UBI volume.
+\item Expecting great boot time and read performance. Great
+      for read-only root filesystems.
+\item Benchmarks not available yet.
+\end{itemize}
+
+
+=== Finding the best filesystem
+\begin{itemize}
+\item Raw flash storage: UBIFS with #kconfig("CONFIG_UBI_FASTMAP") is
+      probably the best solution.
+\item Block storage: SquashFS best solution for root filesystems
+      which can be read-only. Btrfs and f2fs probably the best solutions
+      for read/write filesystems.
+\item Fortunately, changing filesystem types is quite cheap,
+      and completely transparent for applications. Just try
+      several filesystem options, as see which one works best
+      for you!
+\item Do not focus only on boot time. \\
+      For systems in which read and write performance matters, we
+      recommend to use separate root filesystem (for quick
+      boot time) and data partitions (for good runtime performance).
+\end{itemize}
+

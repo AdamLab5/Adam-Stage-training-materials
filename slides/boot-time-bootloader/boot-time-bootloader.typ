@@ -1,20 +1,45 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
+radius:0.5em, width:100%)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+}
+
+#show raw.where(lang: "console", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 6pt)
+
+set text(9pt)
+
+r
+
+}
 
 = Bootloader optimizations
-<bootloader-optimizations>
+
 == Generic bootloader optimizations
 <generic-bootloader-optimizations>
 ===  Bootloader
@@ -27,11 +52,12 @@ config-common(
   Tune your bootloader for fastest performance. 
   Skip the bootloader and load the kernel right away.
 
-===  U-Boot - Remove unnecessary functionality Recompile U-Boot to
+===  U-Boot - Remove unnecessary functionality 
+Recompile U-Boot to
 remove features not needed in production
 
-- Disable as many features as possible through the ``` menuconfig ```
-  interface and through ``` include/configs/<soc>-<board>.h ```
+- Disable as many features as possible through the `menuconfig`
+  interface and through `include/configs/<soc>-<board>.h`
 
 - Examples: MMC, USB, Ethernet, dhcp, ping, command line edition,
   command completion...
@@ -46,15 +72,16 @@ skip U-Boot, using its #emph[Falcon Mode] (covered in the next section).
 ===  U-Boot - Remove the boot delay
 
 - Remove the boot delay: 
-  ``` setenv bootdelay 0 ```
+  `setenv bootdelay 0`
 
 - This usually saves several seconds!
 
-===  U-Boot - Simplify scripts Some boards have over-complicated
+===  U-Boot - Simplify scripts 
+Some boards have over-complicated
 scripts:
 
-#align(center, [#image("u-boot-bad-scripts.pdf", width: 100%)])
-
+#align(center, [#image("u-boot-bad-scripts.pdf", width: 95%)])
+#text(size: 15pt)[
 Let’s replace this by:
 
 ```
@@ -67,7 +94,7 @@ user_debug=28 maximasp.board=EEKv1.3.x
 maximasp.kernel=maximasp_nand.0:kernel0'
 setenv bootcmd 'nboot 0x70007fc0 kernel0'
 ```
-
+]
 This saved 56 ms on this ARM9 system (400 MHz)!
 
 ===  Bootloader: copy the exact kernel size
@@ -82,7 +109,8 @@ This saved 56 ms on this ARM9 system (400 MHz)!
 - Of course, that’s not needed when the kernel is loaded from a
   filesystem, which knows how big the file is.
 
-===  Bootloader: watch the compressed kernel load address On ARM32,
+===  Bootloader: watch the compressed kernel load address 
+On ARM32,
 the uncompressed kernel is usually started at offset 0x8000 from the
 start of RAM. Load the compressed kernel at a far enough address!
 
@@ -91,7 +119,8 @@ start of RAM. Load the compressed kernel at a far enough address!
 Source:
 #link("https://people.kernel.org/linusw/how-the-arm32-linux-kernel-decompresses")
 
-===  Bootloader: load the compressed kernel far enough On ARM32, a
+===  Bootloader: load the compressed kernel far enough 
+On ARM32, a
 usual kernel load address is at offset 0x01000000 (16 MB)
 
 #align(center, [#image("no-kernel-overlap.pdf", height: 60%)])

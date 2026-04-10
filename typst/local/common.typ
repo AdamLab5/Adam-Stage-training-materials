@@ -30,7 +30,7 @@
 ]
 
 #let projconfignotset(arg1, arg2) = [
-  #codelink("##"+arg2+ " is not set","https://elixir.bootlin.com/"+arg1+"/latest/K/ident"+arg2)
+  #codelink(arg2+ " is not set","https://elixir.bootlin.com/"+arg1+"/latest/K/ident"+arg2)
 ]
 
 // Linux Elixir commands

@@ -1,5 +1,5 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
+ #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
 #import "../../typst/local/themeBootlin.typ": *
 #import "../../typst/local/common.typ": *
@@ -10,9 +10,31 @@ config-common(
   // Compile with `typst c --input handout=1 ...` to generate the handout.
   handout: "handout" in sys.inputs and sys.inputs.handout == "1",
 ))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
+#show raw.where(block: true): r => {
+  set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+  r
+}
+
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+ #show raw.where(lang: "c", block: true): r => {
+  set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%, breakable: true, above: 6pt)
+  set text(11pt)
+  r
+}
+
+#show raw.where(lang: "console", block: true): r => {
+  set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%, breakable: true, above: 6pt)
+  set text(9pt)
+  r
+}
+
+#show raw.where(lang: "text", block:true) : r => {
+  set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%, breakable: true, above: 6pt)
+  set text(10.3pt)
+  r
+}
+                
 = Autotools usage
 <autotools-usage>
 ===  Why do we need #emph[autotools]?
@@ -67,17 +89,17 @@ config-common(
   are:
 
   + #strong[Configuration] 
-    ``` ./configure ``` 
+    `./configure` 
     Will look at the available build environment, verify required
-    dependencies, generate ``` Makefile ```s and a ``` config.h ```
+    dependencies, generate `Makefile`s and a `config.h`
 
   + #strong[Compilation] 
-    ``` make ``` 
+    `make` 
     Actually builds the software component, using the generated
     Makefiles.
 
   + #strong[Installation] 
-    ``` make install ``` 
+    `make install` 
     Installs what has been built.
 
 ===  What is `configure` doing?
@@ -86,74 +108,68 @@ config-common(
 
 ===  Standard Makefile targets
 
-- ``` all ```, builds everything. The default target.
+- `all`, builds everything. The default target.
 
-- ``` install ```, installs everything that should be installed.
+- `install`, installs everything that should be installed.
 
-- ``` install-strip ```, same as ``` install ```, but then strips debugging
-  symbols
+- `install-strip`, same as `install`, but then strips debugging symbols
 
-- ``` uninstall ```
+- `uninstall`
 
-- ``` clean ```, remove what was built
+- `clean`, remove what was built
 
-- ``` distclean ```, same as ``` clean ```, but also removes the generated
+- `distclean`, same as `clean`, but also removes the generated
   #emph[autotools] files
 
-- ``` check ```, run the test suite
+- `check`, run the test suite
 
-- ``` installcheck ```, check the installation
+- `installcheck`, check the installation
 
-- ``` dist ```, create a tarball
+- `dist`, create a tarball
 
 ===  Standard filesystem hierarchy
 
-- ``` prefix ```, defaults to #emph[/usr/local]
+- `prefix`, defaults to #emph[/usr/local]
 
-  - ``` exec-prefix ```, defaults to ``` prefix ```
+  - `exec-prefix`, defaults to `prefix`
 
-    - ``` bindir ```, for programs, defaults to ``` exec-prefix/
-      ```#emph[bin]
+    - `bindir`, for programs, defaults to `exec-prefix/`#emph[bin]
 
-    - ``` libdir ```, for libraries, defaults to ``` exec-prefix/
-      ```#emph[lib]
+    - `libdir`, for libraries, defaults to `exec-prefix/`#emph[lib]
 
-- ``` includedir ```, for headers, defaults to ``` prefix/ ```#emph[include]
+- `includedir`, for headers, defaults to `prefix/`#emph[include]
 
-- ``` datarootdir ```, defaults to ``` prefix/ ```#emph[share]
+- `datarootdir`, defaults to `prefix/`#emph[share]
 
-  - ``` datadir ```, defaults to ``` datarootdir ```
+  - `datadir`, defaults to `datarootdir`
 
-  - ``` mandir ```, for man pages, defaults to ``` datarootdir/
-    ```#emph[man]
+  - `mandir`, for man pages, defaults to `datarootdir/`#emph[man]
 
-  - ``` infodir ```, for info documents, defaults to ``` datarootdir/
-    ```#emph[info]
+  - `infodir`, for info documents, defaults to `datarootdir/`#emph[info]
 
-- ``` sysconfdir ```, for configuration files, defaults to ``` prefix/
-  ```#emph[etc]
+- `sysconfdir`, for configuration files, defaults to `prefix/`#emph[etc]
 
-- ``` –<option> ``` available for each of them
+- `–<option>` available for each of them
 
-  - E.g: ``` ./configure –prefix= /sys/ ```
+  - E.g: `./configure –prefix= /sys/`
 
 ===  Standard configuration variables
 
-- ``` CC ```, C compiler command
+- `CC`, C compiler command
 
-- ``` CFLAGS ```, C compiler flags
+- `CFLAGS`, C compiler flags
 
-- ``` CXX ```, C++ compiler command
+- `CXX`, C++ compiler command
 
-- ``` CXXFLAGS ```, C++ compiler flags
+- `CXXFLAGS`, C++ compiler flags
 
-- ``` LDFLAGS ```, linker flags
+- `LDFLAGS`, linker flags
 
-- ``` CPPFLAGS ```, C/C++ preprocessor flags
+- `CPPFLAGS`, C/C++ preprocessor flags
 
-- and many more, see ``` ./configure –help ```
+- and many more, see `./configure –help`
 
-- E.g: ``` ./configure CC=arm-linux-gcc ```
+- E.g: `./configure CC=arm-linux-gcc`
 
 ===  System types: build, host, target
 
@@ -168,17 +184,17 @@ config-common(
     generate code. This is only used for compilers, assemblers, linkers,
     etc.
 
-- Corresponding ``` –build ```, ``` –host ``` and ``` –target ```
-  #emph[configure] options.
+- Corresponding `–build`, `–host` and `–target` #emph[configure]
+  options.
 
   - They are all automatically #emph[guessed] to the current machine by
     default
 
-  - ``` –build ```, generally does not need to be changed
+  - `–build`, generally does not need to be changed
 
-  - ``` –host ```, must be overridden to do cross-compilation
+  - `–host`, must be overridden to do cross-compilation
 
-  - ``` –target ```, needs to be overridden if needed (to generate a
+  - `–target`, needs to be overridden if needed (to generate a
     cross-compiler, for example)
 
 - Arguments to these options are #emph[configuration names], also called
@@ -189,32 +205,29 @@ config-common(
 - A string identifying a combination of architecture, operating system,
   ABI and C library
 
-- General format: ```
-  <arch>-<vendor>-<kernel>-<operating_system> ```
+- General format: `<arch>-<vendor>-<kernel>-<operating_system>`
 
-  - ``` <arch> ``` is the type of processor, i.e. ``` arm ```, ``` i686 ```,
-    etc.
+  - `<arch>` is the type of processor, i.e. `arm`, `i686`, etc.
 
-  - ``` <vendor> ``` is a free form string, which can be omitted
+  - `<vendor>` is a free form string, which can be omitted
 
-  - ``` <kernel> ``` is always ``` linux ``` when working with Linux
-    systems, or ``` none ``` for bare metal systems
+  - `<kernel>` is always `linux` when working with Linux systems, or
+    `none` for bare metal systems
 
-  - ``` <operating_system> ``` generally identifies the C library and
-    ABI, i.e. ``` gnu ```, ``` gnueabi ```, ``` eabi ```, ``` gnueabihf ```, ```
-    uclibcgnueabihf ```
+  - `<operating_system>` generally identifies the C library and ABI,
+    i.e. `gnu`, `gnueabi`, `eabi`, `gnueabihf`, `uclibcgnueabihf`
 
 - Also often used as the #emph[prefix] for cross-compilation tools.
 
 - Examples
 
-  - ``` x86_64-amd-linux-gnu ```
+  - `x86_64-amd-linux-gnu`
 
-  - ``` powerpc-mentor-linux-gnu ```
+  - `powerpc-mentor-linux-gnu`
 
-  - ``` armeb-linux-gnueabihf ```
+  - `armeb-linux-gnueabihf`
 
-  - ``` i486-linux-musl ```
+  - `i486-linux-musl`
 
 ===  System type: native compilation example
 
@@ -232,14 +245,14 @@ checking how to run the C preprocessor... gcc -E
 - By default, #emph[autotools] will guess the #strong[host] machine as
   being the current machine
 
-- To cross-compile, it must be overridden by passing the ``` –host ```
-  option with the appropriate #emph[configuration name]
+- To cross-compile, it must be overridden by passing the `–host` option
+  with the appropriate #emph[configuration name]
 
 - By default, #emph[autotools] will try to use the cross-compilation
   tools that use the #emph[configuration name] as their prefix.
 
-- If not, the variables ``` CC ```, ``` CXX ```, ``` LD ```, ``` AR ```, etc.
-  can be used to point to the cross-compilation tools.
+- If not, the variables `CC`, `CXX`, `LD`, `AR`, etc. can be used to
+  point to the cross-compilation tools.
 
 ===  System type: cross compilation example
 
@@ -274,7 +287,7 @@ checking how to run the C preprocessor... arm-linux-gnueabihf-gcc -E
   - This directory will become the build directory
 
 ===  Out of tree build: example
-
+#text(size: 20pt)[
 ```
 strace-4.9 $ ls configure configure.ac Makefile.am system.c NEWS
 AUTHORS   COPYING     file.c       ioprio.c config.h strace-4.9 $ mkdir ../strace-build-x86 ../strace-build-arm strace-4.9 $ cd ../strace-build-x86
@@ -287,11 +300,11 @@ strace-build-x86 $ cd ../strace-build-arm strace-build-arm $ ../strace-4.9/confi
 strace-build-arm $ make
 [...]
 ```
-
+]
 ===  Diverted installation with DESTDIR
 
-- By default, ``` make install ``` installs to the directories given in ```
-  –prefix ``` and related options.
+- By default, `make install` installs to the directories given in
+  `–prefix` and related options.
 
 - In some situations, it is useful to #emph[divert] the installation to
   another directory
@@ -302,8 +315,9 @@ strace-build-arm $ make
   - Packaging, where the installation needs to be done in a temporary
     directory.
 
-- Achieved using the ``` DESTDIR ``` variable.
+- Achieved using the `DESTDIR` variable.
 
+#text(size: 15pt)[
 ```
 strace-4.9 $ make DESTDIR=/tmp/test install
 [...]
@@ -313,59 +327,59 @@ strace-4.9 $ find  /tmp/test/ -type f
 /tmp/test/usr/local/bin/strace-graph
 /tmp/test/usr/local/bin/strace
 ```
-
+]
 ===  `–prefix` or `DESTDIR`?
 
-- ``` –prefix ``` and ``` DESTDIR ``` are often misunderstood
+- `–prefix` and `DESTDIR` are often misunderstood
 
-- ``` –prefix ``` is the location where the programs/libraries will be
-  placed when executed on the #emph[host machine]
+- `–prefix` is the location where the programs/libraries will be placed
+  when executed on the #emph[host machine]
 
-- ``` DESTDIR ``` is a way of temporarily diverting the installation to a
+- `DESTDIR` is a way of temporarily diverting the installation to a
   different location.
 
-- For example, if you use ``` –prefix=/home/<foo>/sys/usr ```, then
-  binaries/libraries will look for icons in ```
-  /home/<foo>/sys/usr/share/icons ```
+- For example, if you use `–prefix=/home/<foo>/sys/usr`, then
+  binaries/libraries will look for icons in
+  `/home/<foo>/sys/usr/share/icons`
 
-  - Good for native installation in ``` /home/<foo>/sys ```
+  - Good for native installation in `/home/<foo>/sys`
 
   - #strong[Bad] for cross-compilation where the binaries will
-    ultimately be in ``` /usr ```
+    ultimately be in `/usr`
 
 ===  `–prefix` or `DESTDIR` use cases
 
-- Native compilation, install system-wide in ``` /usr ```
-
+- Native compilation, install system-wide in `/usr`
+#text(size: 14.5pt)[
   ```
   $ ./configure --prefix=/usr
   $ make
   $ sudo make install
   ```
-
+]
 - Native compilation, install in a user-specific directory:
-
+#text(size: 14.5pt)[
   ```
   $ ./configure --prefix=/home/<foo>/sys/
   $ make
   $ make install
   ```
-
-- Cross-compilation, install in ``` /usr ```, diverted to a temporary
+]
+- Cross-compilation, install in `/usr`, diverted to a temporary
   directory where the system for the target is built
-
+#text(size: 14.5pt)[
   ```
   $ ./configure --prefix=/usr
   $ make
   $ make DESTDIR=/home/<foo>/target-rootfs/ install
   ```
-
+]
 ===  Analyzing issues
 
-- ``` autoconf ``` keeps a log of all the tests it runs in a file called
-  ``` config.log ```
+- `autoconf` keeps a log of all the tests it runs in a file called
+  `config.log`
 
-- Very useful for analysis of ``` autoconf ``` issues
+- Very useful for analysis of `autoconf` issues
 
 - It contains several sections: #emph[Platform], #emph[Core tests],
   #emph[Running config.status], #emph[Cache variables], #emph[Output
@@ -377,12 +391,11 @@ strace-4.9 $ find  /tmp/test/ -type f
   - This is where you would get more details about the reason of the
     #emph[configure] script failure
 
-- At the beginning of ``` config.log ``` you can also see the ```
-  ./configure ``` line that was used, with all options and environment
-  variables.
+- At the beginning of `config.log` you can also see the `./configure`
+  line that was used, with all options and environment variables.
 
 ===  `config.log` example
-
+#text(size: 12.5pt)[
 ```
 $ ./configure ...
 [...]
@@ -410,42 +423,41 @@ configure:18210: error:
 *** --without-libtiff to configure but some programs using GTK+ may
 *** not work properly
 ```
-
+]
 ===  autotools: #emph[autoconf] and #emph[automake]
 
-- The ``` configure ``` script is a shell script generated from ```
-  configure.ac ``` by a program called ``` autoconf ```
+- The `configure` script is a shell script generated from `configure.ac`
+  by a program called `autoconf`
 
-  - ``` configure.ac ``` used to be named ``` configure.in ``` but this name
-    is now deprecated
+  - `configure.ac` used to be named `configure.in` but this name is now
+    deprecated
 
   - written in shell script, augmented with numerous #emph[m4] macros
 
-- The ``` Makefile.in ``` are generated from ``` Makefile.am ``` files by a
-  program called ``` automake ```
+- The `Makefile.in` are generated from `Makefile.am` files by a program
+  called `automake`
 
-  - Uses special ``` make ``` variables that are expanded in standard ```
-    make ``` constructs
+  - Uses special `make` variables that are expanded in standard `make`
+    constructs
 
-- Some auxiliary tools like ``` autoheader ``` or ``` aclocal ``` are also
-  used
+- Some auxiliary tools like `autoheader` or `aclocal` are also used
 
-  - ``` autoheader ``` is responsible for generating the
-    #emph[configuration header] template, ``` config.h.in ```
+  - `autoheader` is responsible for generating the #emph[configuration
+    header] template, `config.h.in`
 
-- Generated files (``` configure ```, ``` Makefile.in ```, ``` Makefile ```)
-  should not be modified.
+- Generated files (`configure`, `Makefile.in`, `Makefile`) should not be
+  modified.
 
   - Reading them is also very difficult. Read the real source instead!
 
 ===  Cache variables
 
-- Each test done by a ``` configure.ac ``` script is associated with a
+- Each test done by a `configure.ac` script is associated with a
   #emph[cache variable]
 
-- The list of such variables and their values is visible in ```
-  config.log ```:
-
+- The list of such variables and their values is visible in
+  `config.log`:
+#text(size: 16pt)[
   ```
   ## ---------------- ##
   ## Cache variables. ##
@@ -454,14 +466,14 @@ configure:18210: error:
   [...]
   ac_cv_path_SED=/bin/sed
   ```
-
+]
 - If the autodetected value is not correct for some reason, you can
   override any of these variables in the environment:
-
+#text(size: 16pt)[
   ```
   $ ac_cv_path_SED=/path/to/sed ./configure
   ```
-
+]
 - This is sometimes useful when cross-compiling, since some tests are
   not always cross-compilation friendly.
 
@@ -469,36 +481,35 @@ configure:18210: error:
 
 - In general:
 
-  - When a software is published as a #emph[tarball], the ``` configure
-    ``` script and ``` Makefile.in ``` files are already generated and part
-    of the tarball.
+  - When a software is published as a #emph[tarball], the `configure`
+    script and `Makefile.in` files are already generated and part of the
+    tarball.
 
   - When a software is published through #emph[version control system],
-    only the real sources ``` configure.ac ``` and ``` Makefile.am ``` are
+    only the real sources `configure.ac` and `Makefile.am` are
     available.
 
-- There are some exceptions (like tarballs not having pre-generated ```
-  configure ```/``` Makefile.in ```)
+- There are some exceptions (like tarballs not having pre-generated
+  `configure`/`Makefile.in`)
 
 - Do not version control generated files!
 
 ===  Regenerating #emph[autotools] files: `autoreconf`
 
-- To generate all the files used by #emph[autotools], you could call ```
-  automake ```, ``` autoconf ```, ``` aclocal ```, ``` autoheader ```, etc.
-  manually.
+- To generate all the files used by #emph[autotools], you could call
+  `automake`, `autoconf`, `aclocal`, `autoheader`, etc. manually.
 
   - But it is not very easy and efficient.
 
-- A tool called ``` autoreconf ``` automates this process
+- A tool called `autoreconf` automates this process
 
-  - Useful option: ``` -i ``` or ``` –install ```, to ask ``` autoreconf ```
-    to copy missing auxiliary files
+  - Useful option: `-i` or `–install`, to ask `autoreconf` to copy
+    missing auxiliary files
 
-- Always use ``` autoreconf ```!
+- Always use `autoreconf`!
 
 ===  `autoreconf` example
-
+#text(size: 12pt)[
 ```
 $ find . -type f
 ./src/main.c
@@ -528,10 +539,10 @@ $ find . -type f
 ./Makefile.in
 ./configure.ac
 ```
-
+]
 ===  Overall organization
 
-#align(center, [#image("autoreconf.pdf", width: 100%)])
+#align(center, [#image("autoreconf.pdf", width: 70%)])
 
 Usage of existing #emph[autotools] projects
 

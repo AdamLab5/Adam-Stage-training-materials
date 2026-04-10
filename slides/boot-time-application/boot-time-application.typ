@@ -1,20 +1,45 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
+radius:0.5em, width:100%)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+}
+
+#show raw.where(lang: "console", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 6pt)
+
+set text(9pt)
+
+r
+
+}
 
 = Optimizing applications
-<optimizing-applications>
+
 ===  Measuring: strace
 
 - Allows to trace all the system calls made by an application and its
@@ -24,9 +49,9 @@ config-common(
 
   - Understand how time is spent in user space
 
-  - For example, easy to find file open attempts (``` open() ```), file
-    access (``` read() ```, ``` write() ```), and memory allocations (```
-    mmap2() ```). Can be done without any access to source code!
+  - For example, easy to find file open attempts (`open()`), file access
+    (`read()`, `write()`), and memory allocations (`mmap2()`). Can be
+    done without any access to source code!
 
   - Find the biggest time consumers (low hanging fruit)
 
@@ -34,7 +59,12 @@ config-common(
     opening the same file(s) multiple times, or trying to open files
     that do not exist.
 
-- Limitation: you can’t trace the ``` init ``` process!
+- Limitation: you can’t trace the `init` process!
+
+
+
+#include "../../common/strace.typ"
+
 
 ===  perf
 
@@ -43,7 +73,7 @@ config-common(
 - Need a kernel with #kconfig("CONFIG_PERF_EVENTS") and
   #kconfig("CONFIG_HW_PERF_EVENTS")
 
-- User space tool: ``` perf ```. It is part of the kernel sources so it is
+- User space tool: `perf`. It is part of the kernel sources so it is
   always in sync with your kernel.
 
 - Usage:
@@ -58,13 +88,12 @@ config-common(
   perf report
   ```
 
-- Note: advice to run ``` perf ``` on a filesystem built with glibc.
-  Didn’t manage to compile ``` perf ``` on a Musl root filesystem
-  (Buildroot 2021.02 status). Once again, glibc is recommended for
-  debugging.
+- Note: advice to run `perf` on a filesystem built with glibc. Didn’t
+  manage to compile `perf` on a Musl root filesystem (Buildroot 2021.02
+  status). Once again, glibc is recommended for debugging.
 
 ===  perf report output
-
+#text(size: 12pt)[
 ```
 # To display the perf.data header info, please use --header/--header-only options.
 #
@@ -95,11 +124,13 @@ config-common(
      1.95%  ffmpeg   libc-2.31.so              [.] memset
 ...
 ```
-
-Optimizing the application
+]
+#setuplabframe([Optimizing the application],[
 
 - Compile the video player with just the features needed at run time.
 
-- Trace and profile the video player with ``` strace ```
+- Trace and profile the video player with `strace`
 
 - Observe size and time savings
+
+])

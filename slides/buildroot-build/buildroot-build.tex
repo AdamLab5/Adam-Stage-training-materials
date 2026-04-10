@@ -12,8 +12,8 @@
   \item The configuration file is stored as \code{.config} in the
     top-level Buildroot source directory.
     \begin{itemize}
-    \item \code{CONFIG_DIR = $(TOPDIR)}
-    \item \code{TOPDIR = $(shell pwd)}
+    \item \code{CONFIG_DIR = \$(TOPDIR)}
+    \item \code{TOPDIR = \$(shell pwd)}
     \end{itemize}
   \item \code{buildroot/}
     \begin{itemize}
@@ -35,7 +35,7 @@
     same source tree.
   \item Customization of the output directory done by passing
     \code{O=/path/to/directory} on the command line.
-  \item Configuration file stored inside the \code{$(O)} directory, as
+  \item Configuration file stored inside the \code{\$(O)} directory, as
     opposed to inside the Buildroot sources for the in-tree build
     case.
   \item \code{project/}

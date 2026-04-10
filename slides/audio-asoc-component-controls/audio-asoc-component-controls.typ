@@ -1,35 +1,21 @@
 #import "@local/bootlin:0.1.0": *
-
 #import "@local/bootlin-yocto:0.1.0": *
-
 #import "@local/bootlin-utils:0.1.0": *
-
 #import "../../typst/local/themeBootlin.typ": *
-
 #import "../../typst/local/common.typ": *
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
 
-#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
-handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
-
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
-radius:0.5em, width:100%)
-
-#show raw.where(block: false): r => text(fill: color-link)[#r]
-
-#show raw.where(lang: "c", block: true): r => {
-
-set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
-breakable: true, above: 12pt, below: 12pt)
-
-set text(11pt)
-
-r
-
-}
+config-common(
+  // Compile with `typst c --input handout=1 ...` to generate the handout.
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
 
 == ASoC component controls
-
-===  `snd_soc_component_driver`
+<asoc-component-controls>
+===  ``` snd_soc_component_driver ```
 
 - Controls allow to export configuration knobs of the component to
   userspace.
@@ -37,7 +23,7 @@ r
 - ASoC provides many helpers to define them instead of filling
   #kstruct("snd_kcontrol_new")
 
-===  `snd_kcontrol_new`
+===  ``` snd_kcontrol_new ```
 
 #kfile("include/sound/control.h")
 

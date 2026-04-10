@@ -1,19 +1,47 @@
 #import "@local/bootlin:0.1.0": *
+
 #import "@local/bootlin-yocto:0.1.0": *
+
 #import "@local/bootlin-utils:0.1.0": *
-#import "../audio-alsa-utils/themeBootlin.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
+radius:0.5em, width:100%)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+}
+
+#show raw.where(lang: "console", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 6pt)
+
+set text(100pt)
+
+r
+
+}
+
 ===  glibc
-
-#columns(gutter: 8pt)[
+#table(
+columns: (70%, 30%), stroke: none,
+[
 
 - License: LGPL
 
@@ -26,15 +54,14 @@ config-common(
 - Of course, actively maintained
 
 - By default, quite big for small embedded systems. On armv7hf, version
-  2.31: ``` libc ```: 1.5 MB, ``` libm ```: 432 KB, source:
+  2.31: `libc`: 1.5 MB, `libm`: 432 KB, source:
   #link("https://toolchains.bootlin.com")
 
 - #link("https://www.gnu.org/software/libc/")
-
-#colbreak()
-#image("heckert_gnu_white.svg", width: 100%)
-Image: #link("https://bit.ly/2EzHl6m") 
-]
+],[
+#align(center, [#image("heckert_gnu_white.pdf", width: 100%)])
+#align(center, [Image: #link("https://bit.ly/2EzHl6m") ])
+])
 
 ===  uClibc-ng
 
@@ -58,14 +85,15 @@ Image: #link("https://bit.ly/2EzHl6m")
 
   - Focus on size (RAM and storage) rather than performance
 
-  - Size on armv7hf, version 1.0.34: ``` libc ```: 712 KB, source:
+  - Size on armv7hf, version 1.0.34: `libc`: 712 KB, source:
     #link("https://toolchains.bootlin.com")
 
 - Actively supported, supported by Buildroot but not by Yocto Project.
 
 ===  musl C library
-
-#columns(gutter: 8pt)[ #link("https://www.musl-libc.org/")
+#table(
+columns: (73%, 27%), stroke: none,
+[ #link("https://www.musl-libc.org/")
 
 - A lightweight, fast and simple library for embedded systems
 
@@ -83,16 +111,15 @@ Image: #link("https://bit.ly/2EzHl6m")
 - Used by the Alpine Linux lightweight distribution
   (#link("https://www.alpinelinux.org/"))
 
-- Size on armv7hf, version 1.2.0: ``` libc ```: 748 KB, source:
+- Size on armv7hf, version 1.2.0: `libc`: 748 KB, source:
   #link("https://toolchains.bootlin.com")
+],[
+#align(center, [#image("musl.png", width: 120%)]) 
+])
 
-#colbreak()
-#image("musl.png", width: 100%) 
-]
-
-===  glibc vs uclibc-ng vs musl - small static executables Let’s
-compile and strip a ``` hello.c ``` program #strong[statically] and
-compare the size
+===  glibc vs uclibc-ng vs musl - small static executables 
+Let’s compile and strip a `hello.c` program #strong[statically] and compare
+the size
 
 - With musl 1.2.0: 
   #strong[9,084] bytes
@@ -103,12 +130,12 @@ compare the size
 - With glibc 2.31: 
   #strong[431,140] bytes
 
-Tests run with ``` gcc 10.0.2 ``` toolchains for ``` armv7-eabihf ``` 
+Tests run with `gcc 10.0.2` toolchains for `armv7-eabihf` 
 (from #link("https://toolchains.bootlin.com"))
 
-===  glibc vs uclibc vs musl - more realistic example Let’s compile
-and strip BusyBox 1.32.1 #strong[statically] 
-(with the ``` defconfig ``` configuration) and compare the size
+===  glibc vs uclibc vs musl - more realistic example 
+Let’s compile and strip BusyBox 1.32.1 #strong[statically] 
+(with the `defconfig` configuration) and compare the size
 
 - With musl 1.2.0: 
   #strong[1,176,744] bytes
@@ -121,9 +148,9 @@ and strip BusyBox 1.32.1 #strong[statically]
 
 Notes:
 
-- Tests run with ``` gcc 10.0.2 ``` toolchains for ``` armv7-eabihf ```
+- Tests run with `gcc 10.0.2` toolchains for `armv7-eabihf`
 
-- BusyBox is automatically compiled with ``` -Os ``` and stripped.
+- BusyBox is automatically compiled with `-Os` and stripped.
 
 - Compiling with shared libraries will mostly eliminate size differences
 

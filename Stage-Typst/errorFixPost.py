@@ -27,6 +27,10 @@ def resolve_image(path_str, ligne):
         subprocess.run(["epstopdf", "--outfile=" + str(pdf_path), str(eps_path)])
         return pdf_path
 
+    def try_convert_jpg(jpg_path, png_path):
+        subprocess.run(["convert", str(jpg_path), str(png_path)])
+        return png_path
+
     pdf_same = path_obj.with_suffix(".pdf")
     pdf_out  = out_dir / (filename + ".pdf")
     pdf_out_common = out_common_dir / (filename + ".pdf")
@@ -38,6 +42,21 @@ def resolve_image(path_str, ligne):
 
     dia_same = path_obj.with_suffix(".dia")
     dia_out  = out_dir / (filename + ".dia")
+
+
+    jpg_same = Path(filename + ".jpg")
+    jpg_out  = out_dir / (filename + ".jpg")
+    jpg_common = common_dir / (filename + ".jpg")
+
+    png_same = Path(filename + ".png")
+    png_out  = out_dir / (filename + ".png")
+    png_common = common_dir / (filename + ".png")
+
+
+
+    if png_common.exists() and not png_same.exists():
+        return ligne.replace(path_str, str(png_common))
+    
 
     if pdf_common.exists() and not pdf_same.exists():
         print("A")
@@ -61,10 +80,15 @@ def resolve_image(path_str, ligne):
     elif dia_out.exists() and not pdf_out.exists():
         try_convert_dia(dia_out, pdf_out)
     
+    elif jpg_same.exists() and not png_same.exists():
+        try_convert_jpg(jpg_same, png_same)
+    elif jpg_out.exists() and not png_out.exists():
+        try_convert_jpg(jpg_out, png_out)
+    elif jpg_common.exists() and not png_common.exists():
+        try_convert_jpg(jpg_common, png_common)
     
-
+    
     if pdf_same.exists():
-        print("A")
         return ligne.replace(path_str, str(pdf_same))
     elif pdf_out.exists():
         return ligne.replace(path_str, str(pdf_out))
@@ -72,6 +96,96 @@ def resolve_image(path_str, ligne):
     return ligne
 
 
+# def resolve_image(path_str, ligne):
+#     path_obj = Path(path_str)
+#     filename = path_obj.stem
+#     suffix = path_obj.suffix
+
+#     out_dir = Path("../../out")
+#     out_common_dir = Path("../../out/common")
+#     common_dir = Path("../../common")
+
+#     def try_convert_svg(svg_path, pdf_path): 
+#         subprocess.run(["inkscape", "--export-filename=" + str(pdf_path), str(svg_path)])
+#         return pdf_path
+
+#     def try_convert_dia(dia_path, pdf_path):
+#         eps_path = dia_path.with_suffix(".eps")
+#         subprocess.run(["dia", "-e", str(eps_path), "-t", "eps", str(dia_path)])
+#         subprocess.run(["epstopdf", "--outfile=" + str(pdf_path), str(eps_path)])
+#         return pdf_path
+
+#     def try_convert_jpg(jpg_path, png_path):
+#         subprocess.run(["convert", str(jpg_path), str(png_path)])
+#         return png_path
+
+#     pdf_same = Path(filename + ".pdf")
+#     pdf_out  = out_dir / (filename + ".pdf")
+#     pdf_out_common = out_common_dir / (filename + ".pdf")
+#     pdf_common = common_dir / (filename + ".pdf")
+
+#     png_same = Path(filename + ".png")
+#     png_out  = out_dir / (filename + ".png")
+#     png_common = common_dir / (filename + ".png")
+
+#     svg_same = Path(filename + ".svg")
+#     svg_out  = out_dir / (filename + ".svg")
+#     svg_common = common_dir / (filename + ".svg")
+
+#     dia_same = Path(filename + ".dia")
+#     dia_out  = out_dir / (filename + ".dia")
+#     dia_common = common_dir / (filename + ".dia")
+#     dia_local = Path(path_obj.name).with_suffix(".dia")
+
+#     jpg_same = Path(filename + ".jpg")
+#     jpg_out  = out_dir / (filename + ".jpg")
+#     jpg_common = common_dir / (filename + ".jpg")
+
+#     # Conversions si pas encore de pdf/png
+#     if svg_same.exists() and not pdf_same.exists():
+#         try_convert_svg(svg_same, pdf_same)
+#     elif dia_local.exists() and not pdf_same.exists():
+#         try_convert_dia(dia_local, pdf_same)
+#     elif svg_out.exists() and not pdf_out.exists():
+#         try_convert_svg(svg_out, pdf_out)
+#     elif svg_common.exists() and not pdf_common.exists():
+#         try_convert_svg(svg_common, pdf_common)
+#     elif dia_same.exists() and not pdf_same.exists():
+#         try_convert_dia(dia_same, pdf_same)
+#     elif dia_out.exists() and not pdf_out.exists():
+#         try_convert_dia(dia_out, pdf_out)
+#     elif dia_common.exists() and not pdf_common.exists():
+#         try_convert_dia(dia_common, pdf_common)
+#     elif jpg_same.exists() and not png_same.exists():
+#         try_convert_jpg(jpg_same, png_same)
+#     elif jpg_out.exists() and not png_out.exists():
+#         try_convert_jpg(jpg_out, png_out)
+#     elif jpg_common.exists() and not png_common.exists():
+#         try_convert_jpg(jpg_common, png_common)
+
+
+    
+
+#     # Résolution du chemin
+#     if path_obj.exists():
+#         return ligne.replace(path_str, path_obj.name)
+#     elif pdf_same.exists():
+#         return ligne.replace(path_str, pdf_same.name)
+#     elif png_same.exists():
+#         return ligne.replace(path_str, png_same.name)
+#     elif pdf_out.exists():
+#         return ligne.replace(path_str, str(pdf_out))
+#     elif png_out.exists():
+#         return ligne.replace(path_str, str(png_out))
+#     elif pdf_common.exists():
+#         return ligne.replace(path_str, str(pdf_common))
+#     elif png_common.exists():
+#         return ligne.replace(path_str, str(png_common))
+#     elif pdf_out_common.exists():
+#         return ligne.replace(path_str, str(pdf_out_common))
+
+
+#     return ligne
 
 
 
@@ -178,6 +292,8 @@ def relecture():
         ligne = ligne.replace("""“‘""", "```")
         ligne = ligne.replace("‘", "`")
         ligne = ligne.replace("\\[fragile\\]", "")
+        if  "= " and " === " in ligne:
+            ligne = ligne.replace("===", "\n===")
         if ligne.startswith("\\section"):
             ligne = ligne.replace("\\section{", "= ")
             ligne = ligne.replace("}", "")
@@ -185,21 +301,30 @@ def relecture():
             ligne = ligne.replace("\\subsection{", "== ")
             ligne = ligne.replace("}", "")
         if ligne.startswith("= "):
-            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *\n #import "@local/bootlin-yocto:0.1.0": *\n#import "@local/bootlin-utils:0.1.0": *\n#import "../../typst/local/themeBootlin.typ": *\n#import "../../typst/local/common.typ": *\n#show: bootlin-theme.with(\n  aspect-ratio: "16-9",\n\nconfig-common(\n  // Compile with `typst c --input handout=1 ...` to generate the handout.\n  handout: "handout" in sys.inputs and sys.inputs.handout == "1",\n))\n#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)\n#show raw.where(block: false): r => { text(fill: color-link)[#r] } \n #show raw.where(lang: "c", block: true): r => {
-  set block(fill: luma(240),
-  inset: 0.4em,
-  radius: 0.5em,
-  width: 95%, breakable: true, above: 6pt)
-  set text(11pt)
-  r
-}
-#show raw.where(lang: "console", block: true): r => {
-  set block(fill: luma(240),
-  inset: 0.4em, radius: 0.5em,
-  width: 95%, breakable: true, above: 6pt)
-  set text(9pt)
-  r
-}
+            ligne = ligne.replace("=", """#import "@local/bootlin:0.1.0": *
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius: 0.5em, width: 100%)
+#show raw.where(block: true): set text(size: 11pt)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%, breakable: true, above: 12pt, below: 12pt)
+#show raw.where(lang: "c", block: true): set text(11pt)
+
+
+#show raw.where(lang: "console", block: true):set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%, breakable: true, above: 6pt)
+#show raw.where(lang:"console", block: true): set text(12pt)
                 \n=""")
         ligne = ligne.replace("\\=\\=\\=", "=== ")
         if "```make" in ligne :

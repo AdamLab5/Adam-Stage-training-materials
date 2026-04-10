@@ -180,7 +180,7 @@
   let header(self) = {
     set text(size: 26pt)
     h(26mm) + utils.call-or-display(self, self.store.header)
-    v(-0.8em)
+    v(-0.1em)
     line(length: 100%, stroke: 2pt + bootlin-orange)
     v(4mm)
     place(top + left, dx: 6mm, dy: 4mm, box(image("logo-penguins.svg"), width: 18mm))
@@ -279,9 +279,9 @@ Corrections, suggestions, contributions and translations are welcome!])
 
 #let new-section-slide(config: (:), level: 1, numbered: false, body) = touying-slide-wrapper(self => {
   let header(self) = {
-    set text(size: 12pt)
+    set text(size: 13pt)
     [#h(1fr) Embedded Linux and kernel engineering #h(1em)]
-    v(-0.8em)
+    v(0.1em)
     line(length: 100%, stroke: 2pt + bootlin-orange)
     v(4mm)
     place(top + left, dx: 6mm, dy: 4mm, box(image("logo-penguins.svg"), width: 18mm))
@@ -310,9 +310,9 @@ Corrections, suggestions, contributions and translations are welcome!])
 
 #let new-subsection-slide(config: (:), level: 2, numbered: false, body) = touying-slide-wrapper(self => {
   let header(self) = {
-    set text(size: 12pt)
+    set text(size: 13pt)
     [#h(1fr) Embedded Linux and kernel engineering #h(1em)]
-    v(-0.8em)
+    v(0.1em)
     line(length: 100%, stroke: 2pt + bootlin-orange)
     v(4mm)
     place(top + left, dx: 6mm, dy: 4mm, box(image("logo-penguins.svg"), width: 18mm))
@@ -380,6 +380,10 @@ Corrections, suggestions, contributions and translations are welcome!])
     body-indent: 0.5em
   )
 
+  set par(
+    spacing: 0.5em,
+  )
+
   show: touying-slides.with(
     config-page(
       paper: "presentation-" + aspect-ratio,
@@ -422,7 +426,7 @@ Corrections, suggestions, contributions and translations are welcome!])
     ),
     config-store(
       header: header,
-      footer: box(image("bootlin-logo.svg"), height: 1.2em) + [ \- Kernel, drivers and embedded Linux - Development, consulting, training and support - #link("https://bootlin.com")],
+      footer: box(image("bootlin-logo.svg"), height: 1.8em) + [ \- Kernel, drivers and embedded Linux - Development, consulting, training and support - #link("https://bootlin.com")],
       footer-right: context utils.slide-counter.display() + "/" + utils.last-slide-number,
     ),
     ..args,

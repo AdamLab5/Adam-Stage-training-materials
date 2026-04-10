@@ -1,20 +1,45 @@
 #import "@local/bootlin:0.1.0": *
-#import "@local/bootlin-yocto:0.1.0": *
-#import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
-#show: bootlin-theme.with(
-  aspect-ratio: "16-9",
 
-config-common(
-  // Compile with `typst c --input handout=1 ...` to generate the handout.
-  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
-))
-#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100%)
-#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(
+handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em,
+radius:0.5em, width:100%)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+}
+
+#show raw.where(lang: "console", block: true): r => {
+
+set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95%,
+breakable: true, above: 6pt)
+
+set text(9pt)
+
+r
+
+}
 
 == regmap
-<regmap>
+
 ===  regmap
 
 - has its roots in ASoC (ALSA)
@@ -61,10 +86,10 @@ config-common(
                                   dev, config)
   ```
 
-- Also ``` devm_ ``` versions
+- Also `devm_` versions
 
-- and ``` _clk ``` versions, preparing, enabling and disabling clocks
-  when necessary
+- and `_clk` versions, preparing, enabling and disabling clocks when
+  necessary
 
 ===  regmap: config
 
@@ -95,28 +120,26 @@ struct regmap_config {
 
 ===  regmap: config
 
-- ``` reg_bits ``` Number of bits in a register address, mandatory.
+- `reg_bits` Number of bits in a register address, mandatory.
 
-- ``` reg_stride ``` The register address stride. Valid register
-  addresses are a multiple of this value. If set to 0, a value of 1 will
-  be used.
+- `reg_stride` The register address stride. Valid register addresses
+  are a multiple of this value. If set to 0, a value of 1 will be used.
 
-- ``` writeable_reg ```, ``` readable_reg ```, ``` volatile_reg ```, ```
-  precious_reg ```: Optional callbacks returning true if the register is
-  writeable, readable, volatile or precious. volatile registers won’t be
-  cached. precious registers will not be read unless the driver
-  explicitly calls a read function. There are also tables in the
+- `writeable_reg`, `readable_reg`, `volatile_reg`, `precious_reg`:
+  Optional callbacks returning true if the register is writeable,
+  readable, volatile or precious. volatile registers won’t be cached.
+  precious registers will not be read unless the driver explicitly calls
+  a read function. There are also tables in the
   #kstruct("regmap_config") for the same purpose.
 
-- ``` reg_read ```, ``` reg_write ```, ``` reg_update_bits ```: Optional
-  callbacks that if filled will be used to perform accesses. ```
-  reg_update_bits ``` should only be provided if specific locking is
-  required.
+- `reg_read`, `reg_write`, `reg_update_bits`: Optional callbacks
+  that if filled will be used to perform accesses. `reg_update_bits`
+  should only be provided if specific locking is required.
 
-- ``` reg_defaults ```: Power on reset values for registers (for use with
+- `reg_defaults`: Power on reset values for registers (for use with
   register cache support).
 
-- ``` num_reg_defaults ```: Number of elements in ``` reg_defaults ```.
+- `num_reg_defaults`: Number of elements in `reg_defaults`.
 
 ===  regmap: access
 
@@ -253,11 +276,11 @@ static int adau1372_spi_probe(struct spi_device *spi)
 
 ===  regmap: ASoC components
 
-- ``` snd_soc_component ``` regmap accessors also exist, they are
-  available either implicitly as the component core calls ```
-  dev_get_regmap(component->dev, NULL) ``` to retrieve or create a
-  regmap for the device or explicitly by calling ```
-  snd_soc_component_init_regmap() ```
+- `snd_soc_component` regmap accessors also exist, they are available
+  either implicitly as the component core calls
+  `dev_get_regmap(component->dev, NULL)` to retrieve or create a
+  regmap for the device or explicitly by calling
+  `snd_soc_component_init_regmap()`
 
 #kfile("include/sound/soc-component.h")
 

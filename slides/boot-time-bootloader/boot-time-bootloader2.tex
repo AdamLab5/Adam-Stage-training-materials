@@ -1,4 +1,51 @@
-\section{Bootloader optimizations}
+#import "@local/bootlin:0.1.0": * 
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
+config-common(
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\%) 
+
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+
+#show raw.where(lang: "c", block: true): r => \{
+
+set block(fill: luma(240),
+inset: 0.4em,
+radius: 0.5em,
+width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+\} 
+
+
+#show raw.where(lang: "console", block: true): r => \{
+
+set block(fill: luma(240),
+inset: 0.4em,
+radius: 0.5em,
+width: 95\%, breakable: true, above: 6pt)
+
+set text(9pt)
+
+r
+
+\} 
+
+ = Bootloader optimizations
 
 \subsection{Generic bootloader optimizations}
 
@@ -16,8 +63,8 @@
 
 === U-Boot - Remove unnecessary functionality Recompile U-Boot to remove features not needed in production
 \begin{itemize}
-\item Disable as many features as possible through the ``` menuconfig ```
-      interface and through ``` include/configs/<soc>-<board>.h ```
+\item Disable as many features as possible through the `menuconfig`
+      interface and through `include/configs/<soc>-<board>.h`
 \item Examples: MMC, USB, Ethernet, dhcp, ping, command line edition,
       command completion...
 \item A smaller and simpler U-Boot is faster to load and faster
@@ -29,7 +76,7 @@ However, in this presentation, we will give the easiest optimizations in U-Boot,
 === U-Boot - Remove the boot delay
 \begin{itemize}
 \item Remove the boot delay:\\
-      ``` setenv bootdelay 0 ```
+      `setenv bootdelay 0`
 \item This usually saves several seconds!
 \end{itemize}
 

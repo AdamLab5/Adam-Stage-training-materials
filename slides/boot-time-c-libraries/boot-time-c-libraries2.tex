@@ -1,4 +1,51 @@
-=== glibc
+#import "@local/bootlin:0.1.0": * 
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with(
+  aspect-ratio: "16-9",
+config-common(
+  handout: "handout" in sys.inputs and sys.inputs.handout == "1",
+))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius:0.5em, width:100\%) 
+
+#show raw.where(block: false): r => { text(fill: color-link)[#r] } 
+
+#show raw.where(lang: "c", block: true): r => \{
+
+set block(fill: luma(240),
+inset: 0.4em,
+radius: 0.5em,
+width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+set text(11pt)
+
+r
+
+\} 
+
+
+#show raw.where(lang: "console", block: true): r => \{
+
+set block(fill: luma(240),
+inset: 0.4em,
+radius: 0.5em,
+width: 95\%, breakable: true, above: 6pt)
+
+set text(100pt)
+
+r
+
+\} 
+
+ === glibc
   
 #columns(gutter: 8pt)[
     \begin{itemize}
@@ -8,7 +55,7 @@
     \item Found on all GNU / Linux host systems
     \item Of course, actively maintained
     \item By default, quite big for small embedded systems.
-      On armv7hf, version 2.31: ``` libc ```: 1.5 MB, ``` libm ```: 432
+      On armv7hf, version 2.31: `libc`: 1.5 MB, `libm`: 432
       KB, source: \url{https://toolchains.bootlin.com}
     \item \url{https://www.gnu.org/software/libc/}
     \end{itemize}
@@ -39,7 +86,7 @@
           floating-point operations...)
     \item Focus on size (RAM and storage) rather than performance
     \item Size on armv7hf, version 1.0.34:
-      ``` libc ```: 712 KB, source: \url{https://toolchains.bootlin.com}
+      `libc`: 712 KB, source: \url{https://toolchains.bootlin.com}
     \end{itemize}
     \item Actively supported, supported by Buildroot but not by Yocto Project.
   \end{itemize}
@@ -63,7 +110,7 @@
       \item Used by the Alpine Linux lightweight distribution
         (\url{https://www.alpinelinux.org/})
       \item Size on armv7hf, version 1.2.0:
-        ``` libc ```: 748 KB, source: \url{https://toolchains.bootlin.com}
+        `libc`: 748 KB, source: \url{https://toolchains.bootlin.com}
       \end{itemize}
      #colbreak()
     \includegraphics[width=\textwidth]{slides/boot-time-c-libraries/musl.png}
@@ -71,8 +118,7 @@
 
 
 === {glibc vs uclibc-ng vs musl - small static executables}
-  Let's compile and strip a ``` hello.c ``` program {\bf statically} and
-compare the size
+  Let's compile and strip a `hello.c` program {\bf statically} and compare the size
   \begin{itemize}
     \item With musl 1.2.0:\\
           {\bf 9,084} bytes
@@ -81,13 +127,13 @@ compare the size
     \item With glibc 2.31:\\
           {\bf 431,140} bytes
   \end{itemize}
-  Tests run with ``` gcc 10.0.2 ``` toolchains for ``` armv7-eabihf ```\\
+  Tests run with `gcc 10.0.2` toolchains for `armv7-eabihf`\\
   (from \url{https://toolchains.bootlin.com})
 
 
 === {glibc vs uclibc vs musl - more realistic example}
   Let's compile and strip BusyBox 1.32.1 {\bf statically}\\
-  (with the ``` defconfig ``` configuration) and compare the size
+  (with the `defconfig` configuration) and compare the size
   \begin{itemize}
     \item With musl 1.2.0:\\
           {\bf 1,176,744} bytes
@@ -98,8 +144,8 @@ compare the size
   \end{itemize}
   Notes:
   \begin{itemize}
-    \item Tests run with ``` gcc 10.0.2 ``` toolchains for ``` armv7-eabihf ```
-    \item BusyBox is automatically compiled with ``` -Os ``` and stripped.
+    \item Tests run with `gcc 10.0.2` toolchains for `armv7-eabihf`
+    \item BusyBox is automatically compiled with `-Os` and stripped.
     \item Compiling with shared libraries will mostly eliminate size differences
   \end{itemize}
 
