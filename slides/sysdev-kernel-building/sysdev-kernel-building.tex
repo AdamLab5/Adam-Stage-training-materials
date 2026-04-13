@@ -62,7 +62,7 @@
 
 \begin{frame}[fragile]
   \frametitle{Choosing a compiler}
-  The compiler invoked by the kernel Makefile is \code{$(CROSS_COMPILE)gcc}
+  The compiler invoked by the kernel Makefile is \code{\$(CROSS_COMPILE)gcc}
   \begin{itemize}
     \item Specifying the compiler is already needed at configuration
 	  time, as some kernel configuration options depend on the
@@ -365,7 +365,7 @@ CONFIG_FAT_DEFAULT_CODEPAGE=437
     kernel no longer works.
   \item If you don't remember all the changes you made,
     you can get back to your previous configuration:\\
-    \code{$ cp .config.old .config}
+    \code{\$ cp .config.old .config}
   \item All the configuration tools keep this \code{.config.old} backup
     copy.
   \end{itemize}
@@ -381,7 +381,7 @@ CONFIG_FAT_DEFAULT_CODEPAGE=437
   \begin{itemize}
     \item Only works from the top kernel source directory
     \item Should not be performed as a privileged user
-    \item Run several {\bf j}obs in parallel. Our advice: \code{$(nproc)} to
+    \item Run several {\bf j}obs in parallel. Our advice: \code{\$(nproc)} to
       fully load the CPU and I/Os at all times.\\
           Example: \code{make -j20}
     \item To {\bf re}compile faster (7x according to some benchmarks),\\

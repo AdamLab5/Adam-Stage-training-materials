@@ -290,8 +290,12 @@ def relecture():
             # with 
         
         ligne = ligne.replace("""“‘""", "```")
-        ligne = ligne.replace("‘", "`")
+        ligne = ligne.replace("’", "`")
         ligne = ligne.replace("\\[fragile\\]", "")
+        ligne = ligne.replace("‘", "`")
+        ligne = ligne.replace("Bootlin`s", "Bootlin's")
+        if ligne.endswith("]") and ligne.startswith("]"):
+            ligne = ligne.replace("]", "]")
         if  "= " and " === " in ligne:
             ligne = ligne.replace("===", "\n===")
         if ligne.startswith("\\section"):
@@ -327,9 +331,11 @@ handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
 #show raw.where(lang:"console", block: true): set text(12pt)
                 \n=""")
         ligne = ligne.replace("\\=\\=\\=", "=== ")
-        if "```make" in ligne :
-            ligne = ligne.replace("```make", "``` make")
+        if "``` make" in ligne: 
+            ligne = ligne.replace("``` make", "```make")
         
+        ligne = ligne.replace("$ ", "$_")
+        ligne = ligne.replace("$", "\\$")
         # lines = sys.stdin.split('\n')
         # result = []
         # prev_was_item = False
@@ -349,6 +355,25 @@ handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
             ligne = ligne.replace("\\", "")
         
         ligne = re.sub(r'\$([A-Za-z_][A-Za-z0-9_]*|\d+)', r'\\$\1', ligne)
+
+        ligne = ligne.replace("$_", "$\\_")
+        ligne = ligne.replace("$", "\\$")
+        ligne = ligne.replace("\\\\", "\\")
+        ligne=ligne.replace("don`t", "don't")
+        ligne = ligne.replace("what`s", "what's")
+        ligne= ligne.replace("that`s", "that's")
+        ligne = ligne.replace("doesn`t", "doesn't")
+        ligne = ligne.replace("can`t", "can't")
+        ligne = ligne.replace("#colbreak()","],[")
+        if ligne.endswith("]"):
+            ligne=ligne.replace("]", "])")
+        if ligne.startswith("]"):
+            ligne = ligne.replace("]", "])")
+        
+        ligne=ligne.replace("]),[", "],[")
+
+        if "===" and "#table" in ligne:
+            ligne = ligne.replace("#table", "\n#table")
         if "#image" in ligne:
                 nv_ligne = ligne.replace("textheight", "0%")
                 nv_ligne = nv_ligne.replace("0.", "")

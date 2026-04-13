@@ -1,0 +1,101 @@
+#import "@local/bootlin:0.1.0": *
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius: 0.5em, width: 100\%)
+
+#show raw.where(block: true): set text(size: 11pt)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+#show raw.where(lang: "c", block: true): set text(11pt)
+
+#show raw.where(lang: "console", block: true):set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 6pt)
+
+#show raw.where(lang:"console", block: true): set text(12pt)
+
+ == Contents
+
+=== Root filesystem organization
+  \begin{itemize}
+  \item The organization of a Linux root filesystem in terms of
+    directories is well-defined by the {\bf Filesystem Hierarchy
+      Standard}
+  \item \url{https://refspecs.linuxfoundation.org/fhs.shtml}
+  \item Most Linux systems conform to this specification
+    \begin{itemize}
+    \item Applications expect this organization
+    \item It makes it easier for developers and users as the
+      filesystem organization is similar in all systems
+    \end{itemize}
+  \end{itemize}
+
+
+=== Important directories (1)
+  \begin{description}
+  \item[/bin] Basic programs
+  \item[/boot] Kernel images, configurations and initramfs
+    (only when the kernel is loaded from a
+    filesystem, not common on non-x86 architectures)
+  \item[/dev] Device files (covered later)
+  \item[/etc] System-wide configuration
+  \item[/home] Directory for the users home directories
+  \item[/lib] Basic libraries
+  \item[/media] Mount points for removable media
+  \item[/mnt] Mount point for a temporarily mounted filesystem
+  \item[/proc] Mount point for the proc virtual filesystem
+  \end{description}
+
+
+=== Important directories (2)
+  \begin{description}
+  \item[/root]Home directory of the `root` user
+  \item[/run]Run-time variable data (previously `/var/run`)
+  \item[/sbin]Basic system programs
+  \item[/sys]Mount point of the sysfs virtual filesystem
+  \item[/tmp]Temporary files
+  \item[/usr]
+    \begin{description}
+    \item[/usr/bin]Non-basic programs
+    \item[/usr/lib]Non-basic libraries
+    \item[/usr/sbin]Non-basic system programs
+    \end{description}
+  \item[/var] Variable data files, for system services. This includes spool directories and
+    files, administrative and logging data, and transient and
+    temporary files
+  \end{description}
+
+
+=== Separation of programs and libraries
+  \small
+  \begin{itemize}
+  \item Basic programs are installed in `/bin` and `/sbin`
+    and basic libraries in `/lib`
+  \item All other programs are installed in `/usr/bin` and
+    `/usr/sbin` and all other libraries in `/usr/lib`
+  \item In the past, on UNIX systems, `/usr` was very often
+    mounted over the network, through NFS
+  \item In order to allow the system to boot when the network was
+    down, some binaries and libraries are stored in `/bin`,
+    `/sbin` and `/lib`
+  \item `/bin` and `/sbin` contain programs like `ls`,
+    `ip`, `cp`, `bash`, etc.
+  \item `/lib` contains the C library and sometimes a few other
+    basic libraries
+  \item All other programs and libraries are in `/usr`
+  \item Update: distributions are now making `/bin` link to
+    `/usr/bin`, `/lib` to `/usr/lib` and `/sbin`
+    to `/usr/sbin`. Details on
+    \url{https://systemd.io/THE_CASE_FOR_THE_USR_MERGE/}.
+  \end{itemize}
+

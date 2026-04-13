@@ -1,0 +1,90 @@
+#import "@local/bootlin:0.1.0": *
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius: 0.5em, width: 100\%)
+
+#show raw.where(block: true): set text(size: 11pt)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+#show raw.where(lang: "c", block: true): set text(11pt)
+
+#show raw.where(lang: "console", block: true):set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 6pt)
+
+#show raw.where(lang:"console", block: true): set text(12pt)
+
+ == Pseudo Filesystems
+=== proc virtual filesystem
+  \begin{itemize}
+  \item The `proc` virtual filesystem exists since the beginning of
+    Linux
+  \item It allows
+    \begin{itemize}
+    \item The kernel to expose statistics about running processes in
+      the system
+    \item The user to adjust at runtime various system parameters
+      about process management, memory management, etc.
+    \end{itemize}
+  \item The `proc` filesystem is used by many standard user space
+    applications, and they expect it to be mounted in `/proc`
+  \item Applications such as `ps` or `top` would not work
+    without the `proc` filesystem
+  \item Command to mount `proc`:\\
+    `mount -t proc nodev /proc`
+  \item See #kdochtml("filesystems/proc") in kernel documentation
+        or `man proc`
+  \end{itemize}
+
+
+=== proc contents
+  \begin{itemize}
+  \item One directory for each running process in the system
+    \begin{itemize}
+    \item `/proc/<pid>`
+    \item `cat /proc/3840/cmdline`
+    \item It contains details about the files opened by the process,
+      the CPU and memory usage, etc.
+    \end{itemize}
+  \item `/proc/interrupts`, `/proc/iomem`,
+    `/proc/cpuinfo` contain general device-related information
+  \item `/proc/cmdline` contains the kernel command line
+  \item `/proc/sys` contains many files that can be written to
+    adjust kernel parameters
+    \begin{itemize}
+    \item They are called {\em sysctl}. See #kdochtmldir("admin-guide/sysctl")
+      in kernel documentation.
+    \item Example (free the page cache and slab objects):\\
+      `echo 3 > /proc/sys/vm/drop_caches`
+    \end{itemize}
+  \end{itemize}
+
+
+=== sysfs filesystem
+  \begin{itemize}
+  \item It allows to represent in user space the vision that the kernel
+    has of the buses, devices and drivers in the system
+  \item It is useful for various user space applications that need to
+    list and query the available hardware, for example `udev` or
+    `mdev` (see later)
+  \item All applications using sysfs expect it to be mounted in the
+    `/sys` directory
+  \item Command to mount `/sys`:\\
+    `mount -t sysfs nodev /sys`
+  \item
+\begin{verbatim}
+$ ls /sys/
+block bus class dev devices firmware fs kernel module power
+\end{verbatim}
+  \end{itemize}
+

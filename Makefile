@@ -157,6 +157,62 @@ FORCE:
 %-slides.pdf: FORCE
 	@$(MAKE) $@ SLIDES=$*
 endif
+# ifdef SLIDES
+
+# ifeq ($(firstword $(subst -, , $(SLIDES))),full)
+# SLIDES_TRAINING      = $(strip $(subst -slides, , $(subst full-, , $(SLIDES))))
+# SLIDES_COMMON_BEFORE = common/slide-header.typ \
+# 		       common/$(SLIDES_TRAINING)-vars.typ
+# SLIDES_CHAPTERS      = $($(call UPPERCASE, $(subst  -,_, $(SLIDES_TRAINING)))_SLIDES)
+# SLIDES_COMMON_AFTER  = common/slide-footer.typ
+# else
+# SLIDES_TRAINING      = $(firstword $(subst -, ,  $(SLIDES)))
+# ifeq ($(SLIDES_TRAINING),sysdev)
+# SLIDES_TRAINING = embedded-linux
+# endif
+
+# SLIDES_CHAPTERS      = $(filter $(SLIDES)%, $($(call UPPERCASE, $(SLIDES_TRAINING))_SLIDES))
+# ifeq ($(words $(SLIDES_CHAPTERS)),1)
+# SLIDES_COMMON_BEFORE = common/slide-header.typ common/single-subsection-slide-vars.typ
+# else
+# SLIDES_COMMON_BEFORE = common/slide-header.typ common/single-slide-vars.typ
+# endif
+# SLIDES_COMMON_AFTER  = common/slide-footer.typ
+# endif
+
+# ifeq ($(SLIDES_CHAPTERS),)
+# $(error "No chapter to build, maybe you're building a single chapter whose name doesn't start with a training session name")
+# endif
+
+# SLIDES_TYP      = \
+# 	$(SLIDES_COMMON_BEFORE) \
+# 	$(foreach s,$(SLIDES_CHAPTERS),$(wildcard slides/$(s)/$(s).typ)) \
+# 	$(SLIDES_COMMON_AFTER)
+# SLIDES_PICTURES = $(call PICTURES,$(foreach s,$(SLIDES_CHAPTERS),slides/$(s))) $(COMMON_PICTURES)
+
+# $(foreach file,$(SLIDES_TYP),$(if $(wildcard $(file)),,$(error Missing file $(file) !)))
+
+# %-slides.pdf: $(VARS) $(SLIDES_TYP) $(SLIDES_PICTURES) $(STYLESHEET) $(OUTDIR)/last-update.typ
+# 	@mkdir -p $(OUTDIR)
+
+
+#     rm -f $(OUTDIR)/$(basename $@).typ
+# 	echo "\input{last-update}" >> $(OUTDIR)/$(basename $@).typ
+# 	echo "\input{$(VARS)}" >> $(OUTDIR)/$(basename $@).typ
+# 	for f in $(filter %.typ,$^) ; do \
+# 		cp $$f $(OUTDIR)/`basename $$f` ; \
+# 		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/`basename $$f` ; \
+# 		printf "\input{%s}\n" `basename $$f .typ` >> $(OUTDIR)/$(basename $@).typ ; \
+# 	done
+#     (cd $(OUTDIR); $(PDFTYP_ENV) $(PDFTYP) $(PDFTYP_OPT) $(basename $@).typ)
+
+#     (cd $(OUTDIR); $(PDFTYP_ENV) $(PDFTYP) $(PDFTYP_OPT) $(basename $@).typ > /dev/null 2>&1)
+#     cat out/$@ > $@
+# else
+# FORCE:
+# %-slides.pdf: FORCE
+# 	@$(MAKE) $@ SLIDES=$*
+# endif
 
 #
 # === Compilation of labs ===

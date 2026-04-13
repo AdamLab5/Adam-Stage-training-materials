@@ -68,20 +68,37 @@ def prepareDoc():
         )
 
         document = re.sub(
+            r'\\input{gdb.tex}',
+            r'#include "../../common/gdb.typ"\n',
+            document
+        )
+        document = re.sub(
             r'\\input{strace.tex}',
-            r'#include "../../common/strace.tex"\n',
+            r'#include "../../common/strace.typ"\n',
             document
         )
 
         document = re.sub(
             r'\\input{ltrace.tex}',
-            r'#include "../../common/ltrace.tex"\n',
+            r'#include "../../common/ltrace.typ"\n',
             document
         )
 
         document = re.sub(
             r'\\input{valgrind.tex}',
-            r'#include "../../common/valgrind.tex"\n',
+            r'#include "../../common/valgrind.typ"\n',
+            document
+        )
+
+        document = re.sub(
+            r'\\input{elc.tex}',
+            r'#include "../../common/elc.typ"\n',
+            document
+        )
+
+        document = re.sub(
+            r'\\input{lpc.tex}',
+            r'#include "../../common/lpc.typ"\n',
             document
         )
         
@@ -117,6 +134,7 @@ def prepareDoc():
                 document,
                 count=1
             )
+
         if "\\section" and "#import" not in document:
             document=re.sub(
                 r'\\subsection\{([^}]*)\}',
@@ -143,15 +161,10 @@ def prepareDoc():
 
         document = re.sub(
             r'\\begin{columns}\s*\\column\s*\{([^}]*)\}',
-            r'\n#columns(gutter: 8pt)[',
+            r'\n#table(columns: (50\%, 50\%), stroke: none,\n[',
             document
         )
 
-        document = re.sub(
-            r'\\column\s*\{([^}]*)\}',
-            r' #colbreak()',
-            document
-        )
 
         document = re.sub(
             r'\\manpage\{([^}]*)\}\{([^}]*)\}',
