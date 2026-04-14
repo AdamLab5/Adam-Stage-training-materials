@@ -73,9 +73,9 @@ above: 6pt)
 
 #table(columns: (50%, 50%), stroke: none, [
 
-#include "../../common/elc.typ"
+#include "/common/elc.typ"
 
-#include "../../common/lpc.typ"
+#include "/common/lpc.typ"
 
 #align(center, [#image("/common/elc-logo.png", width: 100%)]) 
 #align(center, [#image("/common/lpc-logo.jpg", width: 80%)]) 

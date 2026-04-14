@@ -63,7 +63,7 @@ r
 
 
 
-#include "../../common/strace.typ"
+#include "/common/strace.typ"
 
 
 ===  perf

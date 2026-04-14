@@ -159,13 +159,13 @@ The dependency `gtk+-3.0` is searched using `pkg-config`.
 
 == Debugging
 <debugging>
-#include "../../common/gdb.typ"
+#include "/common/gdb.typ"
 
 == Tracing and profiling
 <tracing-and-profiling>
-#include "../../common/strace.typ"
+#include "/common/strace.typ"
 
-#include "../../common/ltrace.typ"
+#include "/common/ltrace.typ"
 
 ===  ftrace
 
@@ -302,7 +302,7 @@ Generated with
 
 == Memory debugging
 <memory-debugging>
-#include "../../common/valgrind.typ"
+#include "/common/valgrind.typ"
 
 ===  Debugging resources
 
