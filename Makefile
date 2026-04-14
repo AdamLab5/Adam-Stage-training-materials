@@ -129,7 +129,7 @@ $(foreach file,$(SLIDES_TEX),$(if $(wildcard $(file)),,$(error Missing file $(fi
 	for f in $(filter %.typ,$^) ; do \
 		cp $$f $(OUTDIR)/`basename $$f` ; \
 		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/`basename $$f` ; \
-		printf "#include %s\n" `basename $$f .typ` >> $(OUTDIR)/$(basename $@).typ ; \
+		printf "#include \"%s\"\n" `basename $$f` >> $(OUTDIR)/$(basename $@).typ ; \
 	done
 	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ)
 # The second call to pdflatex is to be sure that we have a correct table of
