@@ -1,4 +1,4 @@
-#import "common/embedded-linux-vars.typ": *
+#import "/common/embedded-linux-vars.typ": *
 
 #let imx93-frdm-nunchuk = false 
 #let imx93-frdm-nunchuk = false 
@@ -26,9 +26,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "typst/local/themeBootlin.typ": *
+#import "/typst/local/themeBootlin.typ": *
 
-#import "typst/local/common.typ": *
+#import "/typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout

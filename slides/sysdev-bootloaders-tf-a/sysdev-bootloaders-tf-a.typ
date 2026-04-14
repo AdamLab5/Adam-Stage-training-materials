@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "typst/local/themeBootlin.typ": *
+#import "/typst/local/themeBootlin.typ": *
 
-#import "typst/local/common.typ": *
+#import "/typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -126,7 +126,7 @@ TOS_FW_CONFIG: offset=0x10C716, size=0x3CF6, cmdline="--tos-fw-config"
 
 Reminder: boot sequence with TF-A on STM32MP1
 
-#align(center, [#image("common/sequence-stm32mp1.pdf", width: 100%)])
+#align(center, [#image("/common/sequence-stm32mp1.pdf", width: 100%)])
 
 
 ])

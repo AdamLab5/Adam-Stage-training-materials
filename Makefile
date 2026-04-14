@@ -123,13 +123,15 @@ $(foreach file,$(SLIDES_TEX),$(if $(wildcard $(file)),,$(error Missing file $(fi
 	echo AZJIOGIOAZJGIOAZJGIO $(SLIDES_CHAPTERS)
 	@mkdir -p $(OUTDIR)
 	rm -f $(OUTDIR)/$(basename $@).typ
+	cp -r typst out/
 # We generate a .tex file with \input{} directives (instead of just
 # concatenating all files) so that when there is an error, we are
 # pointed at the right original file and the right line in that file
 	for f in $(filter %.typ,$^) ; do \
-		cp $$f $(OUTDIR)/`basename $$f` ; \
-		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/`basename $$f` ; \
-		printf "#include \"%s\"\n" `basename $$f` >> $(OUTDIR)/$(basename $@).typ ; \
+		mkdir -p $(OUTDIR)/`dirname $$f` ; \
+		cp $$f $(OUTDIR)/$$f ; \
+		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/$$f ; \
+		printf "#include \"$$f\"\n" >> $(OUTDIR)/$(basename $@).typ ; \
 	done
 	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ)
 # The second call to pdflatex is to be sure that we have a correct table of

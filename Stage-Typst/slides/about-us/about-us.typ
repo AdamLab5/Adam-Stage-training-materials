@@ -30,7 +30,7 @@ Bootlin introduction
 
 - #link("https://bootlin.com")
 
-#image("common/bootlin-logo.pdf", width: \textwidth)
+#image("/common/bootlin-logo.pdf", width: \textwidth)
 
 Bootlin engineering services
 

@@ -1,8 +1,8 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": * 
 #import "@local/bootlin-utils:0.1.0": *
-#import "typst/local/themeBootlin.typ": *
-#import "typst/local/common.typ": * 
+#import "/typst/local/themeBootlin.typ": *
+#import "/typst/local/common.typ": * 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
  config-common( // Compile with `typst c --input handout=1 ...` to generate the handout.
   handout: "handout" in sys.inputs and sys.inputs.handout == "1",

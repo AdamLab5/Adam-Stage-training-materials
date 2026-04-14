@@ -58,7 +58,7 @@
       inset: 6pt,
       fill: white
     )[
-    '  #image("../../out/common/logo-penguins.pdf", width: 1cm)
+    '  #image("out/common/logo-penguins.pdf", width: 1cm)
       #h(1em)
       #title
     ]
@@ -108,7 +108,7 @@
     ],
     [
       #align(center)[
-        #image("../../out/common/logo-square.pdf", height: 4cm)
+        #image("out/common/logo-square.pdf", height: 4cm)
       ]
     ]
   )
@@ -123,7 +123,7 @@
     ],
     [
       #align(center)[
-        #image("../../out/common/logo-square.pdf", scale: 45%)
+        #image("out/common/logo-square.pdf", scale: 45%)
       ]
     ]
   )
@@ -134,7 +134,7 @@
   grid(
     columns: (0.4fr, 0.6fr),
     [
-      #image("../../out/common/lab-penguins.pdf", width: 100%)
+      #image("out/common/lab-penguins.pdf", width: 100%)
     ],
     [
         #body
@@ -151,7 +151,7 @@
       column-gutter: 1cm,
       align: horizon,
       [
-        #image("../../common/lab-penguins.svg", width: 100%)
+        #image("/common/lab-penguins.svg", width: 100%)
       ],
       body
     )
@@ -170,7 +170,7 @@
     column-gutter: 1cm,
     align: horizon,
     [
-      #image("../../out/common/lab-penguins.pdf", width: 100%)
+      #image("out/common/lab-penguins.pdf", width: 100%)
     ],
     body
   )
