@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -54,8 +54,8 @@ columns: (70%, 30%), stroke: none, gutter: 12pt,
 - A faster micro SD card - 1 GB or more
 
 ],[
-#align(center, [#image("../../common/usb-serial-cable-female.png", height: 20%)]) 
-#align(center, [#image("../../common/sd-card.pdf", height: 20%)]) 
+#align(center, [#image("common/usb-serial-cable-female.png", height: 20%)]) 
+#align(center, [#image("common/sd-card.pdf", height: 20%)]) 
 
 ]
 )

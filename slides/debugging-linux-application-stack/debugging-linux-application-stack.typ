@@ -1,8 +1,8 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
+#import "typst/local/themeBootlin.typ": *
+#import "typst/local/common.typ": *
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
 
@@ -93,7 +93,7 @@ config-common(
   #emph[Translation lookaside buffers] (TLB) for zero-delay mapping
 
 #colbreak()
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/mmu.pdf", width: 100%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/mmu.pdf", width: 100%)])
 
 ]
 
@@ -135,13 +135,13 @@ config-common(
   - Can be disabled using ``` norandmaps ``` command line parameter
 
 #colbreak()
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/memory_layout.pdf", height: 80%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/memory_layout.pdf", height: 80%)])
 
 ]
 
 ===  Userspace/Kernel memory layout Multiple processes have different
 user memory spaces
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/multiple_process.pdf", height: 70%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/multiple_process.pdf", height: 70%)])
 
 ===  Kernel memory map
 
@@ -162,7 +162,7 @@ user memory spaces
   - Can be disabled using ``` nokaslr ``` command line parameter
 
 #colbreak()
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/kernel_layout.pdf", height: 80%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/kernel_layout.pdf", height: 80%)])
 
 ]
 
@@ -201,10 +201,10 @@ user memory spaces
 
 - Non-contiguous physical memory can be virtually contiguous
 
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/memory_mapping.pdf", height: 70%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/memory_mapping.pdf", height: 70%)])
 
 ===  Userspace memory types
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/mem_type.pdf", height: 70%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/mem_type.pdf", height: 70%)])
 
 ===  On-demand memory mapping (#emph[Lazy allocation)]
 
@@ -227,7 +227,7 @@ user memory spaces
   #emph[pre-faulted]
 
 #colbreak()
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/lazy_mapping.pdf", height: 850%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/lazy_mapping.pdf", height: 850%)])
 
 ]
 
@@ -289,7 +289,7 @@ user memory spaces
   #kstruct("task_struct") can be accessed using
   #kfunc("get_current").
 
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/process_context.pdf", height: 20%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/process_context.pdf", height: 20%)])
 
 == Scheduling
 <scheduling>
@@ -390,7 +390,7 @@ user memory spaces
 
 - Interrupts are disabled (no nested interrupt support)!
 
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/interrupt_context.pdf", height: 20%)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/interrupt_context.pdf", height: 20%)])
 
 ===  System Calls (1/2)
 
@@ -501,7 +501,7 @@ root          11       2 [rcu_tasks_kthread]          TS
   workqueues) which aim to replace tasklets since 6.9.
 
 ===  Interrupts & Softirqs
-#align(center, [#image("../../out/slides/debugging-linux-application-stack/softirqs.pdf", height: 6cm)])
+#align(center, [#image("out/slides/debugging-linux-application-stack/softirqs.pdf", height: 6cm)])
 
 ===  Threaded interrupts
 

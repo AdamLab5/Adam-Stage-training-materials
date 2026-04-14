@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -629,7 +629,7 @@ also possible to use the U-Boot SPL \$arrow.r\$\_U-Boot boot flow on i.MX6.
 
 ===  STM32MP1: ARMv7
 
-#align(center, [#image("../../common/sequence-stm32mp1.pdf", width: 80%)])
+#align(center, [#image("common/sequence-stm32mp1.pdf", width: 80%)])
 
 Note: booting with U-Boot SPL and U-Boot is also possible.
 

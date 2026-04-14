@@ -1,4 +1,4 @@
-#import "../../common/embedded-linux-vars.typ": *
+#import "common/embedded-linux-vars.typ": *
 #let beaglebone-nunchuk = false
 #let beaglebone-nunchuk = false 
 #if training == "yocto" {[
@@ -21,9 +21,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -55,9 +55,9 @@ above: 6pt)
 
 #align(center, [#image("beagleboneblack.png", width: 60%)])
 
-#align(center, [#image("../../common/usb-serial-cable-female.jpg", width: 60%)]) 
+#align(center, [#image("common/usb-serial-cable-female.jpg", width: 60%)]) 
 #if beaglebone-nunchuk {[#align(center, [#image("nunchuk.jpg", width: 60%)]) ]}
-#align(center, [#image("../../common/jumper-wires.jpg", width: 60%)]) 
+#align(center, [#image("common/jumper-wires.jpg", width: 60%)]) 
 
 #if beaglebone-audio {[#align(center, [#image("usb-audio.png", width: 60%)]) ]}
 

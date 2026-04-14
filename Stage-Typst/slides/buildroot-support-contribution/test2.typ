@@ -129,7 +129,7 @@ typ
 
 - #link("https://patchwork.ozlabs.org/project/buildroot/list/")
 
-#image("../../out/slides/buildroot-support-contribution/patchwork.png", height: 50%)
+#image("out/slides/buildroot-support-contribution/patchwork.png", height: 50%)
 
 ==  Automated build testing
 
@@ -155,7 +155,7 @@ typ
 
 ==  autobuild.buildroot.org
 
-#image("../../out/slides/buildroot-support-contribution/autobuild.png", width: 90%)
+#image("out/slides/buildroot-support-contribution/autobuild.png", width: 90%)
 
 ==  \[fragile\]Autobuild daily reports
 

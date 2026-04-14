@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -88,7 +88,7 @@ multiple reasons.
   Linux is also about learning the tools needed on the development
   workstation!
 
-3 #align(center, [#image("../../common/ubuntu.pdf", width: 90%)]) 
+3 #align(center, [#image("common/ubuntu.pdf", width: 90%)]) 
 Image credits: #link("https://tinyurl.com/f4zxj5kw")
 
 

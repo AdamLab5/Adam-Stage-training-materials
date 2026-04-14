@@ -1,8 +1,8 @@
 #import "@local/bootlin:0.1.0": *
 #import "@local/bootlin-yocto:0.1.0": *
 #import "@local/bootlin-utils:0.1.0": *
-#import "../../typst/local/themeBootlin.typ": *
-#import "../../typst/local/common.typ": *
+#import "typst/local/themeBootlin.typ": *
+#import "typst/local/common.typ": *
 #show: bootlin-theme.with(
   aspect-ratio: "16-9",
 
@@ -17,7 +17,7 @@ config-common(
 <embedded-audio-hardware>
 ===  Anatomy
 
-#align(center, [#image("../../out/slides/audio-hardware/anatomy.pdf", width: 100%)]) 
+#align(center, [#image("out/slides/audio-hardware/anatomy.pdf", width: 100%)]) 
 #align(center, [#emph[Example of an embedded system sound card]])
 
 == CODECs
@@ -42,7 +42,7 @@ config-common(
 The CODEC DAI is a
 synchronous serial bus. A common PCM interface is represented here:
 
-#align(center, [#image("../../out/slides/audio-hardware/i2s.pdf", height: 40%)]) 
+#align(center, [#image("out/slides/audio-hardware/i2s.pdf", height: 40%)]) 
 
 ===  Digital audio interface - signals
 
@@ -142,9 +142,9 @@ has:
 wide and is the tag. Then twelve 20bit wide slots are used to transmit
 data.
 
-#align(center, [#image("../../out/slides/audio-hardware/ac97.pdf", height: 30%)]) 
+#align(center, [#image("out/slides/audio-hardware/ac97.pdf", height: 30%)]) 
 
-#align(center, [#image("../../out/slides/audio-hardware/ac97_phases.pdf", height: 30%)])
+#align(center, [#image("out/slides/audio-hardware/ac97_phases.pdf", height: 30%)])
 
 
 ===  Digital formats - PDM 
@@ -152,19 +152,19 @@ There is another, less common interface,
 using Pulse Density Modulation. It has two signals per channels, clock
 and data. Data has only one bit. 
 
-#align(center, [#image("../../out/slides/audio-hardware/PDM.pdf", height: 70%)]) 
+#align(center, [#image("out/slides/audio-hardware/PDM.pdf", height: 70%)]) 
 
 ===  Digital formats - S/PDIF or IEC 60958
 S/PDIF uses only one wire. Data is encoded using BMC (Biphase Mark Code), also known as
 differential Manchester encoding. Its clock is then twice the bitrate.
 
-#align(center, [#image("../../out/slides/audio-hardware/BMC.pdf", height: 30%)]) 
+#align(center, [#image("out/slides/audio-hardware/BMC.pdf", height: 30%)]) 
 
 Blocks of 192 frames are transmitted, each frame consisting of two
 subframes (32bit words). There are three different preambles, one for
 start of block and channel 0, one for channel 0 and one for channel 1.
 
-#align(center, [#image("../../out/slides/audio-hardware/SPDIF.pdf", height: 90%, width:80%)]) 
+#align(center, [#image("out/slides/audio-hardware/SPDIF.pdf", height: 90%, width:80%)]) 
 
 == Auxiliary devices
 <auxiliary-devices>

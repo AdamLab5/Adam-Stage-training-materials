@@ -148,7 +148,7 @@ config-common(
 
 - #link("https://patchwork.ozlabs.org/project/buildroot/list/")
 
-#image("../../slides/buildroot-support-contribution/patchwork.png", height: 50%)
+#image("slides/buildroot-support-contribution/patchwork.png", height: 50%)
 
 ===  Automated build testing
 
@@ -174,7 +174,7 @@ config-common(
 
 ===  autobuild.buildroot.org
 
-#image("../../slides/buildroot-support-contribution/autobuild.png", width: 90%)
+#image("slides/buildroot-support-contribution/autobuild.png", width: 90%)
 
 ===  \[fragile\]Autobuild daily reports
 

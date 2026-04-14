@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -52,7 +52,7 @@ above: 6pt)
 
 #align(center, [#image("book-mastering-embedded-linux4.jpg", height: 250%)])
 
-#align(center, [#image("../../common/linux-programming-interface.png", height: 250%)])
+#align(center, [#image("common/linux-programming-interface.png", height: 250%)])
 
 
 ])
@@ -77,8 +77,8 @@ above: 6pt)
 
 #include "../../common/lpc.typ"
 
-#align(center, [#image("../../common/elc-logo.png", width: 100%)]) 
-#align(center, [#image("../../common/lpc-logo.jpg", width: 80%)]) 
+#align(center, [#image("common/elc-logo.png", width: 100%)]) 
+#align(center, [#image("common/lpc-logo.jpg", width: 80%)]) 
 
 
 ])

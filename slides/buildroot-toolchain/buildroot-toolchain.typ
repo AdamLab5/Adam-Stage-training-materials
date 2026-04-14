@@ -125,7 +125,7 @@ config-common(
 
 - Additional profiles can easily be added.
 
-#image("../../slides/buildroot-toolchain/external-toolchain-profiles.png", width: 100%)
+#image("slides/buildroot-toolchain/external-toolchain-profiles.png", width: 100%)
 
 ===  Existing external toolchains: Bootlin toolchains
 
@@ -149,8 +149,8 @@ config-common(
 
 - Directly integrated in Buildroot
 
-#image("../../slides/buildroot-toolchain/bootlin-toolchains-com.png", height: 50%)
-#image("../../slides/buildroot-toolchain/bootlin-toolchains-menuconfig.png", width: 80%)
+#image("slides/buildroot-toolchain/bootlin-toolchains-com.png", height: 50%)
+#image("slides/buildroot-toolchain/bootlin-toolchains-menuconfig.png", width: 80%)
 
 ===  Custom external toolchains
 
@@ -182,7 +182,7 @@ config-common(
 
 ===  Custom external toolchain example configuration
 
-#image("../../slides/buildroot-toolchain/external-toolchain-config.png", height: 80%)
+#image("slides/buildroot-toolchain/external-toolchain-config.png", height: 80%)
 
 ===  External toolchain: result
 

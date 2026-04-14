@@ -7,9 +7,9 @@
 
   #import "@local/bootlin-utils:0.1.0": *
 
-  #import "../../typst/local/themeBootlin.typ": *
+  #import "typst/local/themeBootlin.typ": *
 
-  #import "../../typst/local/common.typ": *
+  #import "typst/local/common.typ": *
 
   #show: bootlin-theme.with( aspect-ratio: "16-9", config-common(handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
 
@@ -47,7 +47,7 @@
       - Details and registrations: #link("https://bootlin.com/training/\training")
       - Contact: `training@bootlin.com`
       ],[
-      #image("../../common/training.png")
+      #image("common/training.png")
       #emph[Icon by Eucalyp, Flaticon]
     ])]
     

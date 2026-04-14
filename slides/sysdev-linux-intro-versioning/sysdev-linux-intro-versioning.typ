@@ -4,9 +4,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -76,7 +76,7 @@ above: 6pt)
 
   
 #table(columns: (50%, 50%), stroke: none, [
-  #align(center, [#image("../../common/long-term-support-kernels.png", width: 100%)]) 
+  #align(center, [#image("common/long-term-support-kernels.png", width: 100%)]) 
   Captured on #link("https://kernel.org") in Feb. 2026, following the
   #link("https://www.kernel.org/category/releases.html")[#emph[Releases]]
   link. 

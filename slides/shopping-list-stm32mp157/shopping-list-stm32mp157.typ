@@ -1,4 +1,4 @@
-#import "../../common/embedded-linux-vars.typ": *
+#import "common/embedded-linux-vars.typ": *
 
 #let stm32mp157-nunchuk = false 
 #if training == "yocto" {
@@ -23,9 +23,9 @@
 
 #import "@local/bootlin-utils:0.1.0": *
 
-#import "../../typst/local/themeBootlin.typ": *
+#import "typst/local/themeBootlin.typ": *
 
-#import "../../typst/local/common.typ": *
+#import "typst/local/common.typ": *
 
 #show: bootlin-theme.with( aspect-ratio: "16-9",
 config-common(handout: "handout" in sys.inputs and sys.inputs.handout
@@ -91,7 +91,7 @@ RJ45 cable
 
 #if stm32mp157-nunchuk {[
 - #align(center, [#image("nunchuk.jpg", width: 60%)]) ]}
-#align(center, [#image("../../common/jumper-wires.jpg", width: 60%)]) 
+#align(center, [#image("common/jumper-wires.jpg", width: 60%)]) 
 
 #if stm32mp157-audio {[#align(center, [#image("usb-audio.png", width: 60%)])]}
 
