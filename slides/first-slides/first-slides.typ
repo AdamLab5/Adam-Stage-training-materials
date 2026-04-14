@@ -1,4 +1,4 @@
-'#import "../../out/vars.typ": trainer
+#let trainer
 #if trainer==none{
 
   [#import "@local/bootlin:0.1.0": *

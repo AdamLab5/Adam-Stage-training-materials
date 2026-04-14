@@ -1,2 +1,0 @@
-#let sessionurl 
-#let trainer 
