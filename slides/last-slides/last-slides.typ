@@ -1,4 +1,4 @@
-#import "out/vars.typ": trainer
+#let trainer
 
 #import "@local/bootlin:0.1.0": *
 
