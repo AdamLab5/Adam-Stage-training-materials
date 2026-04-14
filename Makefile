@@ -135,9 +135,6 @@ $(foreach file,$(SLIDES_TEX),$(if $(wildcard $(file)),,$(error Missing file $(fi
 		printf "#include \"$$f\"\n" >> $(OUTDIR)/$(basename $@).typ ; \
 	done
 	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ)
-# The second call to pdflatex is to be sure that we have a correct table of
-# content and index
-	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ > /dev/null 2>&1)
 # We use cat to overwrite the final destination file instead of mv, so
 # that evince notices that the file has changed and automatically
 # reloads it (which doesn't happen if we use mv here). This is called
