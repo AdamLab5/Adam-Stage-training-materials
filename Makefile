@@ -121,9 +121,10 @@ $(foreach file,$(SLIDES_TEX),$(if $(wildcard $(file)),,$(error Missing file $(fi
 
 %-slides.pdf: $(SLIDES_TYP) $(SLIDES_PICTURES) $(STYLESHEET)
 	echo AZJIOGIOAZJGIOAZJGIO $(SLIDES_CHAPTERS)
-	@mkdir -p $(OUTDIR)
+	@mkdir -p $(OUTDIR)/common
 	rm -f $(OUTDIR)/$(basename $@).typ
 	cp -r typst out/
+	cp $(wildcard common/*.typ) $(OUTDIR)/common/
 # We generate a .tex file with \input{} directives (instead of just
 # concatenating all files) so that when there is an error, we are
 # pointed at the right original file and the right line in that file
