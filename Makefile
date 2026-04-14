@@ -6,7 +6,7 @@ INKSCAPE = SELF_CALL=true inkscape
 PDFLATEX = xelatex
 DIA      = dia
 EPSTOPDF = epstopdf
-
+PDFTYPST = typst compile
 INKSCAPE_IS_NEW = $(shell $(INKSCAPE) --version | grep -q "^Inkscape 1" && echo YES)
 
 ifeq ($(INKSCAPE_IS_NEW),YES)
@@ -37,10 +37,9 @@ PDFLATEX_ENV = TEXINPUTS=.:$(shell pwd):$(shell pwd)/common: texfot --tee /tmp/f
 
 # Arguments passed to pdflatex
 PDFLATEX_OPT = -shell-escape -file-line-error -halt-on-error
-
+PDFTYPST_OPT = --root .
 # The common slide stylesheet
 STYLESHEET = common/beamerthemeBootlin.sty
-
 ALL_TRAININGS_MKS = $(sort $(notdir $(wildcard mk/*.mk)))
 ALL_TRAININGS = $(patsubst %.mk,%,$(ALL_TRAININGS_MKS))
 
@@ -93,10 +92,7 @@ ifdef SLIDES
 # PDF file that was requested.
 ifeq ($(firstword $(subst -, , $(SLIDES))),full)
 SLIDES_TRAINING      = $(strip $(subst -slides, , $(subst full-, , $(SLIDES))))
-SLIDES_COMMON_BEFORE = common/slide-header.tex \
-		       common/$(SLIDES_TRAINING)-vars.tex
 SLIDES_CHAPTERS      = $($(call UPPERCASE, $(subst  -,_, $(SLIDES_TRAINING)))_SLIDES)
-SLIDES_COMMON_AFTER  = common/slide-footer.tex
 else
 SLIDES_TRAINING      = $(firstword $(subst -, ,  $(SLIDES)))
 ifeq ($(SLIDES_TRAINING),sysdev)
@@ -108,12 +104,6 @@ endif
 # current training, as identified by the first component of the
 # chapter name.
 SLIDES_CHAPTERS      = $(filter $(SLIDES)%, $($(call UPPERCASE, $(SLIDES_TRAINING))_SLIDES))
-ifeq ($(words $(SLIDES_CHAPTERS)),1)
-SLIDES_COMMON_BEFORE = common/slide-header.tex common/single-subsection-slide-vars.tex
-else
-SLIDES_COMMON_BEFORE = common/slide-header.tex common/single-slide-vars.tex
-endif
-SLIDES_COMMON_AFTER  = common/slide-footer.tex
 endif
 
 ifeq ($(SLIDES_CHAPTERS),)
@@ -121,32 +111,30 @@ $(error "No chapter to build, maybe you're building a single chapter whose name 
 endif
 
 # Compute the set of corresponding .tex files and pictures
-SLIDES_TEX      = \
-	$(SLIDES_COMMON_BEFORE) \
-	$(foreach s,$(SLIDES_CHAPTERS),$(wildcard slides/$(s)/$(s).tex)) \
-	$(SLIDES_COMMON_AFTER)
+SLIDES_TYP      = \
+	$(foreach s,$(SLIDES_CHAPTERS),$(wildcard slides/$(s)/$(s).typ))
+
 SLIDES_PICTURES = $(call PICTURES,$(foreach s,$(SLIDES_CHAPTERS),slides/$(s))) $(COMMON_PICTURES)
 
 # Check for all slides .tex file to exist
 $(foreach file,$(SLIDES_TEX),$(if $(wildcard $(file)),,$(error Missing file $(file) !)))
 
-%-slides.pdf: $(VARS) $(SLIDES_TEX) $(SLIDES_PICTURES) $(STYLESHEET) $(OUTDIR)/last-update.tex
+%-slides.pdf: $(SLIDES_TYP) $(SLIDES_PICTURES) $(STYLESHEET)
+	echo AZJIOGIOAZJGIOAZJGIO $(SLIDES_CHAPTERS)
 	@mkdir -p $(OUTDIR)
+	rm -f $(OUTDIR)/$(basename $@).typ
 # We generate a .tex file with \input{} directives (instead of just
 # concatenating all files) so that when there is an error, we are
-# pointed at the right original file and the right line in that file.
-	rm -f $(OUTDIR)/$(basename $@).tex
-	echo "\input{last-update}" >> $(OUTDIR)/$(basename $@).tex
-	echo "\input{$(VARS)}" >> $(OUTDIR)/$(basename $@).tex
-	for f in $(filter %.tex,$^) ; do \
+# pointed at the right original file and the right line in that file
+	for f in $(filter %.typ,$^) ; do \
 		cp $$f $(OUTDIR)/`basename $$f` ; \
 		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/`basename $$f` ; \
-		printf "\input{%s}\n" `basename $$f .tex` >> $(OUTDIR)/$(basename $@).tex ; \
+		printf "#include %s\n" `basename $$f .typ` >> $(OUTDIR)/$(basename $@).typ ; \
 	done
-	(cd $(OUTDIR); $(PDFLATEX_ENV) $(PDFLATEX) $(PDFLATEX_OPT) $(basename $@).tex)
+	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ)
 # The second call to pdflatex is to be sure that we have a correct table of
 # content and index
-	(cd $(OUTDIR); $(PDFLATEX_ENV) $(PDFLATEX) $(PDFLATEX_OPT) $(basename $@).tex > /dev/null 2>&1)
+	(cd $(OUTDIR); $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ > /dev/null 2>&1)
 # We use cat to overwrite the final destination file instead of mv, so
 # that evince notices that the file has changed and automatically
 # reloads it (which doesn't happen if we use mv here). This is called
@@ -312,15 +300,6 @@ FORCE:
 	@$(MAKE) $@ AGENDA=$*
 endif
 
-#
-# === Last update file generation ===
-#
-$(OUTDIR)/last-update.tex: FORCE
-	mkdir -p $(@D)
-	t=`git log -1 --format=%ct` && printf "\def \lastupdateen{%s}\n" "`(LANG=en_EN.UTF-8 date -d @$${t} +'%B %d, %Y')`" > $@.tmp
-	t=`git log -1 --format=%ct` && printf "\def \lastupdatefr{%s}\n" "`(LANG=fr_FR.UTF-8 date -d @$${t} +'%d %B %Y')`" >> $@.tmp
-	if ! cmp $@ $@.tmp ; then mv $@.tmp $@ ; fi
-
 
 #
 # === Picture generation ===
@@ -365,15 +344,7 @@ $(OUTDIR)/%.pdf: %.pdf
 	mkdir -p $(dir $@)
 	@cp $^ $@
 
-#
-# === Misc targets ===
-#
 
-$(VARS): FORCE
-	@mkdir -p $(dir $@)
-	/bin/echo "\def \sessionurl {$(patsubst %/,%,$(SESSION_URL))}" > $@.tmp
-	/bin/echo "\def \trainer {$(TRAINER)}" >> $@.tmp
-	if ! cmp $@ $@.tmp ; then mv $@.tmp $@ ; fi
 
 clean:
 	$(RM) -rf $(OUTDIR) *.pdf *-labs *.xz

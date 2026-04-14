@@ -31,6 +31,8 @@ above: 6pt)
 
 #show raw.where(lang:"console", block: true): set text(12pt)
 
-===  Overall booting process with initramfs
+#setuplabframe([Training Setup],[ Prepare your lab environment
 
-#align(center, [#image("initramfs-boot-sequence.pdf", height: 80%)])
+- Download and extract the lab archive
+
+])

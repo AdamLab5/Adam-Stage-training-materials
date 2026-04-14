@@ -1,0 +1,78 @@
+#let stm32mp257-nunchuk = false
+#let stm32mp257-nunchuk = false
+#if training == "embedded-linux" {#let stm32mp257-nunchuk = true}
+
+#let stm32mp257-audio = false
+#let stm32mp257-audio = false
+#if training == "embedded-linux" {#let stm32mp257-audio = true}
+#import "@local/bootlin:0.1.0": *
+
+#import "@local/bootlin-yocto:0.1.0": *
+
+#import "@local/bootlin-utils:0.1.0": *
+
+#import "../../typst/local/themeBootlin.typ": *
+
+#import "../../typst/local/common.typ": *
+
+#show: bootlin-theme.with( aspect-ratio: "16-9", config-common(handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
+
+#show raw.where(block: true): set block(fill: luma(240), inset: 1em, radius: 0.5em, width: 100\%)
+
+#show raw.where(block: true): set text(size: 11pt)
+
+#show raw.where(block: false): r => text(fill: color-link)[#r]
+
+#show raw.where(lang: "c", block: true): set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 12pt, below: 12pt)
+
+#show raw.where(lang: "c", block: true): set text(11pt)
+
+#show raw.where(lang: "console", block: true):set block(fill: luma(240), inset: 0.4em, radius: 0.5em, width: 95\%, breakable: true, above: 6pt)
+
+#show raw.where(lang:"console", block: true): set text(12pt)
+
+=== STM32MP257 shopping list
+  \footnotesize
+  
+#table(columns: (50\%, 50\%), stroke: none,
+[
+    \begin{itemize}
+        \item Discovery Kits STM32MP257F from STMicroelectronics
+            \footnote{\tiny Boards documentation:
+            \url{https://www.st.com/en/evaluation-tools/stm32mp257f-dk.html}
+            }
+        \begin{itemize}
+            \item STM32MP257 (Dual Cortex-A35 + Cortex-M33) CPU
+            \item 4GB LPDDR4 RAM
+            \item Plenty of periperals: GPIOs, SPI, Serial, USB, ethernet...
+        \end{itemize}
+        \item USB-C to USB-A cable (to power the board and access console)
+        
+#if stm32mp257-nunchuk {
+        \item Nintendo Nunchuk with UEXT connector
+            \footnote{\tiny \url{https://www.olimex.com/Products/Modules/Sensors/MOD-WII/MOD-Wii-UEXT-NUNCHUCK/}}
+        \item Breadboard jumper wires - Male ends (to connect the Nunchuk)
+             \footnote{\tiny \url{https://www.olimex.com/Products/Breadboarding/JUMPER-WIRES/JW-110x10/}}
+	}{}
+        \item MicroSD card
+        
+#if stm32mp257-audio {
+        \item A standard USB audio headset
+	}{}
+    \end{itemize}
+    \column{0.2\textwidth}
+    \begin{center}
+    \includegraphics[width=\textwidth]{slides/shopping-list-stm32mp257/STM32MP257F-DK.png}\\
+    
+#if stm32mp257-nunchuk {
+    \includegraphics[width=0.7\textwidth]{common/nunchuk.jpg}\\
+    \includegraphics[width=0.7\textwidth]{common/jumper-wires.jpg}\\
+    }{}
+    
+#if stm32mp257-audio {
+    \includegraphics[width=0.6\textwidth]{common/usb-audio.png}\\
+    }{}
+    \end{center}
+  \\]
+  \vspace{0.5em}
+

@@ -31,6 +31,23 @@ above: 6pt)
 
 #show raw.where(lang:"console", block: true): set text(12pt)
 
-===  Overall booting process with initramfs
+===  Alexandre Belloni
 
-#align(center, [#image("initramfs-boot-sequence.pdf", height: 80%)])
+- Co-owner and COO at #strong[Bootlin]
+
+- Embedded Linux/Linux kernel engineer and trainer
+
+- Open-source contributor
+
+  - Linux kernel #strong[maintainer for the RTC and I3C subsystems]
+
+  - Linux kernel #strong[co-maintainer for Microchip ARM and MIPS
+    processors]
+
+  - Yocto Project SWAT team lead
+
+- Living in #strong[Lyon], France
+
+- `alexandre.belloni@bootlin.com`
+
+#link("https://bootlin.com/company/staff/alexandre-belloni/")

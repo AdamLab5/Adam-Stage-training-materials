@@ -371,6 +371,7 @@ handout: "handout" in sys.inputs and sys.inputs.handout == "1", ))
             ligne = ligne.replace("]", "])")
         
         ligne=ligne.replace("]),[", "],[")
+        ligne = ligne.replace("]))", "])")
 
         if "===" and "#table" in ligne:
             ligne = ligne.replace("#table", "\n#table")

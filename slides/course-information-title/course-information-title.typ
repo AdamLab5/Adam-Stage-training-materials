@@ -31,6 +31,4 @@ above: 6pt)
 
 #show raw.where(lang:"console", block: true): set text(12pt)
 
-===  Overall booting process with initramfs
-
-#align(center, [#image("initramfs-boot-sequence.pdf", height: 80%)])
+= Generic course information

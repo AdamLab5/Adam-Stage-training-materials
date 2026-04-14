@@ -102,6 +102,119 @@ def prepareDoc():
             document
         )
         
+        document = re.sub(
+            r'\\column\{0.2\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.25\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.5\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.4\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.7\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.6\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.3\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.8\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.33\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.75\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.65\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.35\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.55\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.15\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.85\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        document = re.sub(
+            r'\\column\{0.45\\textwidth\}',
+            r'],[',
+            document,
+            flags=re.MULTILINE
+        )
+
+        
 
         document = re.sub(
             r'\\begin{frame}',
@@ -109,6 +222,11 @@ def prepareDoc():
             document
         )
 
+        document = re.sub(
+            r'\\end{columns}',
+            r'])',
+            document
+        )
         document = re.sub(
             r'(`[^`]*)\n\s*([^`]*`)',
             r'\1 \2',
@@ -305,6 +423,39 @@ def prepareDoc():
         )
 
         document = re.sub(
+            r'\\ifdefempty\{\\([^}]*)\}\{\}\{',
+            r'#if \1 == none{',
+            document
+        )
+        document = re.sub(
+            r'\\settoggle\s*\{([^}]*)\}\s*\{true\}',
+            r'#let \1 = true',
+            document
+        )   
+
+        document = re.sub(
+            r'\\settoggle\s*\{([^}]*)\}\s*\{false\}',
+            r'#let \1 = false',
+            document
+        )
+        document = re.sub(
+            r'\\ifdefstring\s*\{\\([^}]*)\}\s*\{([^}]*)\}\s*\{((?:[^{}]|\{[^{}]*\})*)\}\s*\{\}',
+            r'#if \1 == "\2" {\3}',
+            document
+        )
+        document = re.sub(
+            r'\\newtoggle\s*\{([^}]*)\}',
+            r'#let \1 = false',
+            document
+        )
+
+        document = re.sub(
+            r'\\iftoggle\s*\{([^}]*)\}',
+            r'\n#if \1 ',
+            document
+        )
+
+        document = re.sub(
             r'\\kdochtmldir\{([^}]*)\}',
             r'#kdochtmldir("\1")',
             document
@@ -322,11 +473,7 @@ def prepareDoc():
             document
         )
 
-        document = re.sub(
-            r'end{columns}',
-            r'\]',
-            document
-        )
+
 
         document = re.sub(
             r'\\end{frame}',

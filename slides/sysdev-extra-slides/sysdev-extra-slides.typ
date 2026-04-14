@@ -36,3 +36,5 @@ above: 6pt)
 ===  Linux connectivity stack
 
 #align(center, [#image("connectivity-stack.pdf", height: 70%)])
+#include "vars.typ"
+#include "last-update"

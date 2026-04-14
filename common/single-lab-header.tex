@@ -4,3 +4,55 @@
 \usepackage{listings}
 
 \begin{document}
+
+
+% ifdef SLIDES
+
+% ifeq ($(firstword $(subst -, , $(SLIDES))),full)
+% SLIDES_TRAINING      = $(strip $(subst -slides, , $(subst full-, , $(SLIDES))))
+% SLIDES_CHAPTERS      = $($(call UPPERCASE, $(subst  -,_, $(SLIDES_TRAINING)))_SLIDES)
+% else
+% SLIDES_TRAINING      = $(firstword $(subst -, ,  $(SLIDES)))
+% ifeq ($(SLIDES_TRAINING),sysdev)
+% SLIDES_TRAINING = embedded-linux
+% endif
+% ifeq ($(SLIDES_TRAINING),kernel)
+% SLIDES_TRAINING = linux-kernel
+% endif
+% SLIDES_CHAPTERS      = $(filter $(SLIDES)%, $($(call UPPERCASE, $(SLIDES_TRAINING))_SLIDES))
+% ifeq ($(SLIDES_CHAPTERS),)
+% $(error "No chapter to build, maybe you're building a single chapter whose name doesn't start with a training session name")
+% endif
+% SLIDES_TYP      = \
+% 	$(SLIDES_COMMON_BEFORE) \
+% 	$(foreach s,$(SLIDES_CHAPTERS),$(wildcard slides/$(s)/$(s).typ)) \
+% 	$(SLIDES_COMMON_AFTER)
+% SLIDES_PICTURES = $(call PICTURES,$(foreach s,$(SLIDES_CHAPTERS),slides/$(s))) $(COMMON_PICTURES)
+% $(foreach file,$(SLIDES_TYP),$(if $(wildcard $(file)),,$(error Missing file $(file) !)))
+% %-slides.pdf: $(VARS) $(SLIDES_TYP) $(SLIDES_PICTURES) $(STYLESHEET2) $(OUTDIR)/last-update.typ
+% 	@mkdir -p $(OUTDIR)
+% # We generate a .tex file with \input{} directives (instead of just
+% # concatenating all files) so that when there is an error, we are
+% # pointed at the right original file and the right line in that file.
+% 	rm -f $(OUTDIR)/$(basename $@).tex
+% 	echo "#include{last-update}" >> $(OUTDIR)/$(basename $@).typ
+% 	echo "#include{$(VARS)}" >> $(OUTDIR)/$(basename $@).typ
+% 	for f in $(filter %.typ,$^) ; do \
+% 		cp $$f $(OUTDIR)/`basename $$f` ; \
+% 		sed -i 's%__SESSION_NAME__%$(SLIDES_TRAINING)%' $(OUTDIR)/`basename $$f` ; \
+% 		printf "\input{%s}\n" `basename $$f .tex` >> $(OUTDIR)/$(basename $@).typ ; \
+% 	done
+% 	(cd $(OUTDIR); $(PDFTYPST_ENV) $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ)
+% # The second call to pdflatex is to be sure that we have a correct table of
+% # content and index
+% 	(cd $(OUTDIR); $(PDFTYPST_ENV) $(PDFTYPST) $(PDFTYPST_OPT) $(basename $@).typ > /dev/null 2>&1)
+% # We use cat to overwrite the final destination file instead of mv, so
+% # that evince notices that the file has changed and automatically
+% # reloads it (which doesn't happen if we use mv here). This is called
+% # 'Maxime's feature'.
+% 	cat out/$@ > $@
+% else
+% FORCE:
+% %-slides.pdf: FORCE
+% 	@$(MAKE) $@ SLIDES=$*
+% endif
