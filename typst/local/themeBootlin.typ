@@ -151,7 +151,7 @@
       column-gutter: 1cm,
       align: horizon,
       [
-        #image("/common/lab-penguins.svg", width: 100%)
+        #image("/common/lab-penguins.pdf", width: 100%)
       ],
       body
     )

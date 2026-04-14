@@ -55,7 +55,7 @@ above: 6pt)
 
 #align(center, [#image("beagleboneblack.png", width: 60%)])
 
-#align(center, [#image("/common/usb-serial-cable-female.jpg", width: 60%)]) 
+#align(center, [#image("/common/usb-serial-cable-female.png", width: 60%)]) 
 #if beaglebone-nunchuk {[#align(center, [#image("nunchuk.jpg", width: 60%)]) ]}
 #align(center, [#image("/common/jumper-wires.jpg", width: 60%)]) 
 
